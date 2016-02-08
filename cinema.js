@@ -688,7 +688,7 @@ bannerSeats.style.paddingTop = "8px";
 
 // create div that contain the list of selected seats
 var selectLugares = document.createElement("div");
-selectLugares.style.height = '300px';
+selectLugares.style.height = '40%';
 selectLugares.style.width = "100%";
 selectLugares.id = "selectLugares";
 selectLugares.style.marginTop = "-14px";
@@ -1416,16 +1416,13 @@ function onMouseDown(e) {
                 $(actual).slideDown();
                 slidedownpreco = true;
               }else{
-                console.log('actual' + icon_actual);
                 $(icon_actual).toggleClass('fa fa-angle-down fa fa-angle-up');
                 $(actual).slideUp();
                 slidedownpreco = false;
               }
             }else{
-              console.log('anterior' + icon_anterior);
               $(icon_anterior).toggleClass('fa fa-angle-down fa fa-angle-up');
               $(anterior).slideUp();
-              console.log('actual' + icon_actual);
               $(icon_actual).toggleClass('fa fa-angle-down fa fa-angle-up');
               $(actual).slideDown();
               slidedownpreco = true;
