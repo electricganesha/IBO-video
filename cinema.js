@@ -1,4 +1,4 @@
-//teste git gosto muito
+//teste git
 $.ajax({
   type: "GET",
   url: "js/three.js",
