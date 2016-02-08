@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset=utf-8>
+    <title>Cinema PUSH</title>
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <style>
+        @font-face {
+            font-family: osb;
+            src: url(fonts/OpenSans-Bold.ttf);
+        }
+        @font-face {
+            font-family: osr;
+            src: url(fonts/OpenSans-Regular.ttf);
+        }
+        @font-face {
+            font-family: ossb;
+            src: url(fonts/OpenSans-Semibold.ttf);
+        }
+        @font-face {
+            font-family: osl;
+            src: url(fonts/OpenSans-Light.ttf);
+        }
+        body {
+        margin: 0;
+        overflow-x:hidden;
+        overflow-y:hidden;
+        }
+    </style>
+  </head>
+
+  <body>
+    <video id="video" autoplay loop style="display:none">
+			<source src="video/" type='video/301285658.mp4; codecs="avc1.42E01E, mp4a.40.2"'>
+		</video>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="cinema.js"></script>
+  </body>
+
+</html>
