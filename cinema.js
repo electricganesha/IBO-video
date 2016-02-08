@@ -106,11 +106,11 @@ var textureEcra = THREE.ImageUtils.loadTexture('models/Cinema_Motta/ecra.jpg');
 textureEcra.wrapS = THREE.RepeatWrapping;
 textureEcra.wrapT = THREE.RepeatWrapping;
 
-video = document.getElementById( 'video' );
+/*video = document.getElementById( 'video' );
 textureVideo = new THREE.VideoTexture( video );
 				texture.minFilter = THREE.LinearFilter;
 				texture.magFilter = THREE.LinearFilter;
-				texture.format = THREE.RGBFormat;
+				texture.format = THREE.RGBFormat;*/
 
 // BOOLEANS
 
@@ -747,13 +747,13 @@ function loadScene() {
   });
 
   // create the cinema screen
-  var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
+  /*var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
   var material = new THREE.MeshBasicMaterial( {side:THREE.DoubleSide, map:textureVideo} );
   var plane = new THREE.Mesh( geometry, material );
   plane.position.x = -6.5;
   plane.position.y = 1.2;
   plane.rotation.y = Math.PI/2;
-  mainScene.add( plane );
+  mainScene.add( plane );*/
 }
 
 //
@@ -797,8 +797,7 @@ function loadSala() {
 //
 // here we load the chairs
 //
-function loadCadeiras(populateCadeirasInstances)
-{
+function loadCadeiras(populateCadeirasInstances) {
   // 1. load the point cloud that contains the position referece and the rotation reference for each chair
   loaderJSON.load( "models/Cinema_Motta/Pcloud_oriented_Cadeiras.js", function( geometry, material, normals ) {
 
@@ -834,8 +833,7 @@ function loadCadeiras(populateCadeirasInstances)
 //
 // 3. here we iterate on the point cloud to replicate the instances and position each instance in the correct place
 //
-function populateCadeirasInstances(mesh, normalsArray, bufferGeometry,child)
-{
+function populateCadeirasInstances(mesh, normalsArray, bufferGeometry,child) {
 
 
   // get the origin (from) and vertical axis vectors
@@ -893,8 +891,7 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry,child)
 //
 // Here we access the DB and load the chair occupation info
 //
-function carregarJSONBD()
-{
+function carregarJSONBD() {
   $.ajax({
     url:        'php/ler_BDCinema.php',
     dataType:   "json", // <== JSON-P request
@@ -915,8 +912,7 @@ function carregarJSONBD()
 //
 // Here we color the chairs according to the loaded occupation info
 //
-function pintarCadeiras()
-{
+function pintarCadeiras() {
   for(var i=0 ; i< chairGroup.children.length ; i++)
   {
     for(var j=0 ; j < cadeirasJSON.length ; j++)
@@ -941,8 +937,7 @@ function pintarCadeiras()
 //
 // here we load the chair arms
 //
-function loadBracos(populateBracosInstances)
-{
+function loadBracos(populateBracosInstances){
   // single geometry for geometry merge
   var singleGeometry = new THREE.Geometry();
 
@@ -991,8 +986,7 @@ function loadBracos(populateBracosInstances)
 //
 // 3. here we iterate on the point cloud to replicate the instances and position each instance in the correct place
 //
-function populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,normalVector,preNewObject,material)
-{
+function populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,normalVector,preNewObject,material) {
   var newBraco;
 
   // vertical axis and origin (from) vectors
@@ -1620,8 +1614,7 @@ selectedChairs = new Array();
 //
 // Here we remove a chair
 //
-function removeCadeira(obj)
-{
+function removeCadeira(obj) {
 
   var removalThing = "#"+obj.name;
 
@@ -1690,63 +1683,40 @@ function onMouseWheel(e) {
     switch(delta)
     {
       case(1):
-      if(alreadyScrolledFront){
-        // tween the fov fowards
-        tweenFov = new TWEEN.Tween(camera).to({
-          fov:20
-        },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
-          camera.updateProjectionMatrix();
-        }).onComplete(function () {
-        }).start();
-
-        // change the sprite size when zoomed
-        /*for(var i=0; i<spriteEyeArray.length; i++)
-        {
-        var posY = spriteEyeArray[i].position.y;
-
-        spriteEyeArray[i].scale.set(0.1,0.1,0.1);
-        spriteEyeArray[i].position.y = posY-0.1;
-      }*/
-
-      alreadyScrolledFront=false;
-      alreadyScrolledBack=true;
-    }
-    break;
+        if(alreadyScrolledFront){
+            // tween the fov fowards
+            tweenFov = new TWEEN.Tween(camera).to({
+              fov:20
+            },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
+              camera.updateProjectionMatrix();
+            }).onComplete(function () {
+            }).start();
+          alreadyScrolledFront=false;
+          alreadyScrolledBack=true;
+        }
+        break;
     case(-1):
-    if(alreadyScrolledBack){
-      //tween the fov backwards
-      tweenFov = new TWEEN.Tween(camera).to({
-        fov:45
-      },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
-        camera.updateProjectionMatrix();
-      }).onComplete(function () {
-      }).start();
-
-      // change the sprite size when zoomed
-      /*for(var i=0; i<spriteEyeArray.length; i++)
-      {
-      var posY = spriteEyeArray[i].position.y;
-
-      spriteEyeArray[i].scale.set(0.2,0.2,0.2);
-      spriteEyeArray[i].position.y = posY+0.1;
-    }*/
-
-    alreadyScrolledFront=true;
-    alreadyScrolledBack=false;
+      if(alreadyScrolledBack){
+          //tween the fov backwards
+          tweenFov = new TWEEN.Tween(camera).to({
+            fov:45
+          },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
+            camera.updateProjectionMatrix();
+          }).onComplete(function () {
+          }).start();
+        alreadyScrolledFront=true;
+        alreadyScrolledBack=false;
+      }
+      break;
+    }
   }
-  break;
-
-}
-}
-
 return false;
 }
 
 //
 // main render function (render cycle)
 //
-function animate()
-{
+function animate() {
   requestAnimationFrame(animate);
 
   // if we are rendering the loading scene
@@ -1981,8 +1951,7 @@ updateFn(deltaMsec / 1000, nowMsec / 1000)
 //
 // launch the Tween for changing perspective to seat perspective
 //
-function setupTweenFP(obj)
-{
+function setupTweenFP(obj) {
 
   TWEEN.removeAll();
 
@@ -2060,8 +2029,7 @@ function setupTweenFP(obj)
 //
 // launch the Tween for changing perspective to overview perspective
 //
-function setupTweenOverview()
-{
+function setupTweenOverview() {
   TWEEN.removeAll();
 
   // tween the fov fowards
@@ -2102,8 +2070,7 @@ function setupTweenOverview()
 }
 
 // calculate the total amount of tickets
-function calculaTotal(valorInicial)
-{
+function calculaTotal(valorInicial) {
 
   var total = valorInicial;
 
@@ -2133,8 +2100,7 @@ function calculaTotal(valorInicial)
 
 }
 
-function switchToOrtho()
-{
+function switchToOrtho() {
   sittingDownOrtho = false;
   if (isPerspectiveOrtho==false) // if we're in cinema overview 3D change to 2D view
   {
@@ -2185,8 +2151,7 @@ function detectmob() {
   || navigator.userAgent.match(/iPad/i)
   || navigator.userAgent.match(/iPod/i)
   || navigator.userAgent.match(/BlackBerry/i)
-  || navigator.userAgent.match(/Windows Phone/i)
-){
+  || navigator.userAgent.match(/Windows Phone/i)){
   return true;
 }
 else {
