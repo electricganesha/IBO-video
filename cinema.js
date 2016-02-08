@@ -178,6 +178,7 @@ var cinemaSelecionado = "";
 var slidedown = false;
 var slidedownpreco = false;
 var anterior = "";
+var icon_anterior = "";
 
 // RANDOM
 
@@ -232,8 +233,7 @@ THREE.DefaultLoadingManager.onError = function () {
 //
 // This method shows the loading scene, while the items are not loaded
 //
-function startLoadingScene()
-{
+function startLoadingScene() {
   loadingScene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 10);
   camera.position.set(0, 0, 7);
@@ -1373,6 +1373,15 @@ function onMouseDown(e) {
           else
           changePerspectiveOrtographic(point.x,point.y,point.z,object);
         },false);
+
+        // create icon for link show prices
+        var iconDivPreco = document.createElement("i");
+        iconDivPreco.className = "fa fa-angle-down";
+        iconDivPreco.style.float = "right";
+        iconDivPreco.id = 'icon_'+obj.name;
+        iconDivPreco.style.marginRight = "10px";
+        iconDivPreco.style.marginTop = "4px";
+
         // create link to show the prices
         var showDivPreco = document.createElement("a");
         showDivPreco.href = "#";
@@ -1391,42 +1400,45 @@ function onMouseDown(e) {
         showDivPreco.style.fontFamily = "osl";
         showDivPreco.style.textDecoration = "none";
         showDivPreco.onclick = function() {
-          $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
           var actual = '#showPreco_'+obj.name;
+          var icon_actual = '#icon_'+obj.name;
           if (slidedownpreco == false && anterior == ""){
-            $('#showPreco_'+obj.name).slideDown();
+            $(icon_actual).toggleClass('fa fa-angle-down fa fa-angle-up');
+            $(actual).slideDown();
             slidedownpreco = true;
             anterior = '#showPreco_'+obj.name;
+            icon_anterior = '#icon_'+obj.name;
           }else{
             if (actual == anterior)
             {
               if (slidedownpreco == false){
+                $(icon_actual).toggleClass('fa fa-angle-down fa fa-angle-up');
                 $(actual).slideDown();
                 slidedownpreco = true;
               }else{
+                console.log('actual' + icon_actual);
+                $(icon_actual).toggleClass('fa fa-angle-down fa fa-angle-up');
                 $(actual).slideUp();
                 slidedownpreco = false;
               }
             }else{
+              console.log('anterior' + icon_anterior);
+              $(icon_anterior).toggleClass('fa fa-angle-down fa fa-angle-up');
               $(anterior).slideUp();
+              console.log('actual' + icon_actual);
+              $(icon_actual).toggleClass('fa fa-angle-down fa fa-angle-up');
               $(actual).slideDown();
               slidedownpreco = true;
               anterior = '#showPreco_'+obj.name;
+              icon_anterior = '#icon_'+obj.name;
             }
           }
         }
 
-        // create icon for link show prices
-        var iconDivPreco = document.createElement("i");
-        iconDivPreco.className = "fa fa-angle-down";
-        iconDivPreco.style.float = "right";
-        iconDivPreco.style.marginRight = "10px";
-        iconDivPreco.style.marginTop = "4px";
-
         // create div that contain the list of prices
         var showPreco = document.createElement("div");
         showPreco.style.display = "none";
-        showPreco.style.height = '150px';
+        showPreco.style.height = '100px';
         showPreco.style.width = "100%";
         showPreco.id = "showPreco_"+obj.name;
         showPreco.style.textAlign = "left";
@@ -1608,7 +1620,6 @@ function onMouseDown(e) {
 }
 selectedChairs = new Array();
 }*/
-
 }
 
 //
