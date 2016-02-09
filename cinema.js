@@ -177,6 +177,8 @@ var cadeirasJSON; // an array that keeps the info about the chairs that we retri
 var cinemaSelecionado = "";
 var slidedown = false;
 var slidedownpreco = false;
+var slidedowndata = false;
+var slidedownsessao = false;
 var anterior = "";
 var icon_anterior = "";
 
@@ -364,6 +366,17 @@ function showMenuSelect()
   iDiv.style.right = '-300px';
   iDiv.style.top = '0';
 
+  // create div for collect information about movie
+  var divInfoMovie = document.createElement('div');
+  divInfoMovie.style.width = '100%';
+  divInfoMovie.style.height = '150px';
+  divInfoMovie.style.padding = '0';
+  divInfoMovie.style.position = "absolute";
+  divInfoMovie.style.background = '#FFF';
+  divInfoMovie.id = 'divInfoMovie';
+  divInfoMovie.style.right = '0';
+  divInfoMovie.style.top = '0';
+
   // create element for logo
   var logoCinema = document.createElement("img");
   logoCinema.id = "logoCinema";
@@ -419,14 +432,14 @@ movieInfo.style.fontSize = "14px";
 // create div for collect information
 var divInfo = document.createElement('div');
 divInfo.style.width = '100%';
-divInfo.style.height = '83%';
+divInfo.style.height = '100%';
 divInfo.style.padding = '0';
 divInfo.style.position = "absolute";
 divInfo.style.background = '#2d3e50';
 divInfo.id = 'menuInfo';
 divInfo.setAttribute('class', 'menuInfo');
 divInfo.style.right = '0';
-divInfo.style.bottom = '0';
+divInfo.style.top = '150px';
 
 // create link to show the cinemas
 var showDivCinemas = document.createElement("a");
@@ -444,6 +457,16 @@ showDivCinemas.style.textDecoration = "none";
 showDivCinemas.onclick = function() {
   $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   if (slidedown == false){
+    if (slidedowndata == true) {
+      $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+      $('#showDataDiv').slideUp();
+      slidedowndata = false;
+    }
+    if (slidedownsessao == true) {
+      $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+      $('#showSessaoDiv').slideUp();
+      slidedownsessao = false;
+    }
     $('#showCinemas').slideDown();
     slidedown = true;
   }else{
@@ -456,20 +479,21 @@ showDivCinemas.onclick = function() {
 var icon = document.createElement("i");
 icon.className = "fa fa-angle-down";
 icon.style.float = "right";
+icon.id = "icon";
 icon.style.marginRight = "10px";
 icon.style.marginTop = "4px";
 
 // create div that contain the list of cinemas
 var showCinemas = document.createElement("div");
 showCinemas.style.display = "none";
-showCinemas.style.height = '150px';
+showCinemas.style.height = '115px';
 showCinemas.style.width = "100%";
 showCinemas.id = "showCinemas";
 showCinemas.style.textAlign = "left";
 showCinemas.style.backgroundColor = "#263343";
 showCinemas.text = "Escolha o Cinema";
 showCinemas.style.fontFamily = "ossb";
-showCinemas.style.overflowY = "scroll";
+showCinemas.style.overflowY = "auto";
 
 var AlmadaForum = document.createElement("a");
 AlmadaForum.href = "#";
@@ -673,6 +697,129 @@ showCinemas.appendChild(DolceVitaCoimbra);
 showCinemas.appendChild(Colombo);
 showCinemas.appendChild(VascodaGama);
 
+// create link to show the calendar
+var showData = document.createElement("a");
+showData.href = "#";
+showData.style.float = "left";
+showData.style.height = '30px';
+showData.style.width = "33.2%";
+showData.style.borderRight = "solid 2px #344b5d";
+showData.id = "showData";
+showData.style.color = "#1bbc9b";
+showData.text = "Data";
+showData.style.fontFamily = "ossb";
+showData.style.textDecoration = "none";
+showData.onclick = function() {
+  $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
+  if (slidedowndata == false){
+    if (slidedown == true) {
+      $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
+      $('#showCinemas').slideUp();
+      slidedown = false;
+    }
+    if (slidedownsessao == false){
+      $('#showDataDiv').slideDown();
+      slidedowndata = true;
+    }else{
+      $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+      $('#showSessaoDiv').slideUp();
+      slidedownsessao = false;
+      $('#showDataDiv').slideDown();
+      slidedowndata = true;
+    }
+  }else{
+    $('#showDataDiv').slideUp();
+    slidedowndata = false;
+  }
+}
+
+// create icon for link show calendar
+var iconData = document.createElement("i");
+iconData.className = "fa fa-angle-down";
+iconData.style.float = "right";
+iconData.id ="iconData";
+iconData.style.marginRight = "10px";
+iconData.style.marginTop = "4px";
+
+// create div that contain the calendar
+var showDataDiv = document.createElement("div");
+showDataDiv.style.display = "none";
+showDataDiv.style.height = '150px';
+showDataDiv.style.width = "100%";
+showDataDiv.id = "showDataDiv";
+showDataDiv.style.textAlign = "left";
+showDataDiv.style.backgroundColor = "#263343";
+showDataDiv.style.marginTop = "-30px";
+showDataDiv.style.fontFamily = "ossb";
+showDataDiv.style.overflowY = "auto";
+
+// create link to show the session
+var showSessao = document.createElement("a");
+showSessao.href = "#";
+//showSessao.style.float = "right";
+showSessao.style.height = '30px';
+showSessao.style.width = "33.2%";
+showSessao.style.borderRight = "solid 2px #344b5d";
+showSessao.id = "showSessao";
+showSessao.style.color = "#1bbc9b";
+showSessao.text = "Sessão";
+showSessao.style.fontFamily = "ossb";
+showSessao.style.textDecoration = "none";
+showSessao.onclick = function() {
+  $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
+  if (slidedownsessao == false){
+    if (slidedown == true) {
+      $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
+      $('#showCinemas').slideUp();
+      slidedown = false;
+    }
+    if (slidedowndata == false){
+      $('#showSessaoDiv').slideDown();
+      slidedownsessao = true;
+    }else{
+      $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+      $('#showDataDiv').slideUp();
+      slidedowndata = false;
+      $('#showSessaoDiv').slideDown();
+      slidedownsessao = true;
+    }
+  }else{
+    $('#showSessaoDiv').slideUp();
+    slidedownsessao = false;
+  }
+}
+
+// create icon for link show sessao
+var iconSessao = document.createElement("i");
+iconSessao.className = "fa fa-angle-down";
+iconSessao.style.float = "right";
+iconSessao.id ="iconSessao";
+iconSessao.style.marginRight = "10px";
+iconSessao.style.marginTop = "4px";
+
+// create div that contain the hour
+var showSessaoDiv = document.createElement("div");
+showSessaoDiv.style.display = "none";
+showSessaoDiv.style.height = '80px';
+showSessaoDiv.style.width = "100%";
+showSessaoDiv.id = "showSessaoDiv";
+showSessaoDiv.style.textAlign = "left";
+showSessaoDiv.style.backgroundColor = "#263343";
+showSessaoDiv.style.fontFamily = "ossb";
+showSessaoDiv.style.overflowY = "auto";
+
+// create element for Room Number
+var showRoomNumber = document.createElement("a");
+showRoomNumber.href = "#";
+showRoomNumber.style.float = "right";
+showRoomNumber.style.height = '30px';
+showRoomNumber.style.width = "33.2%";
+showRoomNumber.id = "showRoomNumber";
+showRoomNumber.style.color = "#1bbc9b";
+showRoomNumber.text = "Sala 69";
+showRoomNumber.style.fontFamily = "ossb";
+showRoomNumber.style.textDecoration = "none";
+
 // create red element for display seats
 var bannerSeats = document.createElement("p");
 bannerSeats.id = "movieInfo";
@@ -680,44 +827,75 @@ bannerSeats.innerHTML = "Lugares";
 bannerSeats.style.width = "100%";
 bannerSeats.style.height = "20px";
 bannerSeats.style.backgroundColor = "#e54b65";
+bannerSeats.style.display = "inline-block";
 bannerSeats.style.fontFamily = "ossb";
 bannerSeats.style.lineHeight ="80%";
 bannerSeats.style.color = "#FFF";
 bannerSeats.style.fontSize = "14px";
-bannerSeats.style.paddingTop = "8px";
+bannerSeats.style.paddingTop = "7px";
+bannerSeats.style.marginTop = "-30px";
 
 // create div that contain the list of selected seats
 var selectLugares = document.createElement("div");
-selectLugares.style.height = '40%';
+selectLugares.style.height = 'auto';
+selectLugares.style.maxHeight = '40%'
 selectLugares.style.width = "100%";
 selectLugares.id = "selectLugares";
 selectLugares.style.marginTop = "-14px";
 selectLugares.style.backgroundColor = "#263343";
 selectLugares.style.overflowY = "auto";
 
-var total = document.createElement("a");
-total.href = "#";
-total.innerHTML = "total";
-total.style.fontFamily = "osl";
-total.style.textDecoration = "none";
+var total = document.createElement("p");
+total.style.fontFamily = "osb";
 total.style.color = "#FFF";
 total.id = "total";
+total.style.fontSize = "18px";
 total.style.display = "block";
 total.style.width = "90%";
+total.style.textAlign = "left";
 total.style.paddingLeft = "10%";
 
-iDiv.appendChild(logoCinema);
-iDiv.appendChild(movieName);
-iDiv.appendChild(movieInfo);
+// create div that contain the advertise
+var pub = document.createElement("div");
+pub.style.height = '230px';
+pub.style.width = "100%";
+pub.id = "pub";
+pub.style.bottom = "150px";
+pub.style.right = "0";
+pub.style.position = "absolute";
+
+var imgPub = document.createElement("img");
+imgPub.id = "imgPub";
+imgPub.style.height = '100%';
+imgPub.style.width = "90%";
+
+divInfoMovie.appendChild(logoCinema);
+divInfoMovie.appendChild(movieName);
+divInfoMovie.appendChild(movieInfo);
+iDiv.appendChild(divInfoMovie);
 iDiv.appendChild(divInfo);
 divInfo.appendChild(showDivCinemas);
 showDivCinemas.appendChild(icon);
 divInfo.appendChild(showCinemas);
+
+showData.appendChild(iconData);
+showSessao.appendChild(iconSessao);
+
+divInfo.appendChild(showData);
+divInfo.appendChild(showRoomNumber);
+divInfo.appendChild(showSessao);
+
+divInfo.appendChild(showDataDiv);
+divInfo.appendChild(showSessaoDiv);
+
 divInfo.appendChild(bannerSeats);
 divInfo.appendChild(selectLugares);
 divInfo.appendChild(total);
+pub.appendChild(imgPub);
+divInfo.appendChild(pub);
 document.body.appendChild(iDiv);
 document.getElementById("logoCinema").src="img/logo.png";
+document.getElementById("imgPub").src="img/pedrinho.jpg";
 
 $('#menuSelect').bind('mouseenter' ,"*", function(e){
   mouseIsOnMenu = true;
@@ -1403,6 +1581,16 @@ function onMouseDown(e) {
           var actual = '#showPreco_'+obj.name;
           var icon_actual = '#icon_'+obj.name;
           if (slidedownpreco == false && anterior == ""){
+            if (slidedowndata == true) {
+              $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+              $('#showDataDiv').slideUp();
+              slidedowndata = false;
+            }
+            if (slidedownsessao == true) {
+              $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+              $('#showSessaoDiv').slideUp();
+              slidedownsessao = false;
+            }
             $(icon_actual).toggleClass('fa fa-angle-down fa fa-angle-up');
             $(actual).slideDown();
             slidedownpreco = true;
@@ -2104,7 +2292,7 @@ function calculaTotal(valorInicial) {
     }
 
   }
-  $("#total").html("Total : "+ Math.round(total * 100) / 100 + " €");
+  document.getElementById('total').innerHTML = "Total: <u>"+ Math.round(total * 100) / 100 + "€</u>";
 
 }
 
