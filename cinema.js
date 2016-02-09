@@ -82,6 +82,13 @@ $.ajax({
   async: false
 });
 
+$.ajax({
+  type: "GET",
+  url: "js/jquery-ui.js",
+  dataType: "script",
+  async: false
+});
+
 // TEXTURES
 
 var texturaCadeira = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_vermelho_small.jpg');
@@ -706,7 +713,7 @@ showData.style.width = "33.2%";
 showData.style.borderRight = "solid 2px #344b5d";
 showData.id = "showData";
 showData.style.color = "#1bbc9b";
-showData.text = "Data";
+showData.innerHTML = "Data";
 showData.style.fontFamily = "ossb";
 showData.style.textDecoration = "none";
 showData.onclick = function() {
@@ -720,6 +727,19 @@ showData.onclick = function() {
     if (slidedownsessao == false){
       $('#showDataDiv').slideDown();
       slidedowndata = true;
+      $('#showDataDiv').datepicker({
+      	inline: true,
+      	minDate: 0,
+      	maxDate: "+10D",
+        dateFormat: 'd M',
+        onSelect: function(dateText, inst) {
+          showData.text = $(this).val();
+          showData.appendChild(iconData);
+          $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+          $('#showDataDiv').slideUp();
+          slidedowndata = false;
+      }
+      });
     }else{
       $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
       $('#showSessaoDiv').slideUp();
