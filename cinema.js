@@ -389,35 +389,6 @@ function showMenuSelect()
   logoCinema.id = "logoCinema";
   logoCinema.style.marginTop = "3%";
 
-  /*linkSeguinte.addEventListener('click', function(e){
-
-  var jsonArray = [];
-
-  for(var i=0 ; i<selectedChairs.length ; i++)
-  {
-  for( var j=0 ; j<cadeirasJSON.length ; j++)
-  {
-  if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural)
-  {
-  var item =
-  {
-  fila: cadeirasJSON[j].fila,
-  lugar:cadeirasJSON[j].lugar,
-  tipoBilhete:'Normal'
-}
-jsonArray.push(item);
-}
-
-}
-
-}
-
-jsonChairs = JSON.stringify(jsonArray);
-alert("cadeiras seleccionadas " + jsonChairs);
-window.location.href = "http://www.pushvfx.com";
-
-},false);*/
-
 // create element for name of movie
 var movieName = document.createElement("p");
 movieName.id = "movieName";
@@ -1017,11 +988,45 @@ var total = document.createElement("p");
 total.style.fontFamily = "osb";
 total.style.color = "#FFF";
 total.id = "total";
-total.style.fontSize = "18px";
+total.style.fontSize = "17px";
 total.style.display = "block";
-total.style.width = "90%";
+total.style.width = "145px";
 total.style.textAlign = "left";
-total.style.paddingLeft = "10%";
+total.style.marginLeft = "8%";
+total.style.float = "left";
+
+var btnComprar = document.createElement("a");
+btnComprar.href = "#";
+btnComprar.style.backgroundImage = "url('img/btncomprar.png')";
+btnComprar.style.backgroundRepeat = "no-repeat";
+btnComprar.style.float = "right";
+btnComprar.style.marginTop = "17px";
+btnComprar.style.display = "inline-block";
+btnComprar.style.height = '30px';
+btnComprar.style.width = "104px";
+btnComprar.id = "btnComprar";
+btnComprar.style.marginRight = "7%";
+btnComprar.style.textDecoration = "none";
+
+btnComprar.addEventListener('click', function(e){
+var jsonArray = [];
+for(var i=0 ; i<selectedChairs.length ; i++){
+  for( var j=0 ; j<cadeirasJSON.length ; j++){
+    if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
+      var item =
+      {
+      fila: cadeirasJSON[j].fila,
+      lugar:cadeirasJSON[j].lugar,
+      tipoBilhete:'Normal'
+      }
+      jsonArray.push(item);
+    }
+  }
+}
+jsonChairs = JSON.stringify(jsonArray);
+alert("cadeiras seleccionadas " + jsonChairs);
+window.location.href = "http://www.pushvfx.com";
+},false);
 
 // create div that contain the advertise
 var pub = document.createElement("div");
@@ -1059,6 +1064,7 @@ divInfo.appendChild(showSessaoDiv);
 divInfo.appendChild(bannerSeats);
 divInfo.appendChild(selectLugares);
 divInfo.appendChild(total);
+divInfo.appendChild(btnComprar);
 pub.appendChild(imgPub);
 divInfo.appendChild(pub);
 document.body.appendChild(iDiv);
