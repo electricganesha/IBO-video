@@ -606,7 +606,7 @@ $.extend(Datepicker.prototype, {
 		}
 		// Set display:block in place of inst.dpDiv.show() which won't work on disconnected elements
 		// http://bugs.jqueryui.com/ticket/7552 - A Datepicker created on a detached div has zero height
-		inst.dpDiv.css( "display", "block" );
+		inst.dpDiv.css( "width", "100%" );
 	},
 
 	/* Pop-up the date picker in a "dialog" box.
@@ -2134,7 +2134,7 @@ $.extend(Datepicker.prototype, {
 		}
 
 		// year selection
-		if ( !inst.yearshtml ) {
+		/*if ( !inst.yearshtml ) {
 			inst.yearshtml = "";
 			if (secondary || !changeYear) {
 				html += "<span class='ui-datepicker-year'>" + drawYear + "</span>";
@@ -2143,8 +2143,8 @@ $.extend(Datepicker.prototype, {
 				years = this._get(inst, "yearRange").split(":");
 				thisYear = new Date().getFullYear();
 				determineYear = function(value) {
-					var year = (value.match(/c[+\-].*/) ? drawYear + parseInt(value.substring(1), 10) :
-						(value.match(/[+\-].*/) ? thisYear + parseInt(value, 10) :
+					var year = (value.match(/c[+\-].) ? drawYear + parseInt(value.substring(1), 10) :
+						(value.match(/[+\-].) ? thisYear + parseInt(value, 10) :
 						parseInt(value, 10)));
 					return (isNaN(year) ? thisYear : year);
 				};
@@ -2163,7 +2163,7 @@ $.extend(Datepicker.prototype, {
 				html += inst.yearshtml;
 				inst.yearshtml = null;
 			}
-		}
+		}*/
 
 		html += this._get(inst, "yearSuffix");
 		if (showMonthAfterYear) {

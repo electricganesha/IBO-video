@@ -1,4 +1,3 @@
-//teste
 $.ajax({
   type: "GET",
   url: "js/three.js",
@@ -390,35 +389,6 @@ function showMenuSelect()
   logoCinema.id = "logoCinema";
   logoCinema.style.marginTop = "3%";
 
-  /*linkSeguinte.addEventListener('click', function(e){
-
-  var jsonArray = [];
-
-  for(var i=0 ; i<selectedChairs.length ; i++)
-  {
-  for( var j=0 ; j<cadeirasJSON.length ; j++)
-  {
-  if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural)
-  {
-  var item =
-  {
-  fila: cadeirasJSON[j].fila,
-  lugar:cadeirasJSON[j].lugar,
-  tipoBilhete:'Normal'
-}
-jsonArray.push(item);
-}
-
-}
-
-}
-
-jsonChairs = JSON.stringify(jsonArray);
-alert("cadeiras seleccionadas " + jsonChairs);
-window.location.href = "http://www.pushvfx.com";
-
-},false);*/
-
 // create element for name of movie
 var movieName = document.createElement("p");
 movieName.id = "movieName";
@@ -526,6 +496,9 @@ AlmadaForum.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 var Alvalaxia = document.createElement("a");
@@ -550,6 +523,9 @@ Alvalaxia.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 var Amoreiras = document.createElement("a");
@@ -574,6 +550,9 @@ Amoreiras.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 var BragaParque = document.createElement("a");
@@ -598,6 +577,9 @@ BragaParque.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 var CascaisShopping = document.createElement("a");
@@ -622,6 +604,9 @@ CascaisShopping.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 var DolceVitaCoimbra = document.createElement("a");
@@ -646,6 +631,9 @@ DolceVitaCoimbra.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 var Colombo = document.createElement("a");
@@ -670,6 +658,9 @@ Colombo.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 var VascodaGama = document.createElement("a");
@@ -694,6 +685,9 @@ VascodaGama.onclick = function() {
   $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
   $('#showCinemas').slideUp();
   slidedown = false;
+  showData.style.pointerEvents = "all";
+  showData.style.cursor = "auto";
+  showData.style.color = "#1bbc9b";
 }
 
 showCinemas.appendChild(AlmadaForum);
@@ -708,12 +702,14 @@ showCinemas.appendChild(VascodaGama);
 // create link to show the calendar
 var showData = document.createElement("a");
 showData.href = "#";
+showData.style.pointerEvents = "none";
+showData.style.cursor = "default";
 showData.style.float = "left";
 showData.style.height = '30px';
 showData.style.width = "33.2%";
 showData.style.borderRight = "solid 2px #344b5d";
 showData.id = "showData";
-showData.style.color = "#1bbc9b";
+showData.style.color = "#446368";
 showData.innerHTML = "Data";
 showData.style.fontFamily = "ossb";
 showData.style.textDecoration = "none";
@@ -739,6 +735,9 @@ showData.onclick = function() {
           $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showDataDiv').slideUp();
           slidedowndata = false;
+          showSessao.style.pointerEvents = "all";
+          showSessao.style.cursor = "auto";
+          showSessao.style.color = "#1bbc9b";
       }
       });
     }else{
@@ -747,6 +746,22 @@ showData.onclick = function() {
       slidedownsessao = false;
       $('#showDataDiv').slideDown();
       slidedowndata = true;
+      $('#showDataDiv').datepicker({
+      	inline: true,
+      	minDate: 0,
+      	maxDate: "+10D",
+        dateFormat: 'd M',
+        onSelect: function(dateText, inst) {
+          showData.text = $(this).val();
+          showData.appendChild(iconData);
+          $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+          $('#showDataDiv').slideUp();
+          slidedowndata = false;
+          showSessao.style.pointerEvents = "all";
+          showSessao.style.cursor = "auto";
+          showSessao.style.color = "#1bbc9b";
+      }
+      });
     }
   }else{
     $('#showDataDiv').slideUp();
@@ -765,24 +780,27 @@ iconData.style.marginTop = "4px";
 // create div that contain the calendar
 var showDataDiv = document.createElement("div");
 showDataDiv.style.display = "none";
-showDataDiv.style.height = '150px';
+showDataDiv.style.height = '190px';
 showDataDiv.style.width = "100%";
 showDataDiv.id = "showDataDiv";
 showDataDiv.style.textAlign = "left";
 showDataDiv.style.backgroundColor = "#263343";
 showDataDiv.style.marginTop = "-30px";
 showDataDiv.style.fontFamily = "ossb";
-showDataDiv.style.overflowY = "auto";
+showDataDiv.style.textAlign = "center";
+showDataDiv.style.overflowY = "hidden";
 
 // create link to show the session
 var showSessao = document.createElement("a");
 showSessao.href = "#";
-//showSessao.style.float = "right";
+showSessao.style.pointerEvents = "none";
+showSessao.style.cursor = "default";
+showSessao.style.display = "inline-block";
 showSessao.style.height = '30px';
-showSessao.style.width = "33.2%";
+showSessao.style.width = "32%";
 showSessao.style.borderRight = "solid 2px #344b5d";
 showSessao.id = "showSessao";
-showSessao.style.color = "#1bbc9b";
+showSessao.style.color = "#446368";
 showSessao.text = "Sessão";
 showSessao.style.fontFamily = "ossb";
 showSessao.style.textDecoration = "none";
@@ -821,18 +839,118 @@ iconSessao.style.marginTop = "4px";
 // create div that contain the hour
 var showSessaoDiv = document.createElement("div");
 showSessaoDiv.style.display = "none";
-showSessaoDiv.style.height = '80px';
+showSessaoDiv.style.height = '50px';
 showSessaoDiv.style.width = "100%";
 showSessaoDiv.id = "showSessaoDiv";
-showSessaoDiv.style.textAlign = "left";
 showSessaoDiv.style.backgroundColor = "#263343";
 showSessaoDiv.style.fontFamily = "ossb";
-showSessaoDiv.style.overflowY = "auto";
+showSessaoDiv.style.overflowY = "hidden";
+
+var hora1 = document.createElement("a");
+hora1.href = "#";
+hora1.text = "13:00";
+hora1.style.fontFamily = "osr";
+hora1.style.textDecoration = "none";
+hora1.style.color = "#FFF";
+hora1.style.display = "inline-block";
+hora1.style.marginLeft = "4%";
+hora1.style.marginTop = "10px";
+hora1.onmouseover = function() {
+  this.style.color = "#1bbc9b";
+}
+hora1.onmouseout = function() {
+  this.style.color = "#FFF";
+}
+hora1.onclick = function() {
+  showSessao.text = this.text;
+  showSessao.appendChild(iconSessao);
+  $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+  $('#showSessaoDiv').slideUp();
+  slidedownsessao = false;
+}
+
+var hora2 = document.createElement("a");
+hora2.href = "#";
+hora2.text = "16:30";
+hora2.style.fontFamily = "osr";
+hora2.style.textDecoration = "none";
+hora2.style.color = "#FFF";
+hora2.style.display = "inline-block";
+hora2.style.marginLeft = "7%";
+hora2.style.marginTop = "10px";
+hora2.onmouseover = function() {
+  this.style.color = "#1bbc9b";
+}
+hora2.onmouseout = function() {
+  this.style.color = "#FFF";
+}
+hora2.onclick = function() {
+  showSessao.text = this.text;
+  showSessao.appendChild(iconSessao);
+  $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+  $('#showSessaoDiv').slideUp();
+  slidedownsessao = false;
+}
+
+var hora3 = document.createElement("a");
+hora3.href = "#";
+hora3.text = "20:50";
+hora3.style.fontFamily = "osr";
+hora3.style.textDecoration = "none";
+hora3.style.color = "#FFF";
+hora3.style.display = "inline-block";
+hora3.style.marginLeft = "7%";
+hora3.style.marginTop = "10px";
+hora3.onmouseover = function() {
+  this.style.color = "#1bbc9b";
+}
+hora3.onmouseout = function() {
+  this.style.color = "#FFF";
+}
+hora3.onclick = function() {
+  showSessao.text = this.text;
+  showSessao.appendChild(iconSessao);
+  $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+  $('#showSessaoDiv').slideUp();
+  slidedownsessao = false;
+}
+
+
+var hora4 = document.createElement("a");
+hora4.href = "#";
+hora4.text = "00:10";
+hora4.style.fontFamily = "osr";
+hora4.style.textDecoration = "none";
+hora4.style.color = "#FFF";
+hora4.style.display = "inline-block";
+hora4.style.marginLeft = "7%";
+hora4.style.marginTop = "10px";
+hora4.onmouseover = function() {
+  this.style.color = "#1bbc9b";
+}
+hora4.onmouseout = function() {
+  this.style.color = "#FFF";
+}
+hora4.onclick = function() {
+  showSessao.text = this.text;
+  showSessao.appendChild(iconSessao);
+  $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+  $('#showSessaoDiv').slideUp();
+  slidedownsessao = false;
+}
+
+showSessaoDiv.appendChild(hora1);
+showSessaoDiv.appendChild(hora2);
+showSessaoDiv.appendChild(hora3);
+showSessaoDiv.appendChild(hora4);
 
 // create element for Room Number
 var showRoomNumber = document.createElement("a");
 showRoomNumber.href = "#";
+showRoomNumber.style.pointerEvents = "none";
+showRoomNumber.style.cursor = "default";
 showRoomNumber.style.float = "right";
+showRoomNumber.style.display = "inline-block";
 showRoomNumber.style.height = '30px';
 showRoomNumber.style.width = "33.2%";
 showRoomNumber.id = "showRoomNumber";
@@ -870,11 +988,45 @@ var total = document.createElement("p");
 total.style.fontFamily = "osb";
 total.style.color = "#FFF";
 total.id = "total";
-total.style.fontSize = "18px";
+total.style.fontSize = "17px";
 total.style.display = "block";
-total.style.width = "90%";
+total.style.width = "145px";
 total.style.textAlign = "left";
-total.style.paddingLeft = "10%";
+total.style.marginLeft = "8%";
+total.style.float = "left";
+
+var btnComprar = document.createElement("a");
+btnComprar.href = "#";
+btnComprar.style.backgroundImage = "url('img/btncomprar.png')";
+btnComprar.style.backgroundRepeat = "no-repeat";
+btnComprar.style.float = "right";
+btnComprar.style.marginTop = "17px";
+btnComprar.style.display = "inline-block";
+btnComprar.style.height = '30px';
+btnComprar.style.width = "104px";
+btnComprar.id = "btnComprar";
+btnComprar.style.marginRight = "7%";
+btnComprar.style.textDecoration = "none";
+
+btnComprar.addEventListener('click', function(e){
+var jsonArray = [];
+for(var i=0 ; i<selectedChairs.length ; i++){
+  for( var j=0 ; j<cadeirasJSON.length ; j++){
+    if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
+      var item =
+      {
+      fila: cadeirasJSON[j].fila,
+      lugar:cadeirasJSON[j].lugar,
+      tipoBilhete:'Normal'
+      }
+      jsonArray.push(item);
+    }
+  }
+}
+jsonChairs = JSON.stringify(jsonArray);
+alert("cadeiras seleccionadas " + jsonChairs);
+window.location.href = "http://www.pushvfx.com";
+},false);
 
 // create div that contain the advertise
 var pub = document.createElement("div");
@@ -912,6 +1064,7 @@ divInfo.appendChild(showSessaoDiv);
 divInfo.appendChild(bannerSeats);
 divInfo.appendChild(selectLugares);
 divInfo.appendChild(total);
+divInfo.appendChild(btnComprar);
 pub.appendChild(imgPub);
 divInfo.appendChild(pub);
 document.body.appendChild(iDiv);
