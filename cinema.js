@@ -1575,7 +1575,7 @@ function onMouseDown(e) {
       var fila = "";
       var lugar = "";
       var estado = "";
-      var spriteFound;
+      var spriteFound = false;
 
       // retrieve information of chair occupation from array retrieved from DB
       for(var i=0; i<cadeirasJSON.length; i++)
@@ -1951,7 +1951,7 @@ function onMouseDown(e) {
 
       else
       {
-        if(!mouseIsOnMenu && !mouseIsOutOfDocument)
+        if(!mouseIsOnMenu && !mouseIsOutOfDocument && !spriteFound)
         removeCadeira(obj); // if chair was already selected, de-select it
 
       }
