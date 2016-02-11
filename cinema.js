@@ -361,22 +361,196 @@ function init() {
 function showMenuSelect()
 {
 
-  // create the main selection menu
+  // create main legenda for cinema
   var legDiv = document.createElement('div');
-  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
-  legDiv.style.width = '750px';
+  legDiv.style.width = '100%';
   legDiv.style.top = "100%";
-  legDiv.style.left = "50%";
-  legDiv.style.marginTop = "-100px";
-  legDiv.style.marginLeft = "-375px";
-  legDiv.style.textAlign = "center";
-  legDiv.style.height = '200px';
+  legDiv.style.marginTop = "-80px";
+  legDiv.style.height = '160px';
   legDiv.style.position = "absolute";
-  legDiv.style.background = '#243141';
-  legDiv.style.borderRadius = "10px";
   legDiv.id = 'LegDiv';
 
+  // create sub main legenda for cinema
+  var legenda = document.createElement('div');
+  legenda.style.width = '780px';
+  legenda.style.margin = "auto";
+  legenda.style.textAlign = "center";
+  legenda.style.height = '200px';
+  legenda.style.borderRadius = "10px";
+  legenda.id = 'legenda';
+
+  // create legend for cinema
+  var legEsq = document.createElement('div');
+  legEsq.style.width = '670px';
+  legEsq.style.float = "left";
+  legEsq.style.textAlign = "center";
+  legEsq.style.height = '200px';
+  legEsq.style.background = '#243141';
+  legEsq.style.borderRadius = "10px";
+  legEsq.id = 'legEsq';
+
+  // create legend for cinema
+  var legDir = document.createElement('div');
+  legDir.style.width = '90px';
+  legDir.style.float = "right";
+  legDir.style.textAlign = "center";
+  legDir.style.height = '200px';
+  legDir.style.background = '#1cbb9b';
+  legDir.style.borderRadius = "10px";
+  legDir.id = 'legDir';
+
+  //Topic see prespective
+  var topicDiv1 = document.createElement('div');
+  topicDiv1.style.textAlign = "center";
+  topicDiv1.style.float = "left";
+  topicDiv1.style.width = "120px";
+  topicDiv1.style.marginTop = "15px";
+  //topicDiv1.style.border = "solid 2px red";
+  topicDiv1.style.marginLeft = "23px";
+  topicDiv1.style.height = "28px";
+  topicDiv1.id = 'topicDiv1';
+
+  var pverPresp = document.createElement('p');
+  pverPresp.innerHTML = "Ver Prespectiva";
+  pverPresp.style.color = "#FFF";
+  pverPresp.style.fontSize = "12px";
+  pverPresp.style.fontFamily = "osr";
+  pverPresp.style.float = "right";
+  pverPresp.style.marginTop = "4px";
+
+  var pverPrespImg = document.createElement('img');
+  pverPrespImg.id = "pverPrespImg";
+  pverPrespImg.style.float = "left";
+
+  topicDiv1.appendChild(pverPrespImg);
+  topicDiv1.appendChild(pverPresp);
+  legEsq.appendChild(topicDiv1);
+
+  //Topic available
+  var topicDiv2 = document.createElement('div');
+  topicDiv2.style.textAlign = "center";
+  topicDiv2.style.float = "left";
+  topicDiv2.style.width = "77px";
+  //topicDiv2.style.border = "solid 2px red";
+  topicDiv2.style.marginTop = "15px";
+  topicDiv2.style.marginLeft = "23px";
+  topicDiv2.style.height = "20px";
+  topicDiv2.id = 'topicDiv2';
+  topicDiv2.style.marginTop = '20px';
+
+  var pavailable = document.createElement('p');
+  pavailable.innerHTML = "Disponível";
+  pavailable.style.color = "#FFF";
+  pavailable.style.fontSize = "12px";
+  pavailable.style.fontFamily = "osr";
+  pavailable.style.float = "right";
+  pavailable.style.marginTop = "0px";
+
+  var pavailableImg = document.createElement('img');
+  pavailableImg.id = "pavailableImg";
+  pavailableImg.style.float = "left";
+  pavailableImg.style.marginTop = "2px";
+
+  topicDiv2.appendChild(pavailableImg);
+  topicDiv2.appendChild(pavailable);
+  legEsq.appendChild(topicDiv2);
+
+  //Topic selected
+  var topicDiv3 = document.createElement('div');
+  topicDiv3.style.textAlign = "center";
+  topicDiv3.style.float = "left";
+  topicDiv3.style.width = "85px";
+  //topicDiv3.style.border = "solid 2px red";
+  topicDiv3.style.marginTop = "15px";
+  topicDiv3.style.marginLeft = "23px";
+  topicDiv3.style.height = "20px";
+  topicDiv3.id = 'topicDiv3';
+  topicDiv3.style.marginTop = '20px';
+
+  var pselected = document.createElement('p');
+  pselected.innerHTML = "Selecionado";
+  pselected.style.color = "#FFF";
+  pselected.style.fontSize = "12px";
+  pselected.style.fontFamily = "osr";
+  pselected.style.float = "right";
+  pselected.style.marginTop = "0px";
+
+  var pselectedImg = document.createElement('img');
+  pselectedImg.id = "pselectedImg";
+  pselectedImg.style.float = "left";
+  pselectedImg.style.marginTop = "2px";
+
+  topicDiv3.appendChild(pselectedImg);
+  topicDiv3.appendChild(pselected);
+  legEsq.appendChild(topicDiv3);
+
+  //Topic defecient
+  var topicDiv4 = document.createElement('div');
+  topicDiv4.style.textAlign = "center";
+  topicDiv4.style.float = "left";
+  topicDiv4.style.width = "162px";
+  //topicDiv4.style.border = "solid 2px red";
+  topicDiv4.style.marginTop = "15px";
+  topicDiv4.style.marginLeft = "23px";
+  topicDiv4.style.height = "20px";
+  topicDiv4.id = 'topicDiv3';
+  topicDiv4.style.marginTop = '20px';
+
+  var pdefecient = document.createElement('p');
+  pdefecient.innerHTML = "Mobilidade Condicionada";
+  pdefecient.style.color = "#FFF";
+  pdefecient.style.fontSize = "12px";
+  pdefecient.style.fontFamily = "osr";
+  pdefecient.style.float = "right";
+  pdefecient.style.marginTop = "0px";
+
+  var pdefecientImg = document.createElement('img');
+  pdefecientImg.id = "pdefecientImg";
+  pdefecientImg.style.float = "left";
+  pdefecientImg.style.marginTop = "2px";
+
+  topicDiv4.appendChild(pdefecientImg);
+  topicDiv4.appendChild(pdefecient);
+  legEsq.appendChild(topicDiv4);
+
+  //Topic not available
+  var topicDiv5 = document.createElement('div');
+  topicDiv5.style.textAlign = "center";
+  topicDiv5.style.float = "left";
+  topicDiv5.style.width = "85px";
+  //topicDiv5.style.border = "solid 2px red";
+  topicDiv5.style.marginTop = "15px";
+  topicDiv5.style.marginLeft = "23px";
+  topicDiv5.style.height = "20px";
+  topicDiv5.id = 'topicDiv5';
+  topicDiv5.style.marginTop = '20px';
+
+  var pnotava = document.createElement('p');
+  pnotava.innerHTML = "Indisponível";
+  pnotava.style.color = "#FFF";
+  pnotava.style.fontSize = "12px";
+  pnotava.style.fontFamily = "osr";
+  pnotava.style.float = "right";
+  pnotava.style.marginTop = "0px";
+
+  var pnotavaImg = document.createElement('img');
+  pnotavaImg.id = "pnotavaImg";
+  pnotavaImg.style.float = "left";
+  pnotavaImg.style.marginTop = "2px";
+
+  topicDiv5.appendChild(pnotavaImg);
+  topicDiv5.appendChild(pnotava);
+  legEsq.appendChild(topicDiv5);
+
+  legDiv.appendChild(legenda);
+  legenda.appendChild(legEsq);
+  legenda.appendChild(legDir);
   document.body.appendChild(legDiv);
+  document.getElementById("pverPrespImg").src="img/ver.png";
+  document.getElementById("pavailableImg").src="img/Bola_0001_vermelho.png";
+  document.getElementById("pselectedImg").src="img/Bola_0003_verde.png";
+  document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
+  document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
 
   // create the main selection menu
   var iDiv = document.createElement('div');
