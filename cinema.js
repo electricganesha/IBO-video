@@ -188,6 +188,8 @@ var slidedowndata = false;
 var slidedownsessao = false;
 var anterior = "";
 var icon_anterior = "";
+var capacidade = 0;
+var lugaresLivres = 0;
 
 // RANDOM
 
@@ -265,9 +267,6 @@ function startLoadingScene() {
 // Here we initialise all the needed variables, like the stats, camera, and controls
 //
 function init() {
-
-
-  showMenuSelect(); // this method initialises the side div container
 
   // STATS
 
@@ -353,13 +352,14 @@ function init() {
 
   // change chair color depending on DB status
   pintarCadeiras();
+
+  showMenuSelect(); // this method initialises the side div container
 }
 
 //
 // create a show the selection menu
 //
-function showMenuSelect()
-{
+function showMenuSelect(){
 
   // create main legenda for cinema
   var legDiv = document.createElement('div');
@@ -388,7 +388,6 @@ function showMenuSelect()
   legEsq.style.background = '#243141';
   legEsq.style.borderRadius = "10px";
   legEsq.id = 'legEsq';
-
   // create legend for cinema
   var legDir = document.createElement('div');
   legDir.style.width = '90px';
@@ -398,6 +397,12 @@ function showMenuSelect()
   legDir.style.background = '#1cbb9b';
   legDir.style.borderRadius = "10px";
   legDir.id = 'legDir';
+  legDir.onclick = function() {
+    switchToOrtho();
+  }
+  legDir.onmouseover = function() {
+    legDir.style.cursor = 'pointer';
+  }
 
   //Topic see prespective
   var topicDiv1 = document.createElement('div');
@@ -411,7 +416,7 @@ function showMenuSelect()
   topicDiv1.id = 'topicDiv1';
 
   var pverPresp = document.createElement('p');
-  pverPresp.innerHTML = "Ver Prespectiva";
+  pverPresp.innerHTML = "Ver Perspectiva";
   pverPresp.style.color = "#FFF";
   pverPresp.style.fontSize = "12px";
   pverPresp.style.fontFamily = "osr";
@@ -542,6 +547,92 @@ function showMenuSelect()
   topicDiv5.appendChild(pnotava);
   legEsq.appendChild(topicDiv5);
 
+  //Topic Capacity
+  var capacityDiv = document.createElement('div');
+  capacityDiv.style.textAlign = "center";
+  capacityDiv.style.float = "left";
+  capacityDiv.style.width = "135px";
+  //topicDiv5.style.border = "solid 2px red";
+  capacityDiv.style.marginLeft = "23px";
+  capacityDiv.style.height = "20px";
+  capacityDiv.id = 'capacityDiv';
+  capacityDiv.style.marginTop = '10px';
+
+  var pcapacity = document.createElement('p');
+  pcapacity.innerHTML = "Capacidade:";
+  pcapacity.style.color = "#1cbb9b";
+  pcapacity.style.fontSize = "17px";
+  pcapacity.style.fontFamily = "osb";
+  pcapacity.style.float = "left";
+  pcapacity.style.marginTop = "0px";
+
+  var pcapacityNumber = document.createElement('p');
+  pcapacityNumber.innerHTML = capacidade;
+  pcapacityNumber.id = "pcapacityNumber";
+  pcapacityNumber.style.color = "#FFF";
+  pcapacityNumber.style.fontSize = "17px";
+  pcapacityNumber.style.fontFamily = "osb";
+  pcapacityNumber.style.float = "right";
+  pcapacityNumber.style.marginTop = "0px";
+
+  capacityDiv.appendChild(pcapacity);
+  capacityDiv.appendChild(pcapacityNumber);
+  legEsq.appendChild(capacityDiv);
+
+  lugaresLivres = capacidade;
+  for(var j=0 ; j < cadeirasJSON.length ; j++) {
+    if (cadeirasJSON[j].estado == "OCUPADA"){
+      lugaresLivres -= 1;
+      console.log(lugaresLivres);
+    }
+  }
+  //Topic Free seats
+  var freeseatsDiv = document.createElement('div');
+  freeseatsDiv.style.textAlign = "center";
+  freeseatsDiv.style.float = "left";
+  freeseatsDiv.style.width = "155px";
+  //topicDiv5.style.border = "solid 2px red";
+  freeseatsDiv.style.marginLeft = "23px";
+  freeseatsDiv.style.height = "20px";
+  freeseatsDiv.id = 'freeseatsDiv';
+  freeseatsDiv.style.marginTop = '10px';
+
+  var pfreeseats = document.createElement('p');
+  pfreeseats.innerHTML = "Lugares livres:";
+  pfreeseats.style.color = "#1cbb9b";
+  pfreeseats.style.fontSize = "17px";
+  pfreeseats.style.fontFamily = "osb";
+  pfreeseats.style.float = "left";
+  pfreeseats.style.marginTop = "0px";
+
+  var pfreeseatsNumber = document.createElement('p');
+  pfreeseatsNumber.innerHTML = lugaresLivres;
+  pfreeseatsNumber.id = "pfreeseatsNumber";
+  pfreeseatsNumber.style.color = "#FFF";
+  pfreeseatsNumber.style.fontSize = "17px";
+  pfreeseatsNumber.style.fontFamily = "osb";
+  pfreeseatsNumber.style.float = "right";
+  pfreeseatsNumber.style.marginTop = "0px";
+
+  freeseatsDiv.appendChild(pfreeseats);
+  freeseatsDiv.appendChild(pfreeseatsNumber);
+  legEsq.appendChild(freeseatsDiv);
+
+  var ptrocapresp = document.createElement('p');
+  ptrocapresp.innerHTML = "Ver Planta";
+  ptrocapresp.style.color = "#FFF";
+  ptrocapresp.style.fontSize = "13px";
+  ptrocapresp.style.fontFamily = "osr";
+  ptrocapresp.style.marginTop = "15px";
+  ptrocapresp.id = "ptrocapresp";
+
+  var ptrocaprespImg = document.createElement('img');
+  ptrocaprespImg.id = "ptrocaprespImg";
+  ptrocaprespImg.style.marginTop = "2px";
+
+  legDir.appendChild(ptrocapresp);
+  legDir.appendChild(ptrocaprespImg);
+
   legDiv.appendChild(legenda);
   legenda.appendChild(legEsq);
   legenda.appendChild(legDir);
@@ -551,6 +642,7 @@ function showMenuSelect()
   document.getElementById("pselectedImg").src="img/Bola_0003_verde.png";
   document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
   document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
+  document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
 
   // create the main selection menu
   var iDiv = document.createElement('div');
@@ -1199,7 +1291,7 @@ function showMenuSelect()
   btnComprar.style.marginRight = "7%";
   btnComprar.style.textDecoration = "none";
 
-  btnComprar.addEventListener('click', function(e){
+  btnComprar.addEventListener('click', function(e) {
   var jsonArray = [];
   for(var i=0 ; i<selectedChairs.length ; i++){
     for( var j=0 ; j<cadeirasJSON.length ; j++){
@@ -1268,6 +1360,15 @@ function showMenuSelect()
   },false);
 
   $('#menuSelect').bind('mouseleave', "*", function(e){
+    mouseIsOnMenu = false;
+  },false);
+
+  $('#legenda').bind('mouseenter' ,"*", function(e){
+    mouseIsOnMenu = true;
+    controls.lookSpeed = 0;
+  },false);
+
+  $('#legenda').bind('mouseleave', "*", function(e){
     mouseIsOnMenu = false;
   },false);
 
@@ -1353,8 +1454,9 @@ function loadCadeiras(populateCadeirasInstances) {
     {
       normalVector = new THREE.Vector3(normals[i], normals[i+1], normals[i+2]);
       normalsArray.push(normalVector);
+      capacidade += 1;
     }
-
+    capacidade -= 1;
   });
 
 
@@ -2465,12 +2567,6 @@ $("#ecraDiv").hide();
 function onKeyDown(event) {
   var keyCode = event.which;
 
-  if (keyCode == 13) { // enter
-
-    switchToOrtho();
-
-  }
-
   if ( keyCode == 112 )
   video.play();
 
@@ -2665,6 +2761,7 @@ function switchToOrtho() {
   sittingDownOrtho = false;
   if (isPerspectiveOrtho==false) // if we're in cinema overview 3D change to 2D view
   {
+    document.getElementById ('ptrocapresp').innerHTML = "Ver 3D";
     if(!sittingDown)
     {
       isPerspectiveOrtho = true;
@@ -2682,6 +2779,7 @@ function switchToOrtho() {
   }
   else // change back to 3D view
   {
+    document.getElementById ('ptrocapresp').innerHTML = "Ver Planta";
     isPerspectiveOrtho = false;
 
     $("#ecraDiv").hide();
@@ -2701,6 +2799,7 @@ function switchToOrtho() {
     controls.movementSpeed = 0;
     controls.autoForward = false;
     controls.lat = -45;
+    controls.lookSpeed = 0;
   }
 }
 
