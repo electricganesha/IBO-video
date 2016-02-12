@@ -2550,14 +2550,15 @@ function changePerspectiveOrtographic(x, y, z,obj) {
 }
 
 var iDiv = document.createElement('div');
-iDiv.innerHTML = " Ecrã ";
+iDiv.innerHTML = " ECRÃ ";
 iDiv.style.position = "absolute";
 iDiv.style.width = "100%";
 iDiv.style.textAlign = "center";
 iDiv.id = "ecraDiv";
-iDiv.style.color = "black";
-iDiv.style.top = '20px';
-iDiv.style.fontSize = "42px";
+iDiv.style.fontFamily = "osb";
+iDiv.style.color = "#243141";
+iDiv.style.top = '30px';
+iDiv.style.fontSize = "38px";
 document.body.appendChild(iDiv);
 $("#ecraDiv").hide();
 
@@ -2773,7 +2774,10 @@ function switchToOrtho() {
       camera.position.y = 2;
       camera.position.z = 0;
       camera.lookAt(mainScene.position);
-      camera.zoom = 55;
+      if(window.innerWidth > window.innerHeight)
+         camera.zoom = window.innerWidth*0.037;
+       else
+         camera.zoom = window.innerHeight*0.063;
       camera.updateProjectionMatrix();
     }
   }
