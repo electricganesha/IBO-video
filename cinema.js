@@ -207,6 +207,17 @@ renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
+// create the main selection menu
+var waterMarkDiv = document.createElement('div');
+waterMarkDiv.style.width = '200px';
+waterMarkDiv.style.height = '82px';
+waterMarkDiv.style.position = "absolute";
+waterMarkDiv.id = 'watermarkDiv';
+//waterMarkDiv.style.top = '0';
+waterMarkDiv.style.bottom = "5%";
+waterMarkDiv.style.left = "5%";
+waterMarkDiv.innerHTML = "<img src='img/Push_Logo_transparente.png'> </img>";
+document.body.appendChild(waterMarkDiv);
 
 // Load the initial scenes
 
@@ -224,8 +235,43 @@ loadScene();
 THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
   if(loaded == total)
   {
-    isLoading = false;
-    init();
+    // create the main selection menu
+    var iDiv = document.createElement('div');
+    //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+    iDiv.style.width = '100%';
+    iDiv.style.textAlign = "center";
+    iDiv.style.height = '100%';
+    iDiv.style.position = "absolute";
+    iDiv.style.background = '#000000';
+    iDiv.id = 'loadedScreen';
+    iDiv.style.top = '0';
+    iDiv.style.display = "none";
+
+    var textDiv = document.createElement('div');
+    textDiv.style.color = "white";
+    textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
+    +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
+    +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
+    +"<br><br><br><br> Click anywhere to continue";
+    textDiv.style.width = '50%';
+    textDiv.style.textAlign = "center";
+    textDiv.style.height = '100%';
+    textDiv.style.position = "absolute";
+    textDiv.style.background = '#000000';
+    textDiv.id = 'textScreen';
+    textDiv.style.left = '24%';
+    textDiv.style.top = '30%';
+
+    iDiv.appendChild(textDiv);
+
+    document.body.appendChild(iDiv);
+    $("#loadedScreen").fadeIn("slow");
+    $( "#textScreen" ).click(function() {
+      init();
+    });
+
+
+    //init();
 
   }
 };
@@ -268,6 +314,8 @@ function startLoadingScene() {
 //
 function init() {
 
+
+  $("#textScreen").fadeOut( "slow", function() {
   // STATS
 
   // 0: fps, 1: ms, 2: mb
@@ -354,6 +402,12 @@ function init() {
   pintarCadeiras();
 
   showMenuSelect(); // this method initialises the side div container
+});
+
+$("#loadedScreen").fadeOut( "slow", function() {
+  isLoading = false;
+});
+
 }
 
 //
