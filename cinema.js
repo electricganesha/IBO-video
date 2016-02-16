@@ -135,6 +135,11 @@ var isPerspectiveOrtho = false; // if we are in 2D perspective
 
 var sittingDownOrtho = false; //if the user has clicked on a chair and before was orthographic (e.g. is sitting down)
 
+var lastCameraPositionBeforeTween;
+
+var lastControlsLat;
+
+var lastControlsLon;
 
 // 3D SCENE
 
@@ -2296,12 +2301,11 @@ function onMouseDown(e) {
     sittingDown = false;
     setupTweenOverview();
 
-    controls = new THREE.FirstPersonControls(camera);
-
     for(var i=0; i<spriteEyeArray.length ; i++)
     {
       spriteEyeArray[i].visible = true;
     }
+
   }
   else
   {
@@ -2517,6 +2521,10 @@ function changePerspective(x, y, z,obj) {
   $("#menuSelect").animate({"right": '-=300px'});
 
   sittingDown = true;
+
+  lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
+  lastControlsLat = controls.lat;
+  lastControlsLon = controls.lon;
 
   setupTweenFP(obj);
 
@@ -2754,30 +2762,41 @@ function setupTweenOverview() {
 
   // tween camera position
   tweenOverview = new TWEEN.Tween(camera.position).to({
-    x: -6,
-    y: 1.5,
-    z: 0.009249939938009306
+    x: lastCameraPositionBeforeTween.x,
+    y: lastCameraPositionBeforeTween.y,
+    z: lastCameraPositionBeforeTween.z
   },3000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
   }).onComplete(function () {
   }).start();
 
-  // tween the camera rotation vertically
-  tweenLatOver = new TWEEN.Tween(controls).to({
-    lat:-45
-  },3000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
-  }).onComplete(function () {
-    controls.lookVertical = true;
-    controls.constrainVertical = true;
-    controls.verticalMin = Math.PI/3;
-    controls.verticalMax = 2*Math.PI/3;
-    controls.movementSpeed = 0;
-    controls.autoForward = false;
+  tweenCamRotToLastPlace = new TWEEN.Tween(camera.rotation).to({
+    x: camera.rotation.x,
+    y: camera.rotation.y,
+    z: camera.rotation.z,
+  },100).easing(TWEEN.Easing.Sinusoidal.InOut).onComplete(function () {
+    // tween the camera rotation vertically
+    tweenLatOver = new TWEEN.Tween(controls).to({
+      lat:lastControlsLat
+    },3000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
+    }).onComplete(function () {
+      controls.lookVertical = true;
+      controls.constrainVertical = true;
+      controls.verticalMin = Math.PI/3;
+      controls.verticalMax = 2*Math.PI/3;
+      controls.movementSpeed = 0;
+      controls.autoForward = false;
+      }).start();
+    // tween camera rotation horizontally
+    tweenCamRotationOver = new TWEEN.Tween(controls).to({
+      lon:lastControlsLon
+    },2000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
   }).start();
 
-  // tween camera rotation horizontally
-  tweenCamRotationOver = new TWEEN.Tween(controls).to({
-    lon:0
-  },2000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
+
+
+
+
+
 
 }
 
