@@ -187,6 +187,7 @@ var cadeirasJSON; // an array that keeps the info about the chairs that we retri
 // MENU VARIABLES
 
 var cinemaSelecionado = "";
+var nCinemaSelecionado;
 var slidedown = false;
 var slidedownpreco = false;
 var slidedowndata = false;
@@ -196,6 +197,8 @@ var icon_anterior = "";
 var capacidade = 0;
 var lugaresLivres = 0;
 var cinemasJSON;
+var dias;
+var sessoesJSON;
 
 // RANDOM
 
@@ -429,7 +432,7 @@ function showMenuSelect(){
         success:    function(data){
           cinemasJSON = data;
           loadCinemas();
-          console.log("JSON Loaded Correctly from DB");
+          console.log("Lista de cinemas carregados");
         },
         error:    function(textStatus,errorThrown){
           console.log(textStatus);
@@ -439,17 +442,57 @@ function showMenuSelect(){
       });
     }
 
+  function carregarData() {
+    $.ajax({
+         url: 'php/ler_BDData.php', //This is the current doc
+         type: "POST",
+         dataType:'json', // add json datatype to get json
+         data: ({cinema: nCinemaSelecionado}),
+         success: function(data){
+           dias = data - 1;
+           console.log("Dias Carregados");
+           showData.style.pointerEvents = "all";
+           showData.style.cursor = "auto";
+           showData.style.color = "#1bbc9b";
+         },
+         error:    function(textStatus,errorThrown){
+           console.log(textStatus);
+           console.log(errorThrown);
+         }
+    });
+  }
+
+  function carregarSessao() {
+    $.ajax({
+      url:        'php/ler_BDSessao.php',
+      dataType:   "json", // <== JSON-P request
+      success:    function(data){
+        sessoesJSON = data;
+        $("#showSessaoDiv").html("");
+        loadSessoes();
+        console.log("Lista de sessões carregadas");
+        showSessao.style.pointerEvents = "all";
+        showSessao.style.cursor = "auto";
+        showSessao.style.color = "#1bbc9b";
+      },
+      error:    function(textStatus,errorThrown){
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+
+    });
+  }
+
   function loadCinemas (){
       for( var p=0 ; p<cinemasJSON.length ; p++){
         var nome_cinema = cinemasJSON[p].nome_variavel;
-        console.log(nome_cinema);
         var nome_cinema = document.createElement("a");
         nome_cinema.href = "#";
         nome_cinema.text = cinemasJSON[p].nome_cinema;
         nome_cinema.style.fontFamily = "osl";
         nome_cinema.style.textDecoration = "none";
         nome_cinema.style.color = "#FFF";
-        nome_cinema.className = "linkcinema";
+        nome_cinema.className = cinemasJSON[p].id_cinema;
         nome_cinema.style.display = "block";
         nome_cinema.style.width = "90%";
         nome_cinema.style.paddingLeft = "10%";
@@ -461,18 +504,60 @@ function showMenuSelect(){
         }
         nome_cinema.onclick = function() {
           cinemaSelecionado = this.text;
+          nCinemaSelecionado = this.className;
+          showData.text = "Data";
+          showData.appendChild(iconData);
+          $('#iconData').className = 'fa fa-angle-down';
+          showSessao.text = "Sessão";
+          showSessao.appendChild(iconSessao);
+          $('#iconSessao').className = 'fa fa-angle-down';
+          showData.style.pointerEvents = "none";
+          showData.style.cursor = "default";
+          showData.style.color = "#446368";
+          showSessao.style.pointerEvents = "none";
+          showSessao.style.cursor = "default";
+          showSessao.style.color = "#446368";
+          carregarData();
           showDivCinemas.text = cinemaSelecionado;
           showDivCinemas.appendChild(icon);
           $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showCinemas').slideUp();
           slidedown = false;
-          showData.style.pointerEvents = "all";
-          showData.style.cursor = "auto";
-          showData.style.color = "#1bbc9b";
         }
         showCinemas.appendChild(nome_cinema);
       }
     }
+
+  function loadSessoes (){
+      for( var p=0 ; p<sessoesJSON.length ; p++){
+        var n_sessao = sessoesJSON[p].id_sessao;
+        var n_sessao = document.createElement("a");
+        n_sessao.href = "#";
+        n_sessao.text = sessoesJSON[p].hora_sessao;
+        n_sessao.style.fontFamily = "osr";
+        n_sessao.style.textDecoration = "none";
+        n_sessao.style.color = "#FFF";
+        n_sessao.style.display = "inline-block";
+        n_sessao.style.marginLeft = "4%";
+        n_sessao.style.marginTop = "10px";
+        n_sessao.onmouseover = function() {
+          this.style.color = "#1bbc9b";
+        }
+        n_sessao.onmouseout = function() {
+          this.style.color = "#FFF";
+        }
+        n_sessao.onclick = function() {
+          showSessao.text = this.text;
+          showSessao.appendChild(iconSessao);
+          $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+          $('#showSessaoDiv').slideUp();
+          slidedownsessao = false;
+        }
+        showSessaoDiv.appendChild(n_sessao);
+      }
+    }
+
+
 
 
   // create main legenda for cinema
@@ -888,6 +973,7 @@ function showMenuSelect(){
   showData.onclick = function() {
     $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
     if (slidedowndata == false){
+      $('#showDataDiv').datepicker('destroy');
       if (slidedown == true) {
         $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
         $('#showCinemas').slideUp();
@@ -899,9 +985,10 @@ function showMenuSelect(){
         $('#showDataDiv').datepicker({
         	inline: true,
         	minDate: 0,
-        	maxDate: "+10D",
+        	maxDate: "+" + dias + "D",
           dateFormat: 'd M',
           onSelect: function(dateText, inst) {
+            carregarSessao();
             showData.text = $(this).val();
             showData.appendChild(iconData);
             $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
@@ -921,9 +1008,10 @@ function showMenuSelect(){
         $('#showDataDiv').datepicker({
         	inline: true,
         	minDate: 0,
-        	maxDate: "+10D",
+        	maxDate: "+" + dias + "D",
           dateFormat: 'd M',
           onSelect: function(dateText, inst) {
+            carregarSessao();
             showData.text = $(this).val();
             showData.appendChild(iconData);
             $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
@@ -1018,104 +1106,6 @@ function showMenuSelect(){
   showSessaoDiv.style.fontFamily = "ossb";
   showSessaoDiv.style.overflowY = "hidden";
 
-  var hora1 = document.createElement("a");
-  hora1.href = "#";
-  hora1.text = "13:00";
-  hora1.style.fontFamily = "osr";
-  hora1.style.textDecoration = "none";
-  hora1.style.color = "#FFF";
-  hora1.style.display = "inline-block";
-  hora1.style.marginLeft = "4%";
-  hora1.style.marginTop = "10px";
-  hora1.onmouseover = function() {
-    this.style.color = "#1bbc9b";
-  }
-  hora1.onmouseout = function() {
-    this.style.color = "#FFF";
-  }
-  hora1.onclick = function() {
-    showSessao.text = this.text;
-    showSessao.appendChild(iconSessao);
-    $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showSessaoDiv').slideUp();
-    slidedownsessao = false;
-  }
-
-  var hora2 = document.createElement("a");
-  hora2.href = "#";
-  hora2.text = "16:30";
-  hora2.style.fontFamily = "osr";
-  hora2.style.textDecoration = "none";
-  hora2.style.color = "#FFF";
-  hora2.style.display = "inline-block";
-  hora2.style.marginLeft = "7%";
-  hora2.style.marginTop = "10px";
-  hora2.onmouseover = function() {
-    this.style.color = "#1bbc9b";
-  }
-  hora2.onmouseout = function() {
-    this.style.color = "#FFF";
-  }
-  hora2.onclick = function() {
-    showSessao.text = this.text;
-    showSessao.appendChild(iconSessao);
-    $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showSessaoDiv').slideUp();
-    slidedownsessao = false;
-  }
-
-  var hora3 = document.createElement("a");
-  hora3.href = "#";
-  hora3.text = "20:50";
-  hora3.style.fontFamily = "osr";
-  hora3.style.textDecoration = "none";
-  hora3.style.color = "#FFF";
-  hora3.style.display = "inline-block";
-  hora3.style.marginLeft = "7%";
-  hora3.style.marginTop = "10px";
-  hora3.onmouseover = function() {
-    this.style.color = "#1bbc9b";
-  }
-  hora3.onmouseout = function() {
-    this.style.color = "#FFF";
-  }
-  hora3.onclick = function() {
-    showSessao.text = this.text;
-    showSessao.appendChild(iconSessao);
-    $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showSessaoDiv').slideUp();
-    slidedownsessao = false;
-  }
-
-
-  var hora4 = document.createElement("a");
-  hora4.href = "#";
-  hora4.text = "00:10";
-  hora4.style.fontFamily = "osr";
-  hora4.style.textDecoration = "none";
-  hora4.style.color = "#FFF";
-  hora4.style.display = "inline-block";
-  hora4.style.marginLeft = "7%";
-  hora4.style.marginTop = "10px";
-  hora4.onmouseover = function() {
-    this.style.color = "#1bbc9b";
-  }
-  hora4.onmouseout = function() {
-    this.style.color = "#FFF";
-  }
-  hora4.onclick = function() {
-    showSessao.text = this.text;
-    showSessao.appendChild(iconSessao);
-    $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showSessaoDiv').slideUp();
-    slidedownsessao = false;
-  }
-
-  showSessaoDiv.appendChild(hora1);
-  showSessaoDiv.appendChild(hora2);
-  showSessaoDiv.appendChild(hora3);
-  showSessaoDiv.appendChild(hora4);
-
   // create element for Room Number
   var showRoomNumber = document.createElement("a");
   showRoomNumber.href = "#";
@@ -1127,7 +1117,7 @@ function showMenuSelect(){
   showRoomNumber.style.width = "33.2%";
   showRoomNumber.id = "showRoomNumber";
   showRoomNumber.style.color = "#1bbc9b";
-  showRoomNumber.text = "Sala 69";
+  showRoomNumber.text = "Sala 2";
   showRoomNumber.style.fontFamily = "ossb";
   showRoomNumber.style.textDecoration = "none";
 
@@ -2480,7 +2470,7 @@ function onKeyDown(event) {
 // ******************************************** Video Update FbF ********************************************
 
 
-updateFcts.push(function() {
+/*updateFcts.push(function() {
 renderer.render(scene, camera);
 })
 
@@ -2496,7 +2486,7 @@ lastTimeMsec = nowMsec
 updateFcts.forEach(function(updateFn) {
 updateFn(deltaMsec / 1000, nowMsec / 1000)
 })
-})
+})*/
 
 //
 // launch the Tween for changing perspective to seat perspective
