@@ -187,6 +187,7 @@ var cadeirasJSON; // an array that keeps the info about the chairs that we retri
 // MENU VARIABLES
 
 var cinemaSelecionado = "";
+var nCinemaSelecionado;
 var slidedown = false;
 var slidedownpreco = false;
 var slidedowndata = false;
@@ -196,6 +197,7 @@ var icon_anterior = "";
 var capacidade = 0;
 var lugaresLivres = 0;
 var cinemasJSON;
+var dias;
 
 // RANDOM
 
@@ -429,7 +431,7 @@ function showMenuSelect(){
         success:    function(data){
           cinemasJSON = data;
           loadCinemas();
-          console.log("JSON Loaded Correctly from DB");
+          console.log("Lista de cinemas carregados");
         },
         error:    function(textStatus,errorThrown){
           console.log(textStatus);
@@ -439,17 +441,36 @@ function showMenuSelect(){
       });
     }
 
+  function carregarData() {
+    $.ajax({
+         url: 'php/ler_BDData.php', //This is the current doc
+         type: "POST",
+         dataType:'json', // add json datatype to get json
+         data: ({cinema: nCinemaSelecionado}),
+         success: function(data){
+           dias = data - 1;
+           console.log("Dias Carregados");
+           showData.style.pointerEvents = "all";
+           showData.style.cursor = "auto";
+           showData.style.color = "#1bbc9b";
+         },
+         error:    function(textStatus,errorThrown){
+           console.log(textStatus);
+           console.log(errorThrown);
+         }
+    });
+  }
+
   function loadCinemas (){
       for( var p=0 ; p<cinemasJSON.length ; p++){
         var nome_cinema = cinemasJSON[p].nome_variavel;
-        console.log(nome_cinema);
         var nome_cinema = document.createElement("a");
         nome_cinema.href = "#";
         nome_cinema.text = cinemasJSON[p].nome_cinema;
         nome_cinema.style.fontFamily = "osl";
         nome_cinema.style.textDecoration = "none";
         nome_cinema.style.color = "#FFF";
-        nome_cinema.className = "linkcinema";
+        nome_cinema.className = cinemasJSON[p].id_cinema;
         nome_cinema.style.display = "block";
         nome_cinema.style.width = "90%";
         nome_cinema.style.paddingLeft = "10%";
@@ -461,14 +482,16 @@ function showMenuSelect(){
         }
         nome_cinema.onclick = function() {
           cinemaSelecionado = this.text;
+          nCinemaSelecionado = this.className;
+          showData.style.pointerEvents = "none";
+          showData.style.cursor = "default";
+          showData.style.color = "#446368";
+          carregarData();
           showDivCinemas.text = cinemaSelecionado;
           showDivCinemas.appendChild(icon);
           $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showCinemas').slideUp();
           slidedown = false;
-          showData.style.pointerEvents = "all";
-          showData.style.cursor = "auto";
-          showData.style.color = "#1bbc9b";
         }
         showCinemas.appendChild(nome_cinema);
       }
@@ -888,6 +911,7 @@ function showMenuSelect(){
   showData.onclick = function() {
     $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
     if (slidedowndata == false){
+      $('#showDataDiv').datepicker('destroy');
       if (slidedown == true) {
         $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
         $('#showCinemas').slideUp();
@@ -896,10 +920,11 @@ function showMenuSelect(){
       if (slidedownsessao == false){
         $('#showDataDiv').slideDown();
         slidedowndata = true;
+        console.log (dias);
         $('#showDataDiv').datepicker({
         	inline: true,
         	minDate: 0,
-        	maxDate: "+10D",
+        	maxDate: "+" + dias + "D",
           dateFormat: 'd M',
           onSelect: function(dateText, inst) {
             showData.text = $(this).val();
@@ -912,6 +937,7 @@ function showMenuSelect(){
             showSessao.style.color = "#1bbc9b";
         }
         });
+        console.log (dias);
       }else{
         $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
         $('#showSessaoDiv').slideUp();
@@ -921,7 +947,7 @@ function showMenuSelect(){
         $('#showDataDiv').datepicker({
         	inline: true,
         	minDate: 0,
-        	maxDate: "+10D",
+        	maxDate: "+" + dias + "D",
           dateFormat: 'd M',
           onSelect: function(dateText, inst) {
             showData.text = $(this).val();
@@ -2480,7 +2506,7 @@ function onKeyDown(event) {
 // ******************************************** Video Update FbF ********************************************
 
 
-updateFcts.push(function() {
+/*updateFcts.push(function() {
 renderer.render(scene, camera);
 })
 
@@ -2496,7 +2522,7 @@ lastTimeMsec = nowMsec
 updateFcts.forEach(function(updateFn) {
 updateFn(deltaMsec / 1000, nowMsec / 1000)
 })
-})
+})*/
 
 //
 // launch the Tween for changing perspective to seat perspective
