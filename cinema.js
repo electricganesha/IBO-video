@@ -195,6 +195,7 @@ var anterior = "";
 var icon_anterior = "";
 var capacidade = 0;
 var lugaresLivres = 0;
+var cinemasJSON;
 
 // RANDOM
 
@@ -320,6 +321,7 @@ function startLoadingScene() {
 function init() {
 
 
+
   $("#textScreen").fadeOut( "slow", function() {
   // STATS
 
@@ -419,6 +421,59 @@ $("#loadedScreen").fadeOut( "slow", function() {
 // create a show the selection menu
 //
 function showMenuSelect(){
+
+  function carregarCinemas() {
+      $.ajax({
+        url:        'php/ler_BDCc.php',
+        dataType:   "json", // <== JSON-P request
+        success:    function(data){
+          cinemasJSON = data;
+          loadCinemas();
+          console.log("JSON Loaded Correctly from DB");
+        },
+        error:    function(textStatus,errorThrown){
+          console.log(textStatus);
+          console.log(errorThrown);
+        }
+
+      });
+    }
+
+  function loadCinemas (){
+      for( var p=0 ; p<cinemasJSON.length ; p++){
+        var nome_cinema = cinemasJSON[p].nome_variavel;
+        console.log(nome_cinema);
+        var nome_cinema = document.createElement("a");
+        nome_cinema.href = "#";
+        nome_cinema.text = cinemasJSON[p].nome_cinema;
+        nome_cinema.style.fontFamily = "osl";
+        nome_cinema.style.textDecoration = "none";
+        nome_cinema.style.color = "#FFF";
+        nome_cinema.className = "linkcinema";
+        nome_cinema.style.display = "block";
+        nome_cinema.style.width = "90%";
+        nome_cinema.style.paddingLeft = "10%";
+        nome_cinema.onmouseover = function() {
+          this.style.backgroundColor = "#344b5d";
+        }
+        nome_cinema.onmouseout = function() {
+          this.style.backgroundColor = "#263343";
+        }
+        nome_cinema.onclick = function() {
+          cinemaSelecionado = this.text;
+          showDivCinemas.text = cinemaSelecionado;
+          showDivCinemas.appendChild(icon);
+          $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
+          $('#showCinemas').slideUp();
+          slidedown = false;
+          showData.style.pointerEvents = "all";
+          showData.style.cursor = "auto";
+          showData.style.color = "#1bbc9b";
+        }
+        showCinemas.appendChild(nome_cinema);
+      }
+    }
+
 
   // create main legenda for cinema
   var legDiv = document.createElement('div');
@@ -642,7 +697,6 @@ function showMenuSelect(){
   for(var j=0 ; j < cadeirasJSON.length ; j++) {
     if (cadeirasJSON[j].estado == "OCUPADA"){
       lugaresLivres -= 1;
-      console.log(lugaresLivres);
     }
   }
   //Topic Free seats
@@ -815,231 +869,7 @@ function showMenuSelect(){
   showCinemas.style.fontFamily = "ossb";
   showCinemas.style.overflowY = "auto";
 
-  var AlmadaForum = document.createElement("a");
-  AlmadaForum.href = "#";
-  AlmadaForum.text = "Motta Forum";
-  AlmadaForum.style.fontFamily = "osl";
-  AlmadaForum.style.textDecoration = "none";
-  AlmadaForum.style.color = "#FFF";
-  AlmadaForum.className = "linkcinema";
-  AlmadaForum.style.display = "block";
-  AlmadaForum.style.width = "90%";
-  AlmadaForum.style.paddingLeft = "10%";
-  AlmadaForum.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  AlmadaForum.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  AlmadaForum.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  var Alvalaxia = document.createElement("a");
-  Alvalaxia.href = "#";
-  Alvalaxia.text = "Mottalaxia";
-  Alvalaxia.style.fontFamily = "osl";
-  Alvalaxia.style.textDecoration = "none";
-  Alvalaxia.style.color = "#FFF";
-  Alvalaxia.style.display = "block";
-  Alvalaxia.style.width = "90%";
-  Alvalaxia.style.paddingLeft = "10%";
-  Alvalaxia.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  Alvalaxia.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  Alvalaxia.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  var Amoreiras = document.createElement("a");
-  Amoreiras.href = "#";
-  Amoreiras.text = "Mottamoreiras";
-  Amoreiras.style.fontFamily = "osl";
-  Amoreiras.style.textDecoration = "none";
-  Amoreiras.style.color = "#FFF";
-  Amoreiras.style.display = "block";
-  Amoreiras.style.width = "90%";
-  Amoreiras.style.paddingLeft = "10%";
-  Amoreiras.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  Amoreiras.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  Amoreiras.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  var BragaParque = document.createElement("a");
-  BragaParque.href = "#";
-  BragaParque.text = "Motta Parque";
-  BragaParque.style.fontFamily = "osl";
-  BragaParque.style.textDecoration = "none";
-  BragaParque.style.color = "#FFF";
-  AlmadaForum.style.display = "block";
-  BragaParque.style.width = "90%";
-  BragaParque.style.paddingLeft = "10%";
-  BragaParque.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  BragaParque.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  BragaParque.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  var CascaisShopping = document.createElement("a");
-  CascaisShopping.href = "#";
-  CascaisShopping.text = "Motta Shopping";
-  CascaisShopping.style.fontFamily = "osl";
-  CascaisShopping.style.textDecoration = "none";
-  CascaisShopping.style.color = "#FFF";
-  CascaisShopping.style.display = "block";
-  CascaisShopping.style.width = "90%";
-  CascaisShopping.style.paddingLeft = "10%";
-  CascaisShopping.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  CascaisShopping.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  CascaisShopping.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  var DolceVitaCoimbra = document.createElement("a");
-  DolceVitaCoimbra.href = "#";
-  DolceVitaCoimbra.text = "Motta Vita Coimbra";
-  DolceVitaCoimbra.style.fontFamily = "osl";
-  DolceVitaCoimbra.style.textDecoration = "none";
-  DolceVitaCoimbra.style.color = "#FFF";
-  DolceVitaCoimbra.style.display = "block";
-  DolceVitaCoimbra.style.width = "90%";
-  DolceVitaCoimbra.style.paddingLeft = "10%";
-  DolceVitaCoimbra.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  DolceVitaCoimbra.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  DolceVitaCoimbra.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  var Colombo = document.createElement("a");
-  Colombo.href = "#";
-  Colombo.text = "Mottombo";
-  Colombo.style.fontFamily = "osl";
-  Colombo.style.textDecoration = "none";
-  Colombo.style.color = "#FFF";
-  Colombo.style.display = "block";
-  Colombo.style.width = "90%";
-  Colombo.style.paddingLeft = "10%";
-  Colombo.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  Colombo.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  Colombo.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  var VascodaGama = document.createElement("a");
-  VascodaGama.href = "#";
-  VascodaGama.text = "Motta da Gama";
-  VascodaGama.style.fontFamily = "osl";
-  VascodaGama.style.textDecoration = "none";
-  VascodaGama.style.color = "#FFF";
-  VascodaGama.style.display = "block";
-  VascodaGama.style.width = "90%";
-  VascodaGama.style.paddingLeft = "10%";
-  VascodaGama.onmouseover = function() {
-    this.style.backgroundColor = "#344b5d";
-  }
-  VascodaGama.onmouseout = function() {
-    this.style.backgroundColor = "#263343";
-  }
-  VascodaGama.onclick = function() {
-    cinemaSelecionado = this.text;
-    showDivCinemas.text = cinemaSelecionado;
-    showDivCinemas.appendChild(icon);
-    $(showDivCinemas).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    $('#showCinemas').slideUp();
-    slidedown = false;
-    showData.style.pointerEvents = "all";
-    showData.style.cursor = "auto";
-    showData.style.color = "#1bbc9b";
-  }
-
-  showCinemas.appendChild(AlmadaForum);
-  showCinemas.appendChild(Alvalaxia);
-  showCinemas.appendChild(Amoreiras);
-  showCinemas.appendChild(BragaParque);
-  showCinemas.appendChild(CascaisShopping);
-  showCinemas.appendChild(DolceVitaCoimbra);
-  showCinemas.appendChild(Colombo);
-  showCinemas.appendChild(VascodaGama);
+  carregarCinemas();
 
   // create link to show the calendar
   var showData = document.createElement("a");
