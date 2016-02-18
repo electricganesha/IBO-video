@@ -1,6 +1,7 @@
 <?php
+  $sessao = $_POST['sessao'];
 	$mysqli = new mysqli('localhost', 'cinema', 'cinema', 'bd_cinema');
-	$sql = "select * from cadeiras";
+	$sql = "select * from `" . $sessao . "`";
 	$query = $mysqli->query($sql);
 	while($row = $query->fetch_assoc())
 	{
