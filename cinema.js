@@ -199,7 +199,7 @@ var lugaresLivres = 0;
 var cinemasJSON;
 var dias;
 var sessoesJSON;
-var num_sessao = "1";
+var num_sessao = "0";
 
 // RANDOM
 
@@ -1180,7 +1180,7 @@ function showMenuSelect(){
         {
         fila: cadeirasJSON[j].fila,
         lugar:cadeirasJSON[j].lugar,
-        tipoBilhete:'Normal'
+        tipoBilhete:selectedChairs[i].class
         }
         jsonArray.push(item);
       }
@@ -1188,7 +1188,6 @@ function showMenuSelect(){
   }
   jsonChairs = JSON.stringify(jsonArray);
   alert("cadeiras seleccionadas " + jsonChairs);
-  window.location.href = "http://www.pushvfx.com";
   },false);
 
   // create div that contain the advertise
@@ -1846,13 +1845,13 @@ function onMouseDown(e) {
 
         // Add the Chair
         selectedChairs.push(obj);
-        calculaTotal(6.95); // considers with the initial value
 
         // Add the dynamic text to the div
         var containerDiv = document.createElement( "div" );
         containerDiv.style.borderBottom = "solid 2px #344b5d";
         containerDiv.style.height = "auto";
         containerDiv.id = obj.name;
+
 
         // text Fila + Lugar
         var textContainer = document.createElement("p");
@@ -2126,17 +2125,14 @@ function onMouseDown(e) {
         isSelected = true;
 
         obj.material.map = texturaCadeiraSelect;
-      }
-
-      else
-      {
+      } else {
         if(!mouseIsOnMenu && !mouseIsOutOfDocument && !spriteFound)
         removeCadeira(obj); // if chair was already selected, de-select it
 
       }
 
     }
-
+    calculaTotal(6.95); // considers with the initial value
   }
   else if(!sittingDownOrtho) // if clicked when sitting down
   {
@@ -2658,18 +2654,21 @@ function calculaTotal(valorInicial) {
     {
       case("normal"):
       total += 6.95;
+      selectedChairs[i].class = "normal";
       break;
       case("estudante"):
       total += 6.05;
+      selectedChairs[i].class = "estudante";
       break;
       case("senior"):
       total += 6.05;
+      selectedChairs[i].class = "senior";
       break;
       case("crianca"):
       total += 6.05;
+      selectedChairs[i].class = "crianca";
       break;
     }
-
   }
   document.getElementById('total').innerHTML = "Total: <u>"+ Math.round(total * 100) / 100 + "€</u>";
 
