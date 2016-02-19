@@ -277,7 +277,7 @@ THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
 
     iDiv.appendChild(textDiv);
     document.body.appendChild(iDiv);
-    
+
     $("#loadedScreen").fadeIn("slow");
     $( "#loadedScreen" ).click(function() {
       init();
@@ -783,12 +783,6 @@ function showMenuSelect(){
   capacityDiv.appendChild(pcapacityNumber);
   legEsq.appendChild(capacityDiv);
 
-  lugaresLivres = capacidade;
-  for(var j=0 ; j < cadeirasJSON.length ; j++) {
-    if (cadeirasJSON[j].estado == "OCUPADA"){
-      lugaresLivres -= 1;
-    }
-  }
   //Topic Free seats
   var freeseatsDiv = document.createElement('div');
   freeseatsDiv.style.textAlign = "center";
@@ -1441,14 +1435,17 @@ function carregarJSONBD(num_sessao) {
 // Here we color the chairs according to the loaded occupation info
 //
 function pintarCadeiras() {
+  lugaresLivres = capacidade;
   for(var i=0 ; i< chairGroup.children.length ; i++)
   {
+    console.log(chairGroup.children);
     for(var j=0 ; j < cadeirasJSON.length ; j++)
     {
       if(chairGroup.children[i].name == cadeirasJSON[j].nome_procedural)
       {
         switch(cadeirasJSON[j].estado) {
           case 'OCUPADA':
+          lugaresLivres -= 1;
           if(selectedChairs.length < 1)
           {
             console.log(selectedChairs)
@@ -1482,7 +1479,9 @@ function pintarCadeiras() {
         }
       }
     }
+    console.log("entrou");
   }
+  pfreeseatsNumber.innerHTML = lugaresLivres;
 }
 
 //
