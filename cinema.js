@@ -277,7 +277,7 @@ THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
 
     iDiv.appendChild(textDiv);
     document.body.appendChild(iDiv);
-    
+
     $("#loadedScreen").fadeIn("slow");
     $( "#loadedScreen" ).click(function() {
       init();
@@ -1346,22 +1346,22 @@ function loadCadeiras(populateCadeirasInstances) {
   // 2. load the model itself (only once) to replicate and get the geometry to pass along
   var loaderOBJ = new THREE.OBJMTLLoader();
   loaderOBJ.load( 'models/Cinema_Motta/Cadeira_Nova/Cadeira_Nova.obj', 'models/Cinema_Motta/Cadeira_Nova/Cadeira_Nova.mtl', function ( object ) {
+    var bufferGeometry;
     object.traverse(function(child) {
       if (child instanceof THREE.Mesh && child.geometry != "undefined") {
 
-        var bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
-        populateCadeirasInstances(mesh,normalsArray,bufferGeometry,child); // we carry on through a callback to load the models synchronously
+        bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
 
       }
     });
-
+    populateCadeirasInstances(mesh,normalsArray,bufferGeometry); // we carry on through a callback to load the models synchronously
   });
 }
 
 //
 // 3. here we iterate on the point cloud to replicate the instances and position each instance in the correct place
 //
-function populateCadeirasInstances(mesh, normalsArray, bufferGeometry,child) {
+function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 
 
   // get the origin (from) and vertical axis vectors
