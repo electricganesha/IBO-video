@@ -1239,7 +1239,7 @@ function showMenuSelect(){
   divInfo.appendChild(pub);
   document.body.appendChild(iDiv);
   document.getElementById("logoCinema").src="img/logo.png";
-  document.getElementById("imgPub").src="img/pedrinho.jpg";
+  document.getElementById("imgPub").src="img/publicidade.png";
 
   $('#menuSelect').bind('mouseenter' ,"*", function(e){
     mouseIsOnMenu = true;
