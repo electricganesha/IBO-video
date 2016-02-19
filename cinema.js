@@ -245,47 +245,7 @@ loadScene();
 THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
   if(loaded == total)
   {
-    // create the main selection menu
-    var iDiv = document.createElement('div');
-    //iDiv.innerHTML = " Cadeiras seleccionadas : ";
-    iDiv.style.width = '100%';
-    iDiv.style.cursor = "pointer";
-    iDiv.style.textAlign = "center";
-    iDiv.style.height = '100%';
-    iDiv.style.position = "absolute";
-    iDiv.style.background = 'rgba(0,0,0,0.8)';
-    iDiv.id = 'loadedScreen';
-    iDiv.style.top = '0';
-    iDiv.style.display = "none";
-
-    var textDiv = document.createElement('div');
-    textDiv.style.color = "white";
-    textDiv.style.cursor = "pointer";
-    textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
-    +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
-    +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
-    +"<br><br><br><br> Click anywhere to continue";
-    textDiv.style.width = '50%';
-    textDiv.style.textAlign = "center";
-    textDiv.style.fontFamily = "osb";
-    textDiv.style.height = '100%';
-    textDiv.style.position = "absolute";
-
-    textDiv.id = 'textScreen';
-    textDiv.style.left = '24%';
-    textDiv.style.top = '30%';
-
-    iDiv.appendChild(textDiv);
-    document.body.appendChild(iDiv);
-
-    $("#loadedScreen").fadeIn("slow");
-    $( "#loadedScreen" ).click(function() {
-      init();
-    });
-
-
-    //init();
-
+    init();
   }
 };
 
@@ -327,9 +287,44 @@ function startLoadingScene() {
 //
 function init() {
 
+  // create the main selection menu
+  var iDiv = document.createElement('div');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDiv.style.width = '100%';
+  iDiv.style.cursor = "pointer";
+  iDiv.style.textAlign = "center";
+  iDiv.style.height = '100%';
+  iDiv.style.position = "absolute";
+  iDiv.style.background = 'rgba(0,0,0,0.8)';
+  iDiv.id = 'loadedScreen';
+  iDiv.style.top = '0';
+  iDiv.style.display = "none";
 
+  var textDiv = document.createElement('div');
+  textDiv.style.color = "white";
+  textDiv.style.cursor = "pointer";
+  textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
+  +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
+  +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
+  +"<br><br><br><br> Click anywhere to continue";
+  textDiv.style.width = '50%';
+  textDiv.style.textAlign = "center";
+  textDiv.style.fontFamily = "osb";
+  textDiv.style.height = '100%';
+  textDiv.style.position = "absolute";
 
-  $("#textScreen").fadeOut( "slow", function() {
+  textDiv.id = 'textScreen';
+  textDiv.style.left = '24%';
+  textDiv.style.top = '30%';
+
+  iDiv.appendChild(textDiv);
+  document.body.appendChild(iDiv);
+
+  $("#loadedScreen").fadeIn("slow");
+  $( "#loadedScreen" ).click(function() {
+    $("#loadedScreen").fadeOut( "slow");
+  });
+
   // STATS
 
   // 0: fps, 1: ms, 2: mb
@@ -414,11 +409,7 @@ function init() {
 
 
   showMenuSelect(); // this method initialises the side div container
-});
-
-$("#loadedScreen").fadeOut( "slow", function() {
   isLoading = false;
-});
 
 }
 
@@ -1438,7 +1429,6 @@ function pintarCadeiras() {
   lugaresLivres = capacidade;
   for(var i=0 ; i< chairGroup.children.length ; i++)
   {
-    console.log(chairGroup.children);
     for(var j=0 ; j < cadeirasJSON.length ; j++)
     {
       if(chairGroup.children[i].name == cadeirasJSON[j].nome_procedural)
@@ -1479,7 +1469,6 @@ function pintarCadeiras() {
         }
       }
     }
-    console.log("entrou");
   }
   pfreeseatsNumber.innerHTML = lugaresLivres;
 }
@@ -2682,6 +2671,7 @@ function switchToOrtho() {
   if (isPerspectiveOrtho==false) // if we're in cinema overview 3D change to 2D view
   {
     document.getElementById ('ptrocapresp').innerHTML = "Ver 3D";
+    document.getElementById("ptrocaprespImg").src="img/icon - cadeiras 3D.png";
     if(!sittingDown)
     {
       isPerspectiveOrtho = true;
@@ -2703,6 +2693,7 @@ function switchToOrtho() {
   else // change back to 3D view
   {
     document.getElementById ('ptrocapresp').innerHTML = "Ver Planta";
+    document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
     isPerspectiveOrtho = false;
 
     $("#ecraDiv").hide();
