@@ -123,6 +123,8 @@ textureVideo = new THREE.VideoTexture( video );
 
 var sittingDown = false; //if the user has clicked on a chair (e.g. is sitting down)
 
+var insideHelp = true;
+
 var isLoading = true; // if the scene is loading
 
 var isSelected = false; // if at least one chair is selected
@@ -286,45 +288,6 @@ function startLoadingScene() {
 // Here we initialise all the needed variables, like the stats, camera, and controls
 //
 function init() {
-
-  // create the main selection menu
-  var iDiv = document.createElement('div');
-  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
-  iDiv.style.width = '100%';
-  iDiv.style.cursor = "pointer";
-  iDiv.style.textAlign = "center";
-  iDiv.style.height = '100%';
-  iDiv.style.position = "absolute";
-  iDiv.style.background = 'rgba(0,0,0,0.8)';
-  iDiv.id = 'loadedScreen';
-  iDiv.style.top = '0';
-  iDiv.style.display = "none";
-
-  var textDiv = document.createElement('div');
-  textDiv.style.color = "white";
-  textDiv.style.cursor = "pointer";
-  textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
-  +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
-  +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
-  +"<br><br><br><br> Click anywhere to continue";
-  textDiv.style.width = '50%';
-  textDiv.style.textAlign = "center";
-  textDiv.style.fontFamily = "osb";
-  textDiv.style.height = '100%';
-  textDiv.style.position = "absolute";
-
-  textDiv.id = 'textScreen';
-  textDiv.style.left = '24%';
-  textDiv.style.top = '30%';
-
-  iDiv.appendChild(textDiv);
-  document.body.appendChild(iDiv);
-
-  $("#loadedScreen").fadeIn("slow");
-  $( "#loadedScreen" ).click(function() {
-    $("#loadedScreen").fadeOut( "slow");
-  });
-
   // STATS
 
   // 0: fps, 1: ms, 2: mb
@@ -409,8 +372,64 @@ function init() {
 
 
   showMenuSelect(); // this method initialises the side div container
-  isLoading = false;
 
+  // create the main selection menu
+  var iDiv = document.createElement('div');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDiv.style.width = '100%';
+  iDiv.style.cursor = "pointer";
+  iDiv.style.textAlign = "center";
+  iDiv.style.height = '100%';
+  iDiv.style.position = "absolute";
+  iDiv.style.background = 'rgba(0,0,0,0.8)';
+  iDiv.id = 'loadedScreen';
+  iDiv.style.top = '0';
+  iDiv.style.display = "none";
+
+  var textDiv = document.createElement('div');
+  textDiv.style.color = "white";
+  textDiv.style.cursor = "pointer";
+  textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
+  +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
+  +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
+  +"<br><br><br><br> Click anywhere to continue";
+  textDiv.style.width = '50%';
+  textDiv.style.textAlign = "center";
+  textDiv.style.fontFamily = "osb";
+  textDiv.style.height = '100%';
+  textDiv.style.position = "absolute";
+  textDiv.id = 'textScreen';
+  textDiv.style.left = '24%';
+  textDiv.style.top = '30%';
+
+
+  var iDiv1 = document.createElement('div');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDiv1.style.width = '100%';
+  iDiv1.style.cursor = "pointer";
+  iDiv1.style.pointerEvents = "none";
+  iDiv1.style.textAlign = "center";
+  iDiv1.style.height = '100%';
+  iDiv1.style.position = "absolute";
+  iDiv1.style.background = 'rgba(0,0,0,0.8)';
+  iDiv1.id = 'helpScreen';
+  iDiv1.style.top = '0';
+  iDiv1.style.display = "none";
+
+  iDiv.appendChild(textDiv);
+  document.body.appendChild(iDiv);
+  document.body.appendChild(iDiv1);
+
+  $("#loadedScreen").fadeIn("slow");
+  $( "#loadedScreen" ).click(function() {
+    $("#helpScreen").fadeIn("slow");
+    $("#loadedScreen").fadeOut("slow");
+    setInterval(function() {
+      $("#helpScreen").fadeOut("slow");
+      insideHelp = false;
+    }, 5000);
+  });
+  isLoading = false;
 }
 
 //
@@ -1181,7 +1200,7 @@ function showMenuSelect(){
 
   // create div that contain the advertise
   var pub = document.createElement("div");
-  pub.style.height = '190px';
+  pub.style.height = '300px';
   pub.style.width = "100%";
   pub.id = "pub";
   pub.style.bottom = "150px";
@@ -1716,7 +1735,7 @@ var primeiravez = true;
 //
 function onMouseDown(e) {
   // if we are in the cinema overview
-  if(!sittingDown)
+  if(!sittingDown && insideHelp == false)
   {
     // normal raycaster variables
     var intersectedOne = false;
@@ -1774,11 +1793,9 @@ function onMouseDown(e) {
         }
 
       }
-
       // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
-      if(($.inArray(obj, selectedChairs)=="-1") && (obj.material.map.uuid != texturaCadeiraOcupada.uuid) && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument)
+      if(($.inArray(obj, selectedChairs)=="-1") && (obj.material.map.uuid != texturaCadeiraOcupada.uuid) && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
       {
-
         if (primeiravez == true){
           $("#menuSelect").animate({"right": '+=300px'});
           primeiravez = false;
@@ -2126,7 +2143,7 @@ function onMouseDown(e) {
     }
     calculaTotal(6.95); // considers with the initial value
   }
-  else if(!sittingDownOrtho) // if clicked when sitting down
+  else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
     $("#menuSelect").animate({"right": '+=300px'});
 
@@ -2139,7 +2156,7 @@ function onMouseDown(e) {
     }
 
   }
-  else
+  else if (insideHelp == false)
   {
     $("#menuSelect").animate({"right": '+=300px'});
 
@@ -2582,6 +2599,7 @@ function setupTweenFP(obj) {
 // launch the Tween for changing perspective to overview perspective
 //
 function setupTweenOverview() {
+  console.log("entrou");
   TWEEN.removeAll();
 
   // tween the fov fowards
