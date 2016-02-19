@@ -199,6 +199,7 @@ var lugaresLivres = 0;
 var cinemasJSON;
 var dias;
 var sessoesJSON;
+var num_sessao = "0";
 
 // RANDOM
 
@@ -248,34 +249,37 @@ THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
     var iDiv = document.createElement('div');
     //iDiv.innerHTML = " Cadeiras seleccionadas : ";
     iDiv.style.width = '100%';
+    iDiv.style.cursor = "pointer";
     iDiv.style.textAlign = "center";
     iDiv.style.height = '100%';
     iDiv.style.position = "absolute";
-    iDiv.style.background = '#000000';
+    iDiv.style.background = 'rgba(0,0,0,0.8)';
     iDiv.id = 'loadedScreen';
     iDiv.style.top = '0';
     iDiv.style.display = "none";
 
     var textDiv = document.createElement('div');
     textDiv.style.color = "white";
+    textDiv.style.cursor = "pointer";
     textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
     +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
     +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
     +"<br><br><br><br> Click anywhere to continue";
     textDiv.style.width = '50%';
     textDiv.style.textAlign = "center";
+    textDiv.style.fontFamily = "osb";
     textDiv.style.height = '100%';
     textDiv.style.position = "absolute";
-    textDiv.style.background = '#000000';
+
     textDiv.id = 'textScreen';
     textDiv.style.left = '24%';
     textDiv.style.top = '30%';
 
     iDiv.appendChild(textDiv);
-
     document.body.appendChild(iDiv);
+    
     $("#loadedScreen").fadeIn("slow");
-    $( "#textScreen" ).click(function() {
+    $( "#loadedScreen" ).click(function() {
       init();
     });
 
@@ -408,8 +412,6 @@ function init() {
 
   window.addEventListener( 'resize', onWindowResize, false );
 
-  // change chair color depending on DB status
-  pintarCadeiras();
 
   showMenuSelect(); // this method initialises the side div container
 });
@@ -540,6 +542,7 @@ function showMenuSelect(){
         n_sessao.style.display = "inline-block";
         n_sessao.style.marginLeft = "4%";
         n_sessao.style.marginTop = "10px";
+        n_sessao.id = sessoesJSON[p].id_sessao;
         n_sessao.onmouseover = function() {
           this.style.color = "#1bbc9b";
         }
@@ -547,8 +550,10 @@ function showMenuSelect(){
           this.style.color = "#FFF";
         }
         n_sessao.onclick = function() {
+          btnComprar.style.display = "inline-block";
           showSessao.text = this.text;
           showSessao.appendChild(iconSessao);
+          carregarJSONBD(this.id);
           $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showSessaoDiv').slideUp();
           slidedownsessao = false;
@@ -1163,7 +1168,7 @@ function showMenuSelect(){
   btnComprar.style.backgroundRepeat = "no-repeat";
   btnComprar.style.float = "right";
   btnComprar.style.marginTop = "17px";
-  btnComprar.style.display = "inline-block";
+  btnComprar.style.display = "none";
   btnComprar.style.height = '30px';
   btnComprar.style.width = "104px";
   btnComprar.id = "btnComprar";
@@ -1179,7 +1184,7 @@ function showMenuSelect(){
         {
         fila: cadeirasJSON[j].fila,
         lugar:cadeirasJSON[j].lugar,
-        tipoBilhete:'Normal'
+        tipoBilhete:selectedChairs[i].class
         }
         jsonArray.push(item);
       }
@@ -1187,7 +1192,6 @@ function showMenuSelect(){
   }
   jsonChairs = JSON.stringify(jsonArray);
   alert("cadeiras seleccionadas " + jsonChairs);
-  window.location.href = "http://www.pushvfx.com";
   },false);
 
   // create div that contain the advertise
@@ -1258,7 +1262,7 @@ function showMenuSelect(){
 //
 function loadScene() {
   // load venue status from DB
-  carregarJSONBD();
+  carregarJSONBD(num_sessao);
 
   loadSala();
   loadCadeiras(populateCadeirasInstances);
@@ -1415,21 +1419,21 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry,child) {
 //
 // Here we access the DB and load the chair occupation info
 //
-function carregarJSONBD() {
+function carregarJSONBD(num_sessao) {
   $.ajax({
-    url:        'php/ler_BDCinema.php',
-    dataType:   "json", // <== JSON-P request
-    success:    function(data){
-      cadeirasJSON = data;
-      console.log("JSON Loaded Correctly from DB");
-
-    },
-    error:    function(textStatus,errorThrown){
-
-      console.log(textStatus);
-      console.log(errorThrown);
-    }
-
+       url: 'php/ler_BDCinema.php', //This is the current doc
+       type: "POST",
+       dataType:'json', // add json datatype to get json
+       data: ({sessao: "cadeiras"+num_sessao}),
+       success: function(data){
+         cadeirasJSON = data;
+         console.log("JSON Loaded Correctly from DB cadeiras " + num_sessao);
+         pintarCadeiras();
+       },
+       error:    function(textStatus,errorThrown){
+         console.log(textStatus);
+         console.log(errorThrown);
+       }
   });
 }
 
@@ -1445,7 +1449,30 @@ function pintarCadeiras() {
       {
         switch(cadeirasJSON[j].estado) {
           case 'OCUPADA':
-          chairGroup.children[i].material.map = texturaCadeiraOcupada;
+          if(selectedChairs.length < 1)
+          {
+            console.log(selectedChairs)
+            isSelected = false;
+            chairGroup.children[i].material.map = texturaCadeiraOcupada;
+          }else{
+            for(var x=0; x<selectedChairs.length; x++)
+            {
+                if (selectedChairs[x].name == cadeirasJSON[j].nome_procedural)
+                {
+                  var removalThing = "#"+selectedChairs[x].name;
+                  $(removalThing).remove();
+                  selectedChairs[x].material.map = texturaCadeiraOcupada;
+                  selectedChairs.splice(x, 1);
+                  var eyeSpriteToRemove = spriteEyeArray[x];
+                  mainScene.remove(eyeSpriteToRemove);
+                  octree.remove(eyeSpriteToRemove);
+                  spriteEyeArray.splice(x, 1);
+                  console.log(selectedChairs)
+                }else{
+                  chairGroup.children[i].material.map = texturaCadeiraOcupada;
+                }
+            }
+          }
           break;
           case 'DEFICIENTE':
           chairGroup.children[i].material.map = texturaCadeiraDeficiente;
@@ -1822,13 +1849,13 @@ function onMouseDown(e) {
 
         // Add the Chair
         selectedChairs.push(obj);
-        calculaTotal(6.95); // considers with the initial value
 
         // Add the dynamic text to the div
         var containerDiv = document.createElement( "div" );
         containerDiv.style.borderBottom = "solid 2px #344b5d";
         containerDiv.style.height = "auto";
         containerDiv.id = obj.name;
+
 
         // text Fila + Lugar
         var textContainer = document.createElement("p");
@@ -2102,17 +2129,14 @@ function onMouseDown(e) {
         isSelected = true;
 
         obj.material.map = texturaCadeiraSelect;
-      }
-
-      else
-      {
+      } else {
         if(!mouseIsOnMenu && !mouseIsOutOfDocument && !spriteFound)
         removeCadeira(obj); // if chair was already selected, de-select it
 
       }
 
     }
-
+    calculaTotal(6.95); // considers with the initial value
   }
   else if(!sittingDownOrtho) // if clicked when sitting down
   {
@@ -2634,18 +2658,21 @@ function calculaTotal(valorInicial) {
     {
       case("normal"):
       total += 6.95;
+      selectedChairs[i].class = "normal";
       break;
       case("estudante"):
       total += 6.05;
+      selectedChairs[i].class = "estudante";
       break;
       case("senior"):
       total += 6.05;
+      selectedChairs[i].class = "senior";
       break;
       case("crianca"):
       total += 6.05;
+      selectedChairs[i].class = "crianca";
       break;
     }
-
   }
   document.getElementById('total').innerHTML = "Total: <u>"+ Math.round(total * 100) / 100 + "€</u>";
 
