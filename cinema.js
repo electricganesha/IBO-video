@@ -202,6 +202,7 @@ var cinemasJSON;
 var dias;
 var sessoesJSON;
 var num_sessao = "0";
+var n_sessao_select;
 
 // RANDOM
 
@@ -427,7 +428,7 @@ function init() {
     setInterval(function() {
       $("#helpScreen").fadeOut("slow");
       insideHelp = false;
-    }, 5000);
+    }, 0);
   });
   isLoading = false;
 }
@@ -562,7 +563,9 @@ function showMenuSelect(){
         n_sessao.onclick = function() {
           btnComprar.style.display = "inline-block";
           showSessao.text = this.text;
+          showSessao.className = this.text;
           showSessao.appendChild(iconSessao);
+          n_sessao_select = this.id;
           carregarJSONBD(this.id);
           $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showSessaoDiv').slideUp();
@@ -571,9 +574,6 @@ function showMenuSelect(){
         showSessaoDiv.appendChild(n_sessao);
       }
     }
-
-
-
 
   // create main legenda for cinema
   var legDiv = document.createElement('div');
@@ -882,7 +882,7 @@ function showMenuSelect(){
   // create element for name of movie
   var movieName = document.createElement("p");
   movieName.id = "movieName";
-  movieName.innerHTML = "Pedro Motta vs Predator | 3D";
+  movieName.innerHTML = "Deadpool | 3D";
   movieName.style.fontFamily = "osb";
   movieName.style.lineHeight ="80%";
   movieName.style.color = "#243141";
@@ -891,7 +891,7 @@ function showMenuSelect(){
   // create element for info of movie
   var movieInfo = document.createElement("p");
   movieInfo.id = "movieInfo";
-  movieInfo.innerHTML = "VFX e Motta Graphics | M30";
+  movieInfo.innerHTML = "Acção, Aventura, Comedia | M/14";
   movieInfo.style.fontFamily = "osr";
   movieInfo.style.lineHeight ="80%";
   movieInfo.style.color = "#243141";
@@ -1180,27 +1180,53 @@ function showMenuSelect(){
   btnComprar.style.textDecoration = "none";
 
   btnComprar.addEventListener('click', function(e) {
-  var jsonArray = [];
-  for(var i=0 ; i<selectedChairs.length ; i++){
-    for( var j=0 ; j<cadeirasJSON.length ; j++){
-      if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
-        var item =
-        {
-        fila: cadeirasJSON[j].fila,
-        lugar:cadeirasJSON[j].lugar,
-        tipoBilhete:selectedChairs[i].class
+    var jsonArray = [];
+    var cabecalho =
+    {
+      nome_filme: document.getElementById("movieName").innerHTML,
+      info_filme: document.getElementById("movieInfo").innerHTML,
+      cinema: document.getElementById("showDivCinemas").text,
+      data: document.getElementById("showData").text,
+      sala: document.getElementById("showRoomNumber").text,
+      sessao: document.getElementById("showSessao").className
+    }
+    jsonArray.push(cabecalho);
+    for(var i=0 ; i<selectedChairs.length ; i++){
+      for( var j=0 ; j<cadeirasJSON.length ; j++){
+        if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
+          var item =
+          {
+            sessao: "cadeiras"+ n_sessao_select,
+            fila: cadeirasJSON[j].fila,
+            lugar:cadeirasJSON[j].lugar,
+            tipoBilhete:selectedChairs[i].class
+          }
+          jsonArray.push(item);
         }
-        jsonArray.push(item);
       }
     }
-  }
-  jsonChairs = JSON.stringify(jsonArray);
-  alert("cadeiras seleccionadas " + jsonChairs);
+    jsonChairs = JSON.stringify(jsonArray);
+    $.ajax({
+         url: 'php/ler_BDUpdateCadeiras.php', //This is the current doc
+         type: "POST",
+         dataType:'json', // add json datatype to get json
+         data: ({dados: jsonChairs}),
+         success: function(data){
+           console.log(jsonChairs);
+           console.log("Estado das cadeiras selecionado");
+         },
+         error:    function(textStatus,errorThrown){
+           console.log(textStatus);
+           console.log(errorThrown);
+         }
+    });
+    document.cookie="dados=" + jsonChairs;
+    document.location.href = "resultados.php";
   },false);
 
   // create div that contain the advertise
   var pub = document.createElement("div");
-  pub.style.height = '300px';
+  pub.style.height = '250px';
   pub.style.width = "100%";
   pub.id = "pub";
   pub.style.bottom = "150px";
@@ -1457,7 +1483,6 @@ function pintarCadeiras() {
           lugaresLivres -= 1;
           if(selectedChairs.length < 1)
           {
-            console.log(selectedChairs)
             isSelected = false;
             chairGroup.children[i].material.map = texturaCadeiraOcupada;
           }else{
@@ -1469,11 +1494,11 @@ function pintarCadeiras() {
                   $(removalThing).remove();
                   selectedChairs[x].material.map = texturaCadeiraOcupada;
                   selectedChairs.splice(x, 1);
+                  calculaTotal(0);
                   var eyeSpriteToRemove = spriteEyeArray[x];
                   mainScene.remove(eyeSpriteToRemove);
                   octree.remove(eyeSpriteToRemove);
                   spriteEyeArray.splice(x, 1);
-                  console.log(selectedChairs)
                 }else{
                   chairGroup.children[i].material.map = texturaCadeiraOcupada;
                 }
@@ -2141,7 +2166,7 @@ function onMouseDown(e) {
       }
 
     }
-    calculaTotal(6.95); // considers with the initial value
+    calculaTotal(0); // considers with the initial value
   }
   else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
@@ -2652,7 +2677,6 @@ function setupTweenOverview() {
 
 // calculate the total amount of tickets
 function calculaTotal(valorInicial) {
-
   var total = valorInicial;
 
   for(var i=0 ; i < selectedChairs.length ; i++)
