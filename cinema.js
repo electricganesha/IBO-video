@@ -1634,7 +1634,6 @@ function onMouseMove(e) {
   mouse.x = 2 * (e.clientX / window.innerWidth) - 1;
   mouse.y = 1 - 2 * (e.clientY / window.innerHeight);
 
-
   // define the look speed through the mouse position
   // if mouse is moving to the edges of the screen, speed increases
   if(!isSelected && !sittingDown && !mouseIsOnMenu && !mouseIsOutOfDocument)
