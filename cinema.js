@@ -1657,10 +1657,17 @@ function onMouseMove(e) {
 
     raycaster.setFromCamera( mouse, camera );
 
+    console.log(raycaster.ray.direction);
+
+    //var arrowHelper = new THREE.ArrowHelper( dir, raycaster.ray.origin, length, hex );
+    //scene.add( arrowHelper );
+
     // search the raycasted objects in the octree
     octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
 
     intersections = raycaster.intersectOctreeObjects( octreeObjects );
+
+    //console.log(intersections);
 
     var spriteFound = false;
 
@@ -1673,14 +1680,29 @@ function onMouseMove(e) {
       {
         spriteFound = true;
       }
-
     }
+
 
     // if there is an intersection
     if ( intersections.length > 0 ) {
 
+      // Check if the objects are in front of each other
+      var intersectionIndex = 0;
+
+      for(var i = 0 ; i < intersections.length ; i++)
+      {
+        var lowerX = intersections[0].object.position.x;
+
+        if( intersections[i].object.position.x < lowerX){
+          lowerX = intersections[i].object.position.x;
+          intersectionIndex = i;
+          }
+      }
+
+      intersectionObject = intersections[intersectionIndex].object;
+
       // if previously intersected object is not the current intersection and is not a sprite
-      if ( intersected != intersections[ 0 ].object && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument) {
+      if ( intersected != intersectionObject && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument) {
 
         // if there was a previously intersected object
         if ( intersected )
@@ -1698,8 +1720,7 @@ function onMouseMove(e) {
           }
         }
 
-        // intersected object
-        intersected = intersections[ 0 ].object;
+        intersected = intersectionObject;
         uuidTexturaAntiga = intersected.material.map.uuid;
 
         // if intersection is new : change color to highlight
