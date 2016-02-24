@@ -135,6 +135,8 @@ var mouseIsOutOfDocument = false; // if the mouse is over the menu
 
 var isPerspectiveOrtho = false; // if we are in 2D perspective
 
+var isVR = false; // if we are in VR view
+
 var sittingDownOrtho = false; //if the user has clicked on a chair and before was orthographic (e.g. is sitting down)
 
 var lastCameraPositionBeforeTween;
@@ -312,7 +314,6 @@ function init() {
   document.body.appendChild( statsMS.domElement );
   document.body.appendChild( statsMB.domElement );
 
-  console.log("novo repo");
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 50 );
 
   camera.position.x = -6.160114995658247;
@@ -598,22 +599,38 @@ function showMenuSelect(){
 
   // create sub main legenda for cinema
   var legenda = document.createElement('div');
-  legenda.style.width = '780px';
+  legenda.style.width = '900px';
   legenda.style.margin = "auto";
   legenda.style.textAlign = "center";
   legenda.style.height = '200px';
   legenda.style.borderRadius = "10px";
   legenda.id = 'legenda';
 
-  // create legend for cinema
   var legEsq = document.createElement('div');
-  legEsq.style.width = '670px';
+  legEsq.style.width = '90px';
   legEsq.style.float = "left";
   legEsq.style.textAlign = "center";
   legEsq.style.height = '200px';
-  legEsq.style.background = '#243141';
+  legEsq.style.background = '#1cbb9b';
   legEsq.style.borderRadius = "10px";
   legEsq.id = 'legEsq';
+  legEsq.onclick = function() {
+    switchToVr();
+  }
+  legEsq.onmouseover = function() {
+    legEsq.style.cursor = 'pointer';
+  }
+
+  // create legend for cinema
+  var legMid = document.createElement('div');
+  legMid.style.width = '670px';
+  legMid.style.float = "left";
+  legMid.style.textAlign = "center";
+  legMid.style.height = '200px';
+  legMid.style.marginLeft = '25px';
+  legMid.style.background = '#243141';
+  legMid.style.borderRadius = "10px";
+  legMid.id = 'legMid';
   // create legend for cinema
   var legDir = document.createElement('div');
   legDir.style.width = '90px';
@@ -655,7 +672,7 @@ function showMenuSelect(){
 
   topicDiv1.appendChild(pverPrespImg);
   topicDiv1.appendChild(pverPresp);
-  legEsq.appendChild(topicDiv1);
+  legMid.appendChild(topicDiv1);
 
   //Topic available
   var topicDiv2 = document.createElement('div');
@@ -684,7 +701,7 @@ function showMenuSelect(){
 
   topicDiv2.appendChild(pavailableImg);
   topicDiv2.appendChild(pavailable);
-  legEsq.appendChild(topicDiv2);
+  legMid.appendChild(topicDiv2);
 
   //Topic selected
   var topicDiv3 = document.createElement('div');
@@ -713,7 +730,7 @@ function showMenuSelect(){
 
   topicDiv3.appendChild(pselectedImg);
   topicDiv3.appendChild(pselected);
-  legEsq.appendChild(topicDiv3);
+  legMid.appendChild(topicDiv3);
 
   //Topic defecient
   var topicDiv4 = document.createElement('div');
@@ -742,7 +759,7 @@ function showMenuSelect(){
 
   topicDiv4.appendChild(pdefecientImg);
   topicDiv4.appendChild(pdefecient);
-  legEsq.appendChild(topicDiv4);
+  legMid.appendChild(topicDiv4);
 
   //Topic not available
   var topicDiv5 = document.createElement('div');
@@ -771,7 +788,7 @@ function showMenuSelect(){
 
   topicDiv5.appendChild(pnotavaImg);
   topicDiv5.appendChild(pnotava);
-  legEsq.appendChild(topicDiv5);
+  legMid.appendChild(topicDiv5);
 
   //Topic Capacity
   var capacityDiv = document.createElement('div');
@@ -803,7 +820,7 @@ function showMenuSelect(){
 
   capacityDiv.appendChild(pcapacity);
   capacityDiv.appendChild(pcapacityNumber);
-  legEsq.appendChild(capacityDiv);
+  legMid.appendChild(capacityDiv);
 
   //Topic Free seats
   var freeseatsDiv = document.createElement('div');
@@ -835,7 +852,7 @@ function showMenuSelect(){
 
   freeseatsDiv.appendChild(pfreeseats);
   freeseatsDiv.appendChild(pfreeseatsNumber);
-  legEsq.appendChild(freeseatsDiv);
+  legMid.appendChild(freeseatsDiv);
 
   var ptrocapresp = document.createElement('p');
   ptrocapresp.innerHTML = "Ver Planta";
@@ -849,11 +866,27 @@ function showMenuSelect(){
   ptrocaprespImg.id = "ptrocaprespImg";
   ptrocaprespImg.style.marginTop = "2px";
 
+  var ptrocavr = document.createElement('p');
+  ptrocavr.innerHTML = "VR";
+  ptrocavr.style.color = "#FFF";
+  ptrocavr.style.fontSize = "13px";
+  ptrocavr.style.fontFamily = "osr";
+  ptrocavr.style.marginTop = "15px";
+  ptrocavr.id = "ptrocavr";
+
+  var ptrocavrImg = document.createElement('img');
+  ptrocavrImg.id = "ptrocavrImg";
+  ptrocavrImg.style.marginTop = "-4px";
+
+  legEsq.appendChild(ptrocavr);
+  legEsq.appendChild(ptrocavrImg);
+
   legDir.appendChild(ptrocapresp);
   legDir.appendChild(ptrocaprespImg);
 
   legDiv.appendChild(legenda);
   legenda.appendChild(legEsq);
+  legenda.appendChild(legMid);
   legenda.appendChild(legDir);
   document.body.appendChild(legDiv);
   document.getElementById("pverPrespImg").src="img/ver.png";
@@ -862,6 +895,7 @@ function showMenuSelect(){
   document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
   document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
   document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
+  document.getElementById("ptrocavrImg").src="img/VR-icon.png";
 
   // create the main selection menu
   var iDiv = document.createElement('div');
@@ -2800,6 +2834,23 @@ function switchToOrtho() {
     controls.lookSpeed = 0;
   }
 }
+
+function switchToVr() {
+  if (isVR==false) // if we're in cinema overview 3D change to 2D view
+  {
+    document.getElementById ('ptrocavr').innerHTML = "3D";
+    document.getElementById("ptrocavrImg").src="img/icon - cadeiras 3D.png";
+    isVR = true;
+
+  }
+  else // change back to 3D view
+  {
+    document.getElementById ('ptrocavr').innerHTML = "VR";
+    document.getElementById("ptrocavrImg").src="img/VR-icon.png";
+    isVR = false;
+  }
+}
+
 
 // detect if we are using a mobile
 function detectmob() {
