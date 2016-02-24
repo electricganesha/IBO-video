@@ -312,7 +312,7 @@ function init() {
   document.body.appendChild( statsMS.domElement );
   document.body.appendChild( statsMB.domElement );
 
-
+  console.log("novo repo");
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 50 );
 
   camera.position.x = -6.160114995658247;
