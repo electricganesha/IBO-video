@@ -1657,11 +1657,6 @@ function onMouseMove(e) {
 
     raycaster.setFromCamera( mouse, camera );
 
-    console.log(raycaster.ray.direction);
-
-    //var arrowHelper = new THREE.ArrowHelper( dir, raycaster.ray.origin, length, hex );
-    //scene.add( arrowHelper );
-
     // search the raycasted objects in the octree
     octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
 
@@ -1802,7 +1797,22 @@ function onMouseDown(e) {
     // for each intersected object
     for (var i = 0; i < intersects.length; i++) {
 
-      var intersection = intersects[i];
+      // Check if the objects are in front of each other
+      var intersectionIndex = 0;
+
+      for(var i = 0 ; i < intersects.length ; i++)
+      {
+        var lowerX = intersects[0].object.position.x;
+
+        if( intersects[i].object.position.x < lowerX){
+          lowerX = intersects[i].object.position.x;
+          intersectionIndex = i;
+          }
+      }
+
+      var intersection = intersects[intersectionIndex];
+
+      //var intersection = intersects[i];
       var obj = intersection.object;
       var point = intersection.point;
 
