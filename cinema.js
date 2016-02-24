@@ -123,6 +123,8 @@ textureVideo = new THREE.VideoTexture( video );
 
 var sittingDown = false; //if the user has clicked on a chair (e.g. is sitting down)
 
+var insideHelp = true;
+
 var isLoading = true; // if the scene is loading
 
 var isSelected = false; // if at least one chair is selected
@@ -200,6 +202,7 @@ var cinemasJSON;
 var dias;
 var sessoesJSON;
 var num_sessao = "0";
+var n_sessao_select;
 
 // RANDOM
 
@@ -245,47 +248,7 @@ loadScene();
 THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
   if(loaded == total)
   {
-    // create the main selection menu
-    var iDiv = document.createElement('div');
-    //iDiv.innerHTML = " Cadeiras seleccionadas : ";
-    iDiv.style.width = '100%';
-    iDiv.style.cursor = "pointer";
-    iDiv.style.textAlign = "center";
-    iDiv.style.height = '100%';
-    iDiv.style.position = "absolute";
-    iDiv.style.background = 'rgba(0,0,0,0.8)';
-    iDiv.id = 'loadedScreen';
-    iDiv.style.top = '0';
-    iDiv.style.display = "none";
-
-    var textDiv = document.createElement('div');
-    textDiv.style.color = "white";
-    textDiv.style.cursor = "pointer";
-    textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
-    +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
-    +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
-    +"<br><br><br><br> Click anywhere to continue";
-    textDiv.style.width = '50%';
-    textDiv.style.textAlign = "center";
-    textDiv.style.fontFamily = "osb";
-    textDiv.style.height = '100%';
-    textDiv.style.position = "absolute";
-
-    textDiv.id = 'textScreen';
-    textDiv.style.left = '24%';
-    textDiv.style.top = '30%';
-
-    iDiv.appendChild(textDiv);
-    document.body.appendChild(iDiv);
-
-    $("#loadedScreen").fadeIn("slow");
-    $( "#loadedScreen" ).click(function() {
-      init();
-    });
-
-
-    //init();
-
+    init();
   }
 };
 
@@ -326,10 +289,6 @@ function startLoadingScene() {
 // Here we initialise all the needed variables, like the stats, camera, and controls
 //
 function init() {
-
-
-
-  $("#textScreen").fadeOut( "slow", function() {
   // STATS
 
   // 0: fps, 1: ms, 2: mb
@@ -414,12 +373,64 @@ function init() {
 
 
   showMenuSelect(); // this method initialises the side div container
-});
 
-$("#loadedScreen").fadeOut( "slow", function() {
+  // create the main selection menu
+  var iDiv = document.createElement('div');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDiv.style.width = '100%';
+  iDiv.style.cursor = "pointer";
+  iDiv.style.textAlign = "center";
+  iDiv.style.height = '100%';
+  iDiv.style.position = "absolute";
+  iDiv.style.background = 'rgba(0,0,0,0.8)';
+  iDiv.id = 'loadedScreen';
+  iDiv.style.top = '0';
+  iDiv.style.display = "none";
+
+  var textDiv = document.createElement('div');
+  textDiv.style.color = "white";
+  textDiv.style.cursor = "pointer";
+  textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
+  +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
+  +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
+  +"<br><br><br><br> Click anywhere to continue";
+  textDiv.style.width = '50%';
+  textDiv.style.textAlign = "center";
+  textDiv.style.fontFamily = "osb";
+  textDiv.style.height = '100%';
+  textDiv.style.position = "absolute";
+  textDiv.id = 'textScreen';
+  textDiv.style.left = '24%';
+  textDiv.style.top = '30%';
+
+
+  var iDiv1 = document.createElement('div');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDiv1.style.width = '100%';
+  iDiv1.style.cursor = "pointer";
+  iDiv1.style.pointerEvents = "none";
+  iDiv1.style.textAlign = "center";
+  iDiv1.style.height = '100%';
+  iDiv1.style.position = "absolute";
+  iDiv1.style.background = 'rgba(0,0,0,0.8)';
+  iDiv1.id = 'helpScreen';
+  iDiv1.style.top = '0';
+  iDiv1.style.display = "none";
+
+  iDiv.appendChild(textDiv);
+  document.body.appendChild(iDiv);
+  document.body.appendChild(iDiv1);
+
+  $("#loadedScreen").fadeIn("slow");
+  $( "#loadedScreen" ).click(function() {
+    $("#helpScreen").fadeIn("slow");
+    $("#loadedScreen").fadeOut("slow");
+    setInterval(function() {
+      $("#helpScreen").fadeOut("slow");
+      insideHelp = false;
+    }, 0);
+  });
   isLoading = false;
-});
-
 }
 
 //
@@ -552,7 +563,9 @@ function showMenuSelect(){
         n_sessao.onclick = function() {
           btnComprar.style.display = "inline-block";
           showSessao.text = this.text;
+          showSessao.className = this.text;
           showSessao.appendChild(iconSessao);
+          n_sessao_select = this.id;
           carregarJSONBD(this.id);
           $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showSessaoDiv').slideUp();
@@ -561,9 +574,6 @@ function showMenuSelect(){
         showSessaoDiv.appendChild(n_sessao);
       }
     }
-
-
-
 
   // create main legenda for cinema
   var legDiv = document.createElement('div');
@@ -783,12 +793,6 @@ function showMenuSelect(){
   capacityDiv.appendChild(pcapacityNumber);
   legEsq.appendChild(capacityDiv);
 
-  lugaresLivres = capacidade;
-  for(var j=0 ; j < cadeirasJSON.length ; j++) {
-    if (cadeirasJSON[j].estado == "OCUPADA"){
-      lugaresLivres -= 1;
-    }
-  }
   //Topic Free seats
   var freeseatsDiv = document.createElement('div');
   freeseatsDiv.style.textAlign = "center";
@@ -878,7 +882,7 @@ function showMenuSelect(){
   // create element for name of movie
   var movieName = document.createElement("p");
   movieName.id = "movieName";
-  movieName.innerHTML = "Pedro Motta vs Predator | 3D";
+  movieName.innerHTML = "Deadpool | 3D";
   movieName.style.fontFamily = "osb";
   movieName.style.lineHeight ="80%";
   movieName.style.color = "#243141";
@@ -887,7 +891,7 @@ function showMenuSelect(){
   // create element for info of movie
   var movieInfo = document.createElement("p");
   movieInfo.id = "movieInfo";
-  movieInfo.innerHTML = "VFX e Motta Graphics | M30";
+  movieInfo.innerHTML = "Acção, Aventura, Comedia | M/14";
   movieInfo.style.fontFamily = "osr";
   movieInfo.style.lineHeight ="80%";
   movieInfo.style.color = "#243141";
@@ -1176,27 +1180,53 @@ function showMenuSelect(){
   btnComprar.style.textDecoration = "none";
 
   btnComprar.addEventListener('click', function(e) {
-  var jsonArray = [];
-  for(var i=0 ; i<selectedChairs.length ; i++){
-    for( var j=0 ; j<cadeirasJSON.length ; j++){
-      if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
-        var item =
-        {
-        fila: cadeirasJSON[j].fila,
-        lugar:cadeirasJSON[j].lugar,
-        tipoBilhete:selectedChairs[i].class
+    var jsonArray = [];
+    var cabecalho =
+    {
+      nome_filme: document.getElementById("movieName").innerHTML,
+      info_filme: document.getElementById("movieInfo").innerHTML,
+      cinema: document.getElementById("showDivCinemas").text,
+      data: document.getElementById("showData").text,
+      sala: document.getElementById("showRoomNumber").text,
+      sessao: document.getElementById("showSessao").className
+    }
+    jsonArray.push(cabecalho);
+    for(var i=0 ; i<selectedChairs.length ; i++){
+      for( var j=0 ; j<cadeirasJSON.length ; j++){
+        if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
+          var item =
+          {
+            sessao: "cadeiras"+ n_sessao_select,
+            fila: cadeirasJSON[j].fila,
+            lugar:cadeirasJSON[j].lugar,
+            tipoBilhete:selectedChairs[i].class
+          }
+          jsonArray.push(item);
         }
-        jsonArray.push(item);
       }
     }
-  }
-  jsonChairs = JSON.stringify(jsonArray);
-  alert("cadeiras seleccionadas " + jsonChairs);
+    jsonChairs = JSON.stringify(jsonArray);
+    $.ajax({
+         url: 'php/ler_BDUpdateCadeiras.php', //This is the current doc
+         type: "POST",
+         dataType:'json', // add json datatype to get json
+         data: ({dados: jsonChairs}),
+         success: function(data){
+           console.log(jsonChairs);
+           console.log("Estado das cadeiras selecionado");
+         },
+         error:    function(textStatus,errorThrown){
+           console.log(textStatus);
+           console.log(errorThrown);
+         }
+    });
+    document.cookie="dados=" + jsonChairs;
+    document.location.href = "resultados.php";
   },false);
 
   // create div that contain the advertise
   var pub = document.createElement("div");
-  pub.style.height = '190px';
+  pub.style.height = '250px';
   pub.style.width = "100%";
   pub.id = "pub";
   pub.style.bottom = "150px";
@@ -1235,7 +1265,7 @@ function showMenuSelect(){
   divInfo.appendChild(pub);
   document.body.appendChild(iDiv);
   document.getElementById("logoCinema").src="img/logo.png";
-  document.getElementById("imgPub").src="img/pedrinho.jpg";
+  document.getElementById("imgPub").src="img/publicidade.png";
 
   $('#menuSelect').bind('mouseenter' ,"*", function(e){
     mouseIsOnMenu = true;
@@ -1441,6 +1471,7 @@ function carregarJSONBD(num_sessao) {
 // Here we color the chairs according to the loaded occupation info
 //
 function pintarCadeiras() {
+  lugaresLivres = capacidade;
   for(var i=0 ; i< chairGroup.children.length ; i++)
   {
     for(var j=0 ; j < cadeirasJSON.length ; j++)
@@ -1449,9 +1480,9 @@ function pintarCadeiras() {
       {
         switch(cadeirasJSON[j].estado) {
           case 'OCUPADA':
+          lugaresLivres -= 1;
           if(selectedChairs.length < 1)
           {
-            console.log(selectedChairs)
             isSelected = false;
             chairGroup.children[i].material.map = texturaCadeiraOcupada;
           }else{
@@ -1463,11 +1494,11 @@ function pintarCadeiras() {
                   $(removalThing).remove();
                   selectedChairs[x].material.map = texturaCadeiraOcupada;
                   selectedChairs.splice(x, 1);
+                  calculaTotal(0);
                   var eyeSpriteToRemove = spriteEyeArray[x];
                   mainScene.remove(eyeSpriteToRemove);
                   octree.remove(eyeSpriteToRemove);
                   spriteEyeArray.splice(x, 1);
-                  console.log(selectedChairs)
                 }else{
                   chairGroup.children[i].material.map = texturaCadeiraOcupada;
                 }
@@ -1483,6 +1514,7 @@ function pintarCadeiras() {
       }
     }
   }
+  pfreeseatsNumber.innerHTML = lugaresLivres;
 }
 
 //
@@ -1601,7 +1633,6 @@ function onMouseMove(e) {
   var mouse = new THREE.Vector2();
   mouse.x = 2 * (e.clientX / window.innerWidth) - 1;
   mouse.y = 1 - 2 * (e.clientY / window.innerHeight);
-
 
   // define the look speed through the mouse position
   // if mouse is moving to the edges of the screen, speed increases
@@ -1728,7 +1759,7 @@ var primeiravez = true;
 //
 function onMouseDown(e) {
   // if we are in the cinema overview
-  if(!sittingDown)
+  if(!sittingDown && insideHelp == false)
   {
     // normal raycaster variables
     var intersectedOne = false;
@@ -1786,11 +1817,9 @@ function onMouseDown(e) {
         }
 
       }
-
       // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
-      if(($.inArray(obj, selectedChairs)=="-1") && (obj.material.map.uuid != texturaCadeiraOcupada.uuid) && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument)
+      if(($.inArray(obj, selectedChairs)=="-1") && (obj.material.map.uuid != texturaCadeiraOcupada.uuid) && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
       {
-
         if (primeiravez == true){
           $("#menuSelect").animate({"right": '+=300px'});
           primeiravez = false;
@@ -2136,9 +2165,9 @@ function onMouseDown(e) {
       }
 
     }
-    calculaTotal(6.95); // considers with the initial value
+    calculaTotal(0); // considers with the initial value
   }
-  else if(!sittingDownOrtho) // if clicked when sitting down
+  else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
     $("#menuSelect").animate({"right": '+=300px'});
 
@@ -2151,7 +2180,7 @@ function onMouseDown(e) {
     }
 
   }
-  else
+  else if (insideHelp == false)
   {
     $("#menuSelect").animate({"right": '+=300px'});
 
@@ -2594,6 +2623,7 @@ function setupTweenFP(obj) {
 // launch the Tween for changing perspective to overview perspective
 //
 function setupTweenOverview() {
+  console.log("entrou");
   TWEEN.removeAll();
 
   // tween the fov fowards
@@ -2646,7 +2676,6 @@ function setupTweenOverview() {
 
 // calculate the total amount of tickets
 function calculaTotal(valorInicial) {
-
   var total = valorInicial;
 
   for(var i=0 ; i < selectedChairs.length ; i++)
@@ -2683,6 +2712,7 @@ function switchToOrtho() {
   if (isPerspectiveOrtho==false) // if we're in cinema overview 3D change to 2D view
   {
     document.getElementById ('ptrocapresp').innerHTML = "Ver 3D";
+    document.getElementById("ptrocaprespImg").src="img/icon - cadeiras 3D.png";
     if(!sittingDown)
     {
       isPerspectiveOrtho = true;
@@ -2704,6 +2734,7 @@ function switchToOrtho() {
   else // change back to 3D view
   {
     document.getElementById ('ptrocapresp').innerHTML = "Ver Planta";
+    document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
     isPerspectiveOrtho = false;
 
     $("#ecraDiv").hide();
