@@ -417,9 +417,21 @@ function init() {
   iDiv1.style.top = '0';
   iDiv1.style.display = "none";
 
+  var iDivhelp = document.createElement('img');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDivhelp.style.margin = 'auto';
+  iDivhelp.style.marginTop = '10%';
+  iDivhelp.style.width = '852px';
+  iDivhelp.style.cursor = "pointer";
+  iDivhelp.style.pointerEvents = "none";
+  iDivhelp.style.height = '523px';
+  iDivhelp.id = 'helpScreenArrow';
+
   iDiv.appendChild(textDiv);
   document.body.appendChild(iDiv);
+  iDiv1.appendChild(iDivhelp);
   document.body.appendChild(iDiv1);
+  document.getElementById("helpScreenArrow").src="img/help.png";
 
   $("#loadedScreen").fadeIn("slow");
   $( "#loadedScreen" ).click(function() {
@@ -428,7 +440,7 @@ function init() {
     setInterval(function() {
       $("#helpScreen").fadeOut("slow");
       insideHelp = false;
-    }, 0);
+    }, 3000);
   });
   isLoading = false;
 }
