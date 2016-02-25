@@ -155,7 +155,7 @@ var clock = new THREE.Clock();
 
 var container;
 
-var camera, scene, renderer;
+var camera, scene, renderer, renderVR;
 
 var spriteEyeModel = new THREE.Mesh();
 
@@ -214,13 +214,19 @@ var updateFcts = []; // the array with the video frames
 var video; // the video canvas
 var plane; // the video screen
 
+
+
 // STRUCTURAL / DOM / RENDERER
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
 renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+element = renderer.domElement;
+container = document.body;
+container.appendChild(element);
+
+renderVR = new THREE.StereoEffect(renderer);
 
 // create the main selection menu
 var waterMarkDiv = document.createElement('div');
@@ -290,6 +296,19 @@ function startLoadingScene() {
 //
 // Here we initialise all the needed variables, like the stats, camera, and controls
 //
+
+function fullscreen() {
+    if (container.requestFullscreen) {
+      container.requestFullscreen();
+    } else if (container.msRequestFullscreen) {
+      container.msRequestFullscreen();
+    } else if (container.mozRequestFullScreen) {
+      container.mozRequestFullScreen();
+    } else if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    }
+  }
+
 function init() {
   // STATS
 
@@ -324,8 +343,11 @@ function init() {
 
   if(detectmob())
   {
-    controls = new THREE.DeviceOrientationControls( camera );
+    controls = new THREE.DeviceOrientationControls(camera, true);
     controls.connect();
+    controls.update();
+
+    element.addEventListener('click', fullscreen, false);
   }
   else
   {
@@ -441,7 +463,7 @@ function init() {
     setInterval(function() {
       $("#helpScreen").fadeOut("slow");
       insideHelp = false;
-    }, 3000);
+    }, 2000);
   });
   isLoading = false;
 }
@@ -596,7 +618,6 @@ function showMenuSelect(){
   legDiv.style.height = '160px';
   legDiv.style.position = "absolute";
   legDiv.id = 'LegDiv';
-
   // create sub main legenda for cinema
   var legenda = document.createElement('div');
   legenda.style.width = '900px';
@@ -896,6 +917,7 @@ function showMenuSelect(){
   document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
   document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
   document.getElementById("ptrocavrImg").src="img/VR-icon.png";
+
 
   // create the main selection menu
   var iDiv = document.createElement('div');
@@ -1330,6 +1352,13 @@ function showMenuSelect(){
   $('#legenda').bind('mouseleave', "*", function(e){
     mouseIsOnMenu = false;
   },false);
+
+  if(detectmob())
+  {
+    document.getElementById("watermarkDiv").style.display = "none";
+    //document.getElementById("LegDiv").style.display = "none";
+    document.getElementById("menuSelect").style.display = "none";
+  }
 
 }
 
@@ -2384,12 +2413,35 @@ function onMouseWheel(e) {
 return false;
 }
 
+
+function resize() {
+  var width = container.offsetWidth;
+  var height = container.offsetHeight;
+
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(width, height);
+  renderVR.setSize(width, height);
+}
+
+function render(dt) {
+    renderVR.render(mainScene, camera);
+  }
+
+function update(dt) {
+  resize();
+
+  camera.updateProjectionMatrix();
+
+  controls.update(dt);
+}
+
 //
 // main render function (render cycle)
 //
 function animate() {
   requestAnimationFrame(animate);
-
   // if we are rendering the loading scene
   if(isLoading)
   {
@@ -2695,7 +2747,6 @@ function setupTweenFP(obj) {
   }).onComplete(function () {
   }).start();
 }
-
 //
 // launch the Tween for changing perspective to overview perspective
 //
@@ -2835,12 +2886,19 @@ function switchToOrtho() {
   }
 }
 
+function animateVr() {
+  requestAnimationFrame(animateVr);
+  update(clock.getDelta());
+  render(clock.getDelta());
+}
+
 function switchToVr() {
   if (isVR==false) // if we're in cinema overview 3D change to 2D view
   {
     document.getElementById ('ptrocavr').innerHTML = "3D";
     document.getElementById("ptrocavrImg").src="img/icon - cadeiras 3D.png";
     isVR = true;
+    animateVr();
 
   }
   else // change back to 3D view
@@ -2851,19 +2909,19 @@ function switchToVr() {
   }
 }
 
-
 // detect if we are using a mobile
-function detectmob() {
-  if( navigator.userAgent.match(/Android/i)
-  || navigator.userAgent.match(/webOS/i)
-  || navigator.userAgent.match(/iPhone/i)
-  || navigator.userAgent.match(/iPad/i)
-  || navigator.userAgent.match(/iPod/i)
-  || navigator.userAgent.match(/BlackBerry/i)
-  || navigator.userAgent.match(/Windows Phone/i)){
-    return true;
-  }
-  else{
-    return false;
-  }
+  function detectmob() {
+    if( navigator.userAgent.match(/Android/i)
+    || navigator.userAgent.match(/webOS/i)
+    || navigator.userAgent.match(/iPhone/i)
+    || navigator.userAgent.match(/iPad/i)
+    || navigator.userAgent.match(/iPod/i)
+    || navigator.userAgent.match(/BlackBerry/i)
+    || navigator.userAgent.match(/Windows Phone/i)){
+
+      return true;
+    }
+    else{
+      return false;
+    }
 }
