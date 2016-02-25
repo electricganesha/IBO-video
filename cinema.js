@@ -89,27 +89,46 @@ $.ajax({
   async: false
 });
 
+$.ajax({
+  type: "GET",
+  url: "js/EffectComposer.js",
+  dataType: "script",
+  async: false
+});
+
+$.ajax({
+  type: "GET",
+  url: "js/BloomPass.js",
+  dataType: "script",
+  async: false
+});
+
+
+
 // TEXTURES
+var loader = new THREE.TextureLoader();
 
-var texturaCadeira = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_vermelho_small.jpg');
+var texturaCadeira = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_vermelho_small.jpg');
 
-var texturaCadeiraSelect = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
+var texturaCadeiraSelect = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
 
-var texturaCadeiraHighlight = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
+var texturaCadeiraHighlight = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
 
-var texturaCadeiraOcupada = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/cadeira_Tex_ocupada.jpg');
+var texturaCadeiraOcupada = loader.load('models/Cinema_Motta/Cadeira_Nova/cadeira_Tex_ocupada.jpg');
 
-var texturaCadeiraDeficiente = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_azul_small.jpg');
+var texturaCadeiraDeficiente = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_azul_small.jpg');
 
-var texturaCadeiraNormalMap = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Normals_small.jpg');
+var texturaCadeiraNormalMap = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Normals_small.jpg');
 
-var texturaBracoNormalMap = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Braco_Novo/BracoCadeira_Normal_small.jpg');
+texturaCadeiraNormalMap.minFilter = THREE.LinearFilter;
 
-var texturaBraco = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diffuse_small.jpg');
+var texturaBracoNormalMap = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Normal_small.jpg');
 
-var eyeTexture = THREE.ImageUtils.loadTexture('models/Cinema_Motta/eye-icon.png');
+var texturaBraco = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diffuse_small.jpg');
 
-var textureEcra = THREE.ImageUtils.loadTexture('models/Cinema_Motta/ecra.jpg');
+var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
+
+var textureEcra = loader.load('models/Cinema_Motta/ecra.jpg');
 textureEcra.wrapS = THREE.RepeatWrapping;
 textureEcra.wrapT = THREE.RepeatWrapping;
 
@@ -220,12 +239,24 @@ var plane; // the video screen
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
-renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
-renderer.setSize( window.innerWidth, window.innerHeight );
-element = renderer.domElement;
-container = document.body;
-container.appendChild(element);
+if(detectmob())
+{
+  renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:false });
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  element = renderer.domElement;
+  container = document.body;
+  container.appendChild(element);
 
+}
+else
+{
+  renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
+  renderer.setSize( window.innerWidth, window.innerHeight );
+  element = renderer.domElement;
+  container = document.body;
+  container.appendChild(element);
+
+}
 renderVR = new THREE.StereoEffect(renderer);
 
 // create the main selection menu
@@ -244,6 +275,7 @@ document.body.appendChild(waterMarkDiv);
 
 loadingScene = new THREE.Scene();
 mainScene = new THREE.Scene();
+
 
 startLoadingScene();
 loadScene();
@@ -343,11 +375,12 @@ function init() {
 
   if(detectmob())
   {
+
     controls = new THREE.DeviceOrientationControls(camera, true);
     controls.connect();
     controls.update();
 
-    element.addEventListener('click', fullscreen, false);
+    //element.addEventListener('click', fullscreen, false);
   }
   else
   {
@@ -1455,7 +1488,9 @@ function loadCadeiras(populateCadeirasInstances) {
     object.traverse(function(child) {
       if (child instanceof THREE.Mesh && child.geometry != "undefined") {
 
-        bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
+        //bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
+
+        bufferGeometry = child.geometry;
 
       }
     });
@@ -1478,14 +1513,13 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
     var vertex = mesh.geometry.vertices[i];
 
     // create the material
-    var material = new THREE.MeshPhongMaterial( {
-      color: 0xffffff,
+    var materialcadeira = new THREE.MeshPhongMaterial( {
       map: texturaCadeira,
-      normalMap: texturaCadeiraNormalMap,
-    } );
+      normalMap: texturaCadeiraNormalMap
+    });
 
     // create the new instance
-    newObject = new THREE.Mesh(bufferGeometry,material);
+    newObject = new THREE.Mesh(bufferGeometry,materialcadeira);
 
     // if this instance has a normal vector
     if (normalsArray[i] != null){
@@ -1499,8 +1533,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
       newObject.position.x = vertex.x;
       newObject.position.y = vertex.y;
       newObject.position.z = vertex.z;
-      newObject.geometry.computeFaceNormals();
-      newObject.geometry.computeVertexNormals();
 
       // calculate the quaternion from the vertical axis and the computed normal vector
       var quaternion = new THREE.Quaternion().setFromUnitVectors( vAxis.normalize(),to.normalize()  );
@@ -1604,7 +1636,7 @@ function loadBracos(populateBracosInstances){
     map: texturaBraco,
     specular : [0.1, 0.1, 0.1],
     shininess : 120.00,
-    normalMap: texturaBracoNormalMap,
+    normalMap: texturaBracoNormalMap
   });
 
   var meshBracos = [];
@@ -2410,31 +2442,17 @@ function onMouseWheel(e) {
       break;
     }
   }
-return false;
+  return false;
 }
 
-
-function resize() {
-  var width = container.offsetWidth;
-  var height = container.offsetHeight;
-
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-
-  renderer.setSize(width, height);
-  renderVR.setSize(width, height);
-}
 
 function render(dt) {
     renderVR.render(mainScene, camera);
   }
 
 function update(dt) {
-  resize();
-
-  camera.updateProjectionMatrix();
-
-  controls.update(dt);
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderVR.setSize(window.innerWidth, window.innerHeight);
 }
 
 //
@@ -2906,6 +2924,9 @@ function switchToVr() {
     document.getElementById ('ptrocavr').innerHTML = "VR";
     document.getElementById("ptrocavrImg").src="img/VR-icon.png";
     isVR = false;
+    element = renderer.domElement;
+    container = document.body;
+    container.appendChild(element);
   }
 }
 
