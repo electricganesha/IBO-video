@@ -89,35 +89,55 @@ $.ajax({
   async: false
 });
 
+$.ajax({
+  type: "GET",
+  url: "js/EffectComposer.js",
+  dataType: "script",
+  async: false
+});
+
+$.ajax({
+  type: "GET",
+  url: "js/BloomPass.js",
+  dataType: "script",
+  async: false
+});
+
+
+
 // TEXTURES
+var loader = new THREE.TextureLoader();
 
-var texturaCadeira = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_vermelho_small.jpg');
+var texturaCadeira = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_vermelho_small.jpg');
 
-var texturaCadeiraSelect = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
+var texturaCadeiraSelect = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
 
-var texturaCadeiraHighlight = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
+var texturaCadeiraHighlight = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_amarelo_small.jpg');
 
-var texturaCadeiraOcupada = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/cadeira_Tex_ocupada.jpg');
+var texturaCadeiraOcupada = loader.load('models/Cinema_Motta/Cadeira_Nova/cadeira_Tex_ocupada.jpg');
 
-var texturaCadeiraDeficiente = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_azul_small.jpg');
+var texturaCadeiraDeficiente = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_azul_small.jpg');
 
-var texturaCadeiraNormalMap = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Normals_small.jpg');
+var texturaCadeiraNormalMap = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Normals_small.jpg');
 
-var texturaBracoNormalMap = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Braco_Novo/BracoCadeira_Normal_small.jpg');
+texturaCadeiraNormalMap.minFilter = THREE.LinearFilter;
 
-var texturaBraco = THREE.ImageUtils.loadTexture('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diffuse_small.jpg');
+var texturaBracoNormalMap = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Normal_small.jpg');
 
-var eyeTexture = THREE.ImageUtils.loadTexture('models/Cinema_Motta/eye-icon.png');
+var texturaBraco = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diffuse_small.jpg');
 
-var textureEcra = THREE.ImageUtils.loadTexture('models/Cinema_Motta/ecra.jpg');
+var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
+
+var textureEcra = loader.load('models/Cinema_Motta/ecra.jpg');
 textureEcra.wrapS = THREE.RepeatWrapping;
 textureEcra.wrapT = THREE.RepeatWrapping;
 
-/*video = document.getElementById( 'video' );
+video = document.getElementById( 'video' );
+console.log(video);
 textureVideo = new THREE.VideoTexture( video );
-				texture.minFilter = THREE.LinearFilter;
-				texture.magFilter = THREE.LinearFilter;
-				texture.format = THREE.RGBFormat;*/
+				textureVideo.minFilter = THREE.LinearFilter;
+				textureVideo.magFilter = THREE.LinearFilter;
+				textureVideo.format = THREE.RGBFormat;
 
 // BOOLEANS
 
@@ -134,6 +154,8 @@ var mouseIsOnMenu = false; // if the mouse is over the menu
 var mouseIsOutOfDocument = false; // if the mouse is over the menu
 
 var isPerspectiveOrtho = false; // if we are in 2D perspective
+
+var isVR = false; // if we are in VR view
 
 var sittingDownOrtho = false; //if the user has clicked on a chair and before was orthographic (e.g. is sitting down)
 
@@ -153,7 +175,7 @@ var clock = new THREE.Clock();
 
 var container;
 
-var camera, scene, renderer;
+var camera, scene, renderer, renderVR;
 
 var spriteEyeModel = new THREE.Mesh();
 
@@ -212,13 +234,20 @@ var updateFcts = []; // the array with the video frames
 var video; // the video canvas
 var plane; // the video screen
 
+
+
 // STRUCTURAL / DOM / RENDERER
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
 renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+element = renderer.domElement;
+container = document.body;
+container.appendChild(element);
+
+renderVR = new THREE.StereoEffect(renderer);
+renderVR.eyeSeparation = 0.01;
 
 // create the main selection menu
 var waterMarkDiv = document.createElement('div');
@@ -236,6 +265,7 @@ document.body.appendChild(waterMarkDiv);
 
 loadingScene = new THREE.Scene();
 mainScene = new THREE.Scene();
+
 
 startLoadingScene();
 loadScene();
@@ -288,6 +318,19 @@ function startLoadingScene() {
 //
 // Here we initialise all the needed variables, like the stats, camera, and controls
 //
+
+function fullscreen() {
+    if (container.requestFullscreen) {
+      container.requestFullscreen();
+    } else if (container.msRequestFullscreen) {
+      container.msRequestFullscreen();
+    } else if (container.mozRequestFullScreen) {
+      container.mozRequestFullScreen();
+    } else if (container.webkitRequestFullscreen) {
+      container.webkitRequestFullscreen();
+    }
+  }
+
 function init() {
   // STATS
 
@@ -312,7 +355,6 @@ function init() {
   document.body.appendChild( statsMS.domElement );
   document.body.appendChild( statsMB.domElement );
 
-
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 50 );
 
   camera.position.x = -6.160114995658247;
@@ -323,8 +365,12 @@ function init() {
 
   if(detectmob())
   {
-    controls = new THREE.DeviceOrientationControls( camera );
+
+    controls = new THREE.DeviceOrientationControls(camera, renderer.domElement);
     controls.connect();
+    controls.update();
+
+    element.addEventListener('click', fullscreen, false);
   }
   else
   {
@@ -417,9 +463,21 @@ function init() {
   iDiv1.style.top = '0';
   iDiv1.style.display = "none";
 
+  var iDivhelp = document.createElement('img');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDivhelp.style.margin = 'auto';
+  iDivhelp.style.marginTop = '10%';
+  iDivhelp.style.width = '852px';
+  iDivhelp.style.cursor = "pointer";
+  iDivhelp.style.pointerEvents = "none";
+  iDivhelp.style.height = '523px';
+  iDivhelp.id = 'helpScreenArrow';
+
   iDiv.appendChild(textDiv);
   document.body.appendChild(iDiv);
+  iDiv1.appendChild(iDivhelp);
   document.body.appendChild(iDiv1);
+  document.getElementById("helpScreenArrow").src="img/help.png";
 
   $("#loadedScreen").fadeIn("slow");
   $( "#loadedScreen" ).click(function() {
@@ -583,25 +641,40 @@ function showMenuSelect(){
   legDiv.style.height = '160px';
   legDiv.style.position = "absolute";
   legDiv.id = 'LegDiv';
-
   // create sub main legenda for cinema
   var legenda = document.createElement('div');
-  legenda.style.width = '780px';
+  legenda.style.width = '900px';
   legenda.style.margin = "auto";
   legenda.style.textAlign = "center";
   legenda.style.height = '200px';
   legenda.style.borderRadius = "10px";
   legenda.id = 'legenda';
 
-  // create legend for cinema
   var legEsq = document.createElement('div');
-  legEsq.style.width = '670px';
+  legEsq.style.width = '90px';
   legEsq.style.float = "left";
   legEsq.style.textAlign = "center";
   legEsq.style.height = '200px';
-  legEsq.style.background = '#243141';
+  legEsq.style.background = '#1cbb9b';
   legEsq.style.borderRadius = "10px";
   legEsq.id = 'legEsq';
+  legEsq.onclick = function() {
+    switchToVr();
+  }
+  legEsq.onmouseover = function() {
+    legEsq.style.cursor = 'pointer';
+  }
+
+  // create legend for cinema
+  var legMid = document.createElement('div');
+  legMid.style.width = '670px';
+  legMid.style.float = "left";
+  legMid.style.textAlign = "center";
+  legMid.style.height = '200px';
+  legMid.style.marginLeft = '25px';
+  legMid.style.background = '#243141';
+  legMid.style.borderRadius = "10px";
+  legMid.id = 'legMid';
   // create legend for cinema
   var legDir = document.createElement('div');
   legDir.style.width = '90px';
@@ -643,7 +716,7 @@ function showMenuSelect(){
 
   topicDiv1.appendChild(pverPrespImg);
   topicDiv1.appendChild(pverPresp);
-  legEsq.appendChild(topicDiv1);
+  legMid.appendChild(topicDiv1);
 
   //Topic available
   var topicDiv2 = document.createElement('div');
@@ -672,7 +745,7 @@ function showMenuSelect(){
 
   topicDiv2.appendChild(pavailableImg);
   topicDiv2.appendChild(pavailable);
-  legEsq.appendChild(topicDiv2);
+  legMid.appendChild(topicDiv2);
 
   //Topic selected
   var topicDiv3 = document.createElement('div');
@@ -701,7 +774,7 @@ function showMenuSelect(){
 
   topicDiv3.appendChild(pselectedImg);
   topicDiv3.appendChild(pselected);
-  legEsq.appendChild(topicDiv3);
+  legMid.appendChild(topicDiv3);
 
   //Topic defecient
   var topicDiv4 = document.createElement('div');
@@ -730,7 +803,7 @@ function showMenuSelect(){
 
   topicDiv4.appendChild(pdefecientImg);
   topicDiv4.appendChild(pdefecient);
-  legEsq.appendChild(topicDiv4);
+  legMid.appendChild(topicDiv4);
 
   //Topic not available
   var topicDiv5 = document.createElement('div');
@@ -759,7 +832,7 @@ function showMenuSelect(){
 
   topicDiv5.appendChild(pnotavaImg);
   topicDiv5.appendChild(pnotava);
-  legEsq.appendChild(topicDiv5);
+  legMid.appendChild(topicDiv5);
 
   //Topic Capacity
   var capacityDiv = document.createElement('div');
@@ -791,7 +864,7 @@ function showMenuSelect(){
 
   capacityDiv.appendChild(pcapacity);
   capacityDiv.appendChild(pcapacityNumber);
-  legEsq.appendChild(capacityDiv);
+  legMid.appendChild(capacityDiv);
 
   //Topic Free seats
   var freeseatsDiv = document.createElement('div');
@@ -823,7 +896,7 @@ function showMenuSelect(){
 
   freeseatsDiv.appendChild(pfreeseats);
   freeseatsDiv.appendChild(pfreeseatsNumber);
-  legEsq.appendChild(freeseatsDiv);
+  legMid.appendChild(freeseatsDiv);
 
   var ptrocapresp = document.createElement('p');
   ptrocapresp.innerHTML = "Ver Planta";
@@ -837,11 +910,27 @@ function showMenuSelect(){
   ptrocaprespImg.id = "ptrocaprespImg";
   ptrocaprespImg.style.marginTop = "2px";
 
+  var ptrocavr = document.createElement('p');
+  ptrocavr.innerHTML = "VR";
+  ptrocavr.style.color = "#FFF";
+  ptrocavr.style.fontSize = "13px";
+  ptrocavr.style.fontFamily = "osr";
+  ptrocavr.style.marginTop = "15px";
+  ptrocavr.id = "ptrocavr";
+
+  var ptrocavrImg = document.createElement('img');
+  ptrocavrImg.id = "ptrocavrImg";
+  ptrocavrImg.style.marginTop = "-4px";
+
+  legEsq.appendChild(ptrocavr);
+  legEsq.appendChild(ptrocavrImg);
+
   legDir.appendChild(ptrocapresp);
   legDir.appendChild(ptrocaprespImg);
 
   legDiv.appendChild(legenda);
   legenda.appendChild(legEsq);
+  legenda.appendChild(legMid);
   legenda.appendChild(legDir);
   document.body.appendChild(legDiv);
   document.getElementById("pverPrespImg").src="img/ver.png";
@@ -850,6 +939,8 @@ function showMenuSelect(){
   document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
   document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
   document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
+  document.getElementById("ptrocavrImg").src="img/VR-icon.png";
+
 
   // create the main selection menu
   var iDiv = document.createElement('div');
@@ -1285,6 +1376,13 @@ function showMenuSelect(){
     mouseIsOnMenu = false;
   },false);
 
+  if(detectmob())
+  {
+    document.getElementById("watermarkDiv").style.display = "none";
+    //document.getElementById("LegDiv").style.display = "none";
+    document.getElementById("menuSelect").style.display = "none";
+  }
+
 }
 
 //
@@ -1304,13 +1402,13 @@ function loadScene() {
   });
 
   // create the cinema screen
-  /*var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
+  var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
   var material = new THREE.MeshBasicMaterial( {side:THREE.DoubleSide, map:textureVideo} );
   var plane = new THREE.Mesh( geometry, material );
   plane.position.x = -6.5;
   plane.position.y = 1.2;
   plane.rotation.y = Math.PI/2;
-  mainScene.add( plane );*/
+  mainScene.add( plane );
 }
 
 //
@@ -1402,15 +1500,25 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
   for(i=0; i<mesh.geometry.vertices.length; i++){
     var vertex = mesh.geometry.vertices[i];
 
-    // create the material
-    var material = new THREE.MeshPhongMaterial( {
-      color: 0xffffff,
-      map: texturaCadeira,
-      normalMap: texturaCadeiraNormalMap,
-    } );
+    if(detectmob())
+    {
+      // create the material
+      var materialcadeira = new THREE.MeshBasicMaterial( {
+        map: texturaCadeira
+      });
+    }
+    else
+    {
+      // create the material
+      var materialcadeira = new THREE.MeshPhongMaterial( {
+        map: texturaCadeira,
+        normalMap: texturaCadeiraNormalMap
+      });
+
+    }
 
     // create the new instance
-    newObject = new THREE.Mesh(bufferGeometry,material);
+    newObject = new THREE.Mesh(bufferGeometry,materialcadeira);
 
     // if this instance has a normal vector
     if (normalsArray[i] != null){
@@ -1424,8 +1532,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
       newObject.position.x = vertex.x;
       newObject.position.y = vertex.y;
       newObject.position.z = vertex.z;
-      newObject.geometry.computeFaceNormals();
-      newObject.geometry.computeVertexNormals();
 
       // calculate the quaternion from the vertical axis and the computed normal vector
       var quaternion = new THREE.Quaternion().setFromUnitVectors( vAxis.normalize(),to.normalize()  );
@@ -1524,14 +1630,27 @@ function loadBracos(populateBracosInstances){
   // single geometry for geometry merge
   var singleGeometry = new THREE.Geometry();
 
-  // chair arm material
-  var material = new THREE.MeshPhongMaterial({
-    map: texturaBraco,
-    specular : [0.1, 0.1, 0.1],
-    shininess : 120.00,
-    normalMap: texturaBracoNormalMap,
-  });
 
+  if(detectmob())
+  {
+    // chair arm material
+    var material = new THREE.MeshBasicMaterial({
+      map: texturaBraco,
+      specular : [0.1, 0.1, 0.1],
+      shininess : 120.00
+    });
+  }
+  else
+  {
+    // chair arm material
+    var material = new THREE.MeshPhongMaterial({
+      map: texturaBraco,
+      specular : [0.1, 0.1, 0.1],
+      shininess : 120.00,
+      normalMap: texturaBracoNormalMap
+    });
+
+  }
   var meshBracos = [];
   var normalsArrayBracos = [];
   var normalVector = new THREE.Vector3(0,0,0);
@@ -1540,7 +1659,6 @@ function loadBracos(populateBracosInstances){
   loaderJSON.load( "models/Cinema_Motta/Pcloud_oriented_Bracos.js", function( geometry, material, normals ) {
 
     meshBracos = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
-
     for(i=0 ; i<normals.length ; i+=3)
     {
       normalVector = new THREE.Vector3(normals[i], normals[i+1], normals[i+2]);
@@ -1549,19 +1667,17 @@ function loadBracos(populateBracosInstances){
 
   } );
 
-  var preNewObject;
-
   // 2. load the model itself (only once) to replicate and get the geometry to pass along
   var loaderOBJ = new THREE.OBJMTLLoader();
   loaderOBJ.load( 'models/Cinema_Motta/Braco_Novo/Braco_Novo.obj', 'models/Cinema_Motta/Braco_Novo/Braco_Novo.mtl', function ( object ) {
+    var preNewObject;
     object.traverse(function(child) {
       //(child.name);
-      if (child instanceof THREE.Mesh){// && child.name == "BracoCadeira:Group2.001") {
+      if (child instanceof THREE.Mesh && child.geometry != "undefined"){
         preNewObject = new THREE.Mesh( child.geometry, material );
-        populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,normalVector,preNewObject,material);
-
       }
     });
+    populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,normalVector,preNewObject,material);
   });
 
 }
@@ -2335,7 +2451,17 @@ function onMouseWheel(e) {
       break;
     }
   }
-return false;
+  return false;
+}
+
+
+function render(dt) {
+    renderVR.render(mainScene, camera);
+  }
+
+function update(dt) {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderVR.setSize(window.innerWidth, window.innerHeight);
 }
 
 //
@@ -2343,7 +2469,6 @@ return false;
 //
 function animate() {
   requestAnimationFrame(animate);
-
   // if we are rendering the loading scene
   if(isLoading)
   {
@@ -2423,7 +2548,7 @@ animate();
 function changePerspective(x, y, z,obj) {
 
   $("#menuSelect").animate({"right": '-=300px'});
-
+  video.play();
   sittingDown = true;
 
   lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
@@ -2554,7 +2679,7 @@ function onKeyDown(event) {
 // ******************************************** Video Update FbF ********************************************
 
 
-/*updateFcts.push(function() {
+updateFcts.push(function() {
 renderer.render(scene, camera);
 })
 
@@ -2570,7 +2695,7 @@ lastTimeMsec = nowMsec
 updateFcts.forEach(function(updateFn) {
 updateFn(deltaMsec / 1000, nowMsec / 1000)
 })
-})*/
+})
 
 //
 // launch the Tween for changing perspective to seat perspective
@@ -2649,7 +2774,6 @@ function setupTweenFP(obj) {
   }).onComplete(function () {
   }).start();
 }
-
 //
 // launch the Tween for changing perspective to overview perspective
 //
@@ -2789,18 +2913,45 @@ function switchToOrtho() {
   }
 }
 
+function animateVr() {
+  requestAnimationFrame(animateVr);
+  update(clock.getDelta());
+  render(clock.getDelta());
+}
+
+function switchToVr() {
+  if (isVR==false) // if we're in cinema overview 3D change to 2D view
+  {
+    document.getElementById ('ptrocavr').innerHTML = "3D";
+    document.getElementById("ptrocavrImg").src="img/icon - cadeiras 3D.png";
+    isVR = true;
+    animateVr();
+
+  }
+  else // change back to 3D view
+  {
+    document.getElementById ('ptrocavr').innerHTML = "VR";
+    document.getElementById("ptrocavrImg").src="img/VR-icon.png";
+    isVR = false;
+    element = renderer.domElement;
+    container = document.body;
+    container.appendChild(element);
+  }
+}
+
 // detect if we are using a mobile
-function detectmob() {
-  if( navigator.userAgent.match(/Android/i)
-  || navigator.userAgent.match(/webOS/i)
-  || navigator.userAgent.match(/iPhone/i)
-  || navigator.userAgent.match(/iPad/i)
-  || navigator.userAgent.match(/iPod/i)
-  || navigator.userAgent.match(/BlackBerry/i)
-  || navigator.userAgent.match(/Windows Phone/i)){
-    return true;
-  }
-  else{
-    return false;
-  }
+  function detectmob() {
+    if( navigator.userAgent.match(/Android/i)
+    || navigator.userAgent.match(/webOS/i)
+    || navigator.userAgent.match(/iPhone/i)
+    || navigator.userAgent.match(/iPad/i)
+    || navigator.userAgent.match(/iPod/i)
+    || navigator.userAgent.match(/BlackBerry/i)
+    || navigator.userAgent.match(/Windows Phone/i)){
+
+      return true;
+    }
+    else{
+      return false;
+    }
 }
