@@ -9,6 +9,9 @@ THREE.DeviceOrientationControls = function ( object ) {
 
 	var scope = this;
 
+	var firstAlpha;
+	var firstIn = false;
+
 	this.object = object;
 
 	this.object.rotation.reorder( "YXZ" );
@@ -23,6 +26,11 @@ THREE.DeviceOrientationControls = function ( object ) {
 
 		scope.deviceOrientation = event;
 
+		if(!firstIn)
+		{
+    	firstAlpha = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.alpha ) : 0;
+			firstIn = true;
+		}
 	};
 
 	var onScreenOrientationChangeEvent = function () {
@@ -85,6 +93,8 @@ THREE.DeviceOrientationControls = function ( object ) {
 		var beta   = scope.deviceOrientation.beta  ? THREE.Math.degToRad( scope.deviceOrientation.beta  ) : 0; // X'
 		var gamma  = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.gamma ) : 0; // Y''
 		var orient = scope.screenOrientation       ? THREE.Math.degToRad( scope.screenOrientation       ) : 0; // O
+
+		alpha = alpha-firstAlpha;
 
 		setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
