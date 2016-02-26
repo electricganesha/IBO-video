@@ -132,11 +132,12 @@ var textureEcra = loader.load('models/Cinema_Motta/ecra.jpg');
 textureEcra.wrapS = THREE.RepeatWrapping;
 textureEcra.wrapT = THREE.RepeatWrapping;
 
-/*video = document.getElementById( 'video' );
+video = document.getElementById( 'video' );
+console.log(video);
 textureVideo = new THREE.VideoTexture( video );
-				texture.minFilter = THREE.LinearFilter;
-				texture.magFilter = THREE.LinearFilter;
-				texture.format = THREE.RGBFormat;*/
+				textureVideo.minFilter = THREE.LinearFilter;
+				textureVideo.magFilter = THREE.LinearFilter;
+				textureVideo.format = THREE.RGBFormat;
 
 // BOOLEANS
 
@@ -239,25 +240,14 @@ var plane; // the video screen
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
-if(detectmob())
-{
-  renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:false });
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  element = renderer.domElement;
-  container = document.body;
-  container.appendChild(element);
+renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
+renderer.setSize( window.innerWidth, window.innerHeight );
+element = renderer.domElement;
+container = document.body;
+container.appendChild(element);
 
-}
-else
-{
-  renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
-  renderer.setSize( window.innerWidth, window.innerHeight );
-  element = renderer.domElement;
-  container = document.body;
-  container.appendChild(element);
-
-}
 renderVR = new THREE.StereoEffect(renderer);
+renderVR.eyeSeparation = 0.01;
 
 // create the main selection menu
 var waterMarkDiv = document.createElement('div');
@@ -376,11 +366,11 @@ function init() {
   if(detectmob())
   {
 
-    controls = new THREE.DeviceOrientationControls(camera, true);
+    controls = new THREE.DeviceOrientationControls(camera, renderer.domElement);
     controls.connect();
     controls.update();
 
-    //element.addEventListener('click', fullscreen, false);
+    element.addEventListener('click', fullscreen, false);
   }
   else
   {
@@ -496,7 +486,7 @@ function init() {
     setInterval(function() {
       $("#helpScreen").fadeOut("slow");
       insideHelp = false;
-    }, 2000);
+    }, 0);
   });
   isLoading = false;
 }
@@ -1412,13 +1402,13 @@ function loadScene() {
   });
 
   // create the cinema screen
-  /*var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
+  var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
   var material = new THREE.MeshBasicMaterial( {side:THREE.DoubleSide, map:textureVideo} );
   var plane = new THREE.Mesh( geometry, material );
   plane.position.x = -6.5;
   plane.position.y = 1.2;
   plane.rotation.y = Math.PI/2;
-  mainScene.add( plane );*/
+  mainScene.add( plane );
 }
 
 //
@@ -1488,9 +1478,7 @@ function loadCadeiras(populateCadeirasInstances) {
     object.traverse(function(child) {
       if (child instanceof THREE.Mesh && child.geometry != "undefined") {
 
-        //bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
-
-        bufferGeometry = child.geometry;
+        bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
 
       }
     });
@@ -1512,11 +1500,22 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
   for(i=0; i<mesh.geometry.vertices.length; i++){
     var vertex = mesh.geometry.vertices[i];
 
-    // create the material
-    var materialcadeira = new THREE.MeshPhongMaterial( {
-      map: texturaCadeira,
-      normalMap: texturaCadeiraNormalMap
-    });
+    if(detectmob())
+    {
+      // create the material
+      var materialcadeira = new THREE.MeshBasicMaterial( {
+        map: texturaCadeira
+      });
+    }
+    else
+    {
+      // create the material
+      var materialcadeira = new THREE.MeshPhongMaterial( {
+        map: texturaCadeira,
+        normalMap: texturaCadeiraNormalMap
+      });
+
+    }
 
     // create the new instance
     newObject = new THREE.Mesh(bufferGeometry,materialcadeira);
@@ -1631,14 +1630,27 @@ function loadBracos(populateBracosInstances){
   // single geometry for geometry merge
   var singleGeometry = new THREE.Geometry();
 
-  // chair arm material
-  var material = new THREE.MeshPhongMaterial({
-    map: texturaBraco,
-    specular : [0.1, 0.1, 0.1],
-    shininess : 120.00,
-    normalMap: texturaBracoNormalMap
-  });
 
+  if(detectmob())
+  {
+    // chair arm material
+    var material = new THREE.MeshBasicMaterial({
+      map: texturaBraco,
+      specular : [0.1, 0.1, 0.1],
+      shininess : 120.00
+    });
+  }
+  else
+  {
+    // chair arm material
+    var material = new THREE.MeshPhongMaterial({
+      map: texturaBraco,
+      specular : [0.1, 0.1, 0.1],
+      shininess : 120.00,
+      normalMap: texturaBracoNormalMap
+    });
+
+  }
   var meshBracos = [];
   var normalsArrayBracos = [];
   var normalVector = new THREE.Vector3(0,0,0);
@@ -1647,7 +1659,6 @@ function loadBracos(populateBracosInstances){
   loaderJSON.load( "models/Cinema_Motta/Pcloud_oriented_Bracos.js", function( geometry, material, normals ) {
 
     meshBracos = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
-
     for(i=0 ; i<normals.length ; i+=3)
     {
       normalVector = new THREE.Vector3(normals[i], normals[i+1], normals[i+2]);
@@ -1656,19 +1667,17 @@ function loadBracos(populateBracosInstances){
 
   } );
 
-  var preNewObject;
-
   // 2. load the model itself (only once) to replicate and get the geometry to pass along
   var loaderOBJ = new THREE.OBJMTLLoader();
   loaderOBJ.load( 'models/Cinema_Motta/Braco_Novo/Braco_Novo.obj', 'models/Cinema_Motta/Braco_Novo/Braco_Novo.mtl', function ( object ) {
+    var preNewObject;
     object.traverse(function(child) {
       //(child.name);
-      if (child instanceof THREE.Mesh){// && child.name == "BracoCadeira:Group2.001") {
+      if (child instanceof THREE.Mesh && child.geometry != "undefined"){
         preNewObject = new THREE.Mesh( child.geometry, material );
-        populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,normalVector,preNewObject,material);
-
       }
     });
+    populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,normalVector,preNewObject,material);
   });
 
 }
@@ -2539,7 +2548,7 @@ animate();
 function changePerspective(x, y, z,obj) {
 
   $("#menuSelect").animate({"right": '-=300px'});
-
+  video.play();
   sittingDown = true;
 
   lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
@@ -2670,7 +2679,7 @@ function onKeyDown(event) {
 // ******************************************** Video Update FbF ********************************************
 
 
-/*updateFcts.push(function() {
+updateFcts.push(function() {
 renderer.render(scene, camera);
 })
 
@@ -2686,7 +2695,7 @@ lastTimeMsec = nowMsec
 updateFcts.forEach(function(updateFn) {
 updateFn(deltaMsec / 1000, nowMsec / 1000)
 })
-})*/
+})
 
 //
 // launch the Tween for changing perspective to seat perspective
