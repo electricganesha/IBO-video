@@ -23,7 +23,6 @@ THREE.DeviceOrientationControls = function ( object ) {
 	this.screenOrientation = 0;
 
 	var onDeviceOrientationChangeEvent = function ( event ) {
-
 		scope.deviceOrientation = event;
 
 		if(!firstIn)
