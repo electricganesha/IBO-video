@@ -70,14 +70,14 @@ $.ajax({
 
 $.ajax({
   type: "GET",
-  url: "js/DeviceOrientationControls.js",
+  url: "js/threex.videotexture.js",
   dataType: "script",
   async: false
 });
 
 $.ajax({
   type: "GET",
-  url: "js/threex.videotexture.js",
+  url: "js/jquery-ui.js",
   dataType: "script",
   async: false
 });
@@ -92,12 +92,6 @@ $.ajax({
 $.ajax({
   type: "GET",
   url: "js/jquery-ui.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/EffectComposer.js",
   dataType: "script",
   async: false
@@ -106,6 +100,13 @@ $.ajax({
 $.ajax({
   type: "GET",
   url: "js/BloomPass.js",
+  dataType: "script",
+  async: false
+});
+
+$.ajax({
+  type: "GET",
+  url: "js/vreticle.js",
   dataType: "script",
   async: false
 });
@@ -289,8 +290,6 @@ var materialcadeiraOcupada = new THREE.MeshPhongMaterial( {
 
 
 // STRUCTURAL / DOM / RENDERER
-var windowHalfX = window.innerWidth / 2;
-var windowHalfY = window.innerHeight / 2;
 
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -318,7 +317,6 @@ document.body.appendChild(waterMarkDiv);
 
 loadingScene = new THREE.Scene();
 mainScene = new THREE.Scene();
-
 
 startLoadingScene();
 loadScene();
@@ -385,6 +383,215 @@ function fullscreen() {
     }
   }
 
+THREE.DeviceOrientationControls = function ( object ) {
+
+  	var scope = this;
+
+  	var firstAlpha;
+  	var firstIn = false;
+
+  	this.object = object;
+
+  	this.object.rotation.reorder( "YXZ" );
+
+  	this.freeze = true;
+
+  	this.deviceOrientation = {};
+
+  	this.screenOrientation = 0;
+
+  	var onDeviceOrientationChangeEvent = function ( event ) {
+  		scope.deviceOrientation = event;
+  		if(!firstIn)
+  		{
+      	firstAlpha = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.alpha ) : 0;
+  			firstIn = true;
+  		}
+      if(!sittingDown && isVR)
+      {
+        var mouse2 = new THREE.Vector2();
+        mouse2.x = 2 * ((window.innerWidth/2) / window.innerWidth) - 1;
+        mouse2.y = 1 - 2 * ((window.innerHeight/2) / window.innerHeight);
+        // normal raycasting variables
+        var intersectedOne = false;
+        var intersectedObject = new THREE.Object3D();
+
+        var raycaster = new THREE.Raycaster();
+
+        var intersections;
+
+        raycaster.setFromCamera( mouse2, camera );
+
+        // search the raycasted objects in the octree
+        octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
+
+        intersections = raycaster.intersectOctreeObjects( octreeObjects );
+
+        //console.log(intersections);
+
+        var spriteFound = false;
+
+        // for each of the intersected objects
+        for(var i=0; i<intersections.length; i++)
+        {
+          // if intersected object is a sprite
+          if(intersections[i].object.name == "spriteEye")
+          {
+            spriteFound = true;
+          }
+        }
+
+
+        // if there is an intersection
+        if ( intersections.length > 0 ) {
+          // Check if the objects are in front of each other
+          var intersectionIndex = 0;
+
+          for(var i = 0 ; i < intersections.length ; i++)
+          {
+            var lowerX = intersections[0].object.position.x;
+
+            if( intersections[i].object.position.x < lowerX){
+              lowerX = intersections[i].object.position.x;
+              intersectionIndex = i;
+              }
+          }
+
+          intersectionObject = intersections[intersectionIndex].object;
+          // if previously intersected object is not the current intersection and is not a sprite
+          if ( intersected != intersectionObject && !spriteFound) {
+            // if there was a previously intersected object
+            if ( intersected )
+            {
+              // change the texture of the intersected object to the old object to the original color
+              switch(uuidTexturaAntiga) {
+                case texturaCadeiraOcupada.uuid:
+                intersected.material.map = texturaCadeiraOcupada;
+                break;
+                case texturaCadeiraDeficiente.uuid:
+                intersected.material.map = texturaCadeiraDeficiente;
+                break;
+                default:
+                intersected.material.map = texturaCadeira;
+              }
+            }
+
+            intersected = intersectionObject;
+            uuidTexturaAntiga = intersected.material.map.uuid;
+
+            // if intersection is new : change color to highlight
+            switch(intersected.material.map.uuid) {
+              case texturaCadeiraOcupada.uuid:
+              intersected.material.map = texturaCadeiraOcupada;
+              break;
+              case texturaCadeiraDeficiente.uuid:
+              intersected.material.map = texturaCadeiraHighlight;
+              break;
+              default:
+              intersected.material.map = texturaCadeiraHighlight;
+
+            }
+          }
+        }
+        else // if there are no intersections
+        {
+          // if there was a previous intersection
+          if ( intersected ) {
+            // change the texture of the intersected object to the old object to the original color
+            switch(uuidTexturaAntiga) {
+              case texturaCadeira.uuid:
+              intersected.material.map = texturaCadeira;
+              break;
+              case texturaCadeiraOcupada.uuid:
+              intersected.material.map = texturaCadeiraOcupada;
+              break;
+              case texturaCadeiraDeficiente.uuid:
+              intersected.material.map = texturaCadeiraDeficiente;
+              break;
+              default:
+            }
+          }
+          intersected = null;
+          uuidTexturaAntiga = "";
+        }
+
+        // paint all the selected chairs (check the array) with the selected color
+        for(var i=0 ; i< selectedChairs.length ; i++)
+        {
+          selectedChairs[i].material.map = texturaCadeiraSelect;
+        }
+      }
+  	};
+
+  	var onScreenOrientationChangeEvent = function () {
+
+  		scope.screenOrientation = window.orientation || 0;
+
+  	};
+
+  	// The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
+
+  	var setObjectQuaternion = function () {
+
+  		var zee = new THREE.Vector3( 0, 0, 1 );
+
+  		var euler = new THREE.Euler();
+
+  		var q0 = new THREE.Quaternion();
+
+  		var q1 = new THREE.Quaternion( - Math.sqrt( 0.5 ), 0, 0, Math.sqrt( 0.5 ) ); // - PI/2 around the x-axis
+
+  		return function ( quaternion, alpha, beta, gamma, orient ) {
+
+  			euler.set( beta, alpha, - gamma, 'YXZ' );                       // 'ZXY' for the device, but 'YXZ' for us
+
+  			quaternion.setFromEuler( euler );                               // orient the device
+
+  			quaternion.multiply( q1 );                                      // camera looks out the back of the device, not the top
+
+  			quaternion.multiply( q0.setFromAxisAngle( zee, - orient ) );    // adjust for screen orientation
+
+  		}
+
+  	}();
+
+  	this.connect = function() {
+
+  		onScreenOrientationChangeEvent(); // run once on load
+
+  		window.addEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
+  		window.addEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
+
+  		scope.freeze = false;
+
+  	};
+
+  	this.disconnect = function() {
+
+  		scope.freeze = true;
+
+  		window.removeEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
+  		window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
+
+  	};
+
+  	this.update = function () {
+
+  		if ( scope.freeze ) return;
+
+  		var alpha  = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.alpha ) : 0; // Z
+  		var beta   = scope.deviceOrientation.beta  ? THREE.Math.degToRad( scope.deviceOrientation.beta  ) : 0; // X'
+  		var gamma  = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.gamma ) : 0; // Y''
+  		var orient = scope.screenOrientation       ? THREE.Math.degToRad( scope.screenOrientation       ) : 0; // O
+
+  		alpha = alpha-firstAlpha;
+
+  		setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
+
+  	};
+
+  };
+
 function init() {
   // STATS
 
@@ -424,11 +631,8 @@ function init() {
   if(detectmob())
   {
 
-    controls = new THREE.DeviceOrientationControls(camera, renderer.domElement);
+    controls = new THREE.DeviceOrientationControls(camera);
     controls.connect();
-    controls.update();
-
-    element.addEventListener('click', fullscreen, false);
   }
   else
   {
@@ -741,6 +945,59 @@ function showMenuSelect(){
       }
     }
 
+  if(detectmob())
+  {
+    // create main legenda for cinema
+    var legDiv = document.createElement('div');
+    legDiv.style.width = '100%';
+    legDiv.style.top = "100%";
+    legDiv.style.marginTop = "-80px";
+    legDiv.style.height = '160px';
+    legDiv.style.position = "absolute";
+    legDiv.id = 'LegDiv';
+    // create sub main legenda for cinema
+    var legenda = document.createElement('div');
+    legenda.style.width = '900px';
+    legenda.style.margin = "auto";
+    legenda.style.textAlign = "center";
+    legenda.style.height = '200px';
+    legenda.style.borderRadius = "10px";
+    legenda.id = 'legenda';
+
+    var legEsq = document.createElement('div');
+    legEsq.style.width = '90px';
+    legEsq.style.float = "left";
+    legEsq.style.textAlign = "center";
+    legEsq.style.height = '200px';
+    legEsq.style.background = '#1cbb9b';
+    legEsq.style.borderRadius = "10px";
+    legEsq.id = 'legEsq';
+    legEsq.onclick = function() {
+      switchToVr();
+    }
+    legEsq.onmouseover = function() {
+      legEsq.style.cursor = 'pointer';
+    }
+
+    var ptrocavr = document.createElement('p');
+    ptrocavr.innerHTML = "VR";
+    ptrocavr.style.color = "#FFF";
+    ptrocavr.style.fontSize = "13px";
+    ptrocavr.style.fontFamily = "osr";
+    ptrocavr.style.marginTop = "15px";
+    ptrocavr.id = "ptrocavr";
+
+    var ptrocavrImg = document.createElement('img');
+    ptrocavrImg.id = "ptrocavrImg";
+    ptrocavrImg.style.marginTop = "-4px";
+
+    legEsq.appendChild(ptrocavr);
+    legEsq.appendChild(ptrocavrImg);
+    legDiv.appendChild(legenda);
+    legenda.appendChild(legEsq);
+    document.body.appendChild(legDiv);
+    document.getElementById("ptrocavrImg").src="img/VR-icon.png";
+  } else {
   // create main legenda for cinema
   var legDiv = document.createElement('div');
   legDiv.style.width = '100%';
@@ -1483,14 +1740,12 @@ function showMenuSelect(){
   $('#legenda').bind('mouseleave', "*", function(e){
     mouseIsOnMenu = false;
   },false);
+  }
 
   if(detectmob())
   {
     document.getElementById("watermarkDiv").style.display = "none";
-    //document.getElementById("LegDiv").style.display = "none";
-    document.getElementById("menuSelect").style.display = "none";
   }
-
 }
 
 //
@@ -1892,10 +2147,10 @@ var uuidTexturaAntiga ="";
 //
 // Mouse Move Event
 //
+// retrieve mouse coordinates
+var mouse = new THREE.Vector2();
 function onMouseMove(e) {
 
-  // retrieve mouse coordinates
-  var mouse = new THREE.Vector2();
   mouse.x = 2 * (e.clientX / window.innerWidth) - 1;
   mouse.y = 1 - 2 * (e.clientY / window.innerHeight);
 
@@ -2840,7 +3095,7 @@ function onKeyDown(event) {
 
 
 updateFcts.push(function() {
-renderer.render(scene, camera);
+  renderer.render(scene, camera);
 })
 
 var lastTimeMsec = null
@@ -2852,9 +3107,9 @@ lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60
 var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
 lastTimeMsec = nowMsec
 // call each update function
-updateFcts.forEach(function(updateFn) {
+/*updateFcts.forEach(function(updateFn) {
 updateFn(deltaMsec / 1000, nowMsec / 1000)
-})
+})*/
 })
 
 //
@@ -3079,12 +3334,14 @@ function animateVr() {
 }
 
 function switchToVr() {
-  if (isVR==false) // if we're in cinema overview 3D change to 2D view
+  if (isVR==false) // if we're in cinema overview 3D change to VR view
   {
     document.getElementById ('ptrocavr').innerHTML = "3D";
     document.getElementById("ptrocavrImg").src="img/icon - cadeiras 3D.png";
     isVR = true;
     animateVr();
+    var reticle = vreticle.Reticle(camera);
+    mainScene.add(camera);
 
   }
   else // change back to 3D view
