@@ -84,6 +84,13 @@ $.ajax({
 
 $.ajax({
   type: "GET",
+  url: "js/threex.rendererstats.js",
+  dataType: "script",
+  async: false
+});
+
+$.ajax({
+  type: "GET",
   url: "js/jquery-ui.js",
   dataType: "script",
   async: false
@@ -133,7 +140,6 @@ textureEcra.wrapS = THREE.RepeatWrapping;
 textureEcra.wrapT = THREE.RepeatWrapping;
 
 video = document.getElementById( 'video' );
-console.log(video);
 textureVideo = new THREE.VideoTexture( video );
 				textureVideo.minFilter = THREE.LinearFilter;
 				textureVideo.magFilter = THREE.LinearFilter;
@@ -180,18 +186,20 @@ var camera, scene, renderer, renderVR;
 var spriteEyeModel = new THREE.Mesh();
 
 // STATISTICS (FPS, MS, MB)
-
+var rendererStats  = new THREEx.RendererStats();
 var statsFPS = new Stats();
 var statsMS = new Stats();
 var statsMB = new Stats();
+
+var firstTimeRunning = true;
+var firstTimeLoading = true;
 
 // RAYCASTING
 
 // we are using an octree for increasing the performance on raycasting
 var octree = new THREE.Octree( {
-  //scene: scene,
-  undeferred: false,
-  depthMax: Infinity,
+  undeferred: true,
+  depthMax: 310,
   objectsThreshold: 8,
   overlapPct: 0.15
 } );
@@ -235,6 +243,50 @@ var video; // the video canvas
 var plane; // the video screen
 
 
+// create the material
+var materialcadeiraMobileHighlight = new THREE.MeshBasicMaterial( {
+  map: texturaCadeiraHighlight
+});
+
+// create the material
+var materialcadeiraMobile = new THREE.MeshBasicMaterial( {
+  map: texturaCadeira
+});
+
+// create the material
+var materialcadeiraDeficienteMobile = new THREE.MeshBasicMaterial( {
+  map: texturaCadeiraDeficiente,
+});
+
+// create the material
+var materialcadeiraOcupadaMobile = new THREE.MeshBasicMaterial( {
+  map: texturaCadeiraOcupada,
+});
+
+// create the material
+var materialcadeiraHighLight = new THREE.MeshPhongMaterial( {
+  map: texturaCadeiraHighlight,
+  normalMap: texturaCadeiraNormalMap
+});
+
+// create the material
+var materialcadeiraNormal = new THREE.MeshPhongMaterial( {
+  map: texturaCadeira,
+  normalMap: texturaCadeiraNormalMap
+});
+
+// create the material
+var materialcadeiraDeficiente = new THREE.MeshPhongMaterial( {
+  map: texturaCadeiraDeficiente,
+  normalMap: texturaCadeiraNormalMap
+});
+
+// create the material
+var materialcadeiraOcupada = new THREE.MeshPhongMaterial( {
+  map: texturaCadeiraOcupada,
+  normalMap: texturaCadeiraNormalMap
+});
+
 
 // STRUCTURAL / DOM / RENDERER
 var windowHalfX = window.innerWidth / 2;
@@ -243,6 +295,7 @@ var windowHalfY = window.innerHeight / 2;
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 element = renderer.domElement;
+//renderer.sortObjects = false;
 container = document.body;
 container.appendChild(element);
 
@@ -276,8 +329,9 @@ loadScene();
 //
 // check if all the models were loaded
 THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
-  if(loaded == total)
+  if(loaded == total && firstTimeLoading)
   {
+    firstTimeLoading = false;
     init();
   }
 };
@@ -334,6 +388,10 @@ function fullscreen() {
 function init() {
   // STATS
 
+  rendererStats.domElement.style.position   = 'absolute'
+  rendererStats.domElement.style.left  = '0px'
+  rendererStats.domElement.style.bottom    = '0px'
+  document.body.appendChild( rendererStats.domElement )
   // 0: fps, 1: ms, 2: mb
   statsFPS.setMode( 0 );
   statsMS.setMode( 1 );
@@ -393,11 +451,12 @@ function init() {
   var light = new THREE.HemisphereLight( 0xffffff, 0x000000, 1.0 );
   mainScene.add( light );
 
+  /*var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+  directionalLight.position.set( 0, 1, 0 );
+  mainScene.add( directionalLight );*/
 
   // model
   group = new THREE.Object3D();
-
-
 
   //event listeners
   document.addEventListener('mousemove', onMouseMove, false);
@@ -628,6 +687,55 @@ function showMenuSelect(){
           $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showSessaoDiv').slideUp();
           slidedownsessao = false;
+
+          for(var j= 0; j< selectedChairs.length ; j++)
+          {
+            var selectedObject = mainScene.getObjectByName("selectChair_"+selectedChairs[j].name);
+            mainScene.remove( selectedObject );
+
+            var removalThing = "#"+selectedChairs[j].name;
+
+            $(removalThing).remove();
+          }
+
+          isSelected = false;
+          $("#menuSelect").animate({"right": '-=300px'});
+          primeiravez = true;
+          mouseIsOnMenu = false;
+
+          selectedChairs = [];
+
+          for(var j= 0; j< spriteEyeArray.length ; j++)
+          {
+            var selectedObject = mainScene.getObjectByName(spriteEyeArray[j].name);
+            mainScene.remove( selectedObject );
+          }
+
+          spriteEyeArray = [];
+
+          var selectedObject = mainScene.getObjectByName("singleGeometryNormal");
+          mainScene.remove( selectedObject );
+
+          var selectedObject = mainScene.getObjectByName("singleGeometryOcupadas");
+          mainScene.remove( selectedObject );
+
+          var selectedObject = mainScene.getObjectByName("singleGeometryDeficiente");
+          mainScene.remove( selectedObject );
+
+          // we are using an octree for increasing the performance on raycasting
+          octree = new THREE.Octree( {
+            undeferred: true,
+            depthMax: Infinity,
+            objectsThreshold: 8,
+            overlapPct: 0.15
+          } );
+
+          lugaresLivres = 0;
+          capacidade = 0;
+
+          loadCadeiras(populateCadeirasInstances);
+
+
         }
         showSessaoDiv.appendChild(n_sessao);
       }
@@ -1277,7 +1385,7 @@ function showMenuSelect(){
       nome_filme: document.getElementById("movieName").innerHTML,
       info_filme: document.getElementById("movieInfo").innerHTML,
       cinema: document.getElementById("showDivCinemas").text,
-      data: document.getElementById("showData").text,
+      data: document.getElemeentById("showData").text,
       sala: document.getElementById("showRoomNumber").text,
       sessao: document.getElementById("showSessao").className
     }
@@ -1390,7 +1498,11 @@ function showMenuSelect(){
 //
 function loadScene() {
   // load venue status from DB
-  carregarJSONBD(num_sessao);
+  if(firstTimeRunning)
+  {
+    carregarJSONBD(num_sessao);
+    firstTimeRunning = false;
+  }
 
   loadSala();
   loadCadeiras(populateCadeirasInstances);
@@ -1416,12 +1528,41 @@ function loadScene() {
 //
 function loadSala() {
 
+
+
+  var loaderJSON = new THREE.JSONLoader();
+
   // load JSON model
-  loaderJSON.load( "models/Cinema_Motta/Sala_Vazia.js", function( geometry, material ) {
+  loaderJSON.load( "models/Cinema_Motta/Sala_Baked_03.js", function( geometry, materials ) {
 
-    var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+    //var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
 
-    mesh = new THREE.Mesh( bufferGeometry, new THREE.MeshFaceMaterial( material ));
+    materials[0] = new THREE.MeshBasicMaterial(materials[0]);
+    materials[1] = new THREE.MeshBasicMaterial(materials[1]);
+    materials[2] = new THREE.MeshBasicMaterial(materials[2]);
+    materials[3] = new THREE.MeshBasicMaterial(materials[3]);
+
+    material1 = new THREE.MeshBasicMaterial();
+    material1.map = materials[0].map;
+    materials[0] = material1;
+
+    material2 = new THREE.MeshBasicMaterial();
+    material2.map = materials[1].map;
+    materials[1] = material2;
+
+    material3 = new THREE.MeshBasicMaterial();
+    material3.map = materials[2].map;
+    materials[2] = material3;
+
+    material4 = new THREE.MeshBasicMaterial();
+    material4.map = materials[3].map;
+    materials[3] = material4;
+
+
+    var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ));
+
+    mesh.position.x = mesh.position.x-0.2;
+    mesh.position.y = mesh.position.y+0.3;
 
     mainScene.add(mesh);
 
@@ -1453,6 +1594,9 @@ function loadSala() {
 // here we load the chairs
 //
 function loadCadeiras(populateCadeirasInstances) {
+
+  var loaderJSON = new THREE.JSONLoader();
+
   // 1. load the point cloud that contains the position referece and the rotation reference for each chair
   loaderJSON.load( "models/Cinema_Motta/Pcloud_oriented_Cadeiras.js", function( geometry, material, normals ) {
 
@@ -1478,8 +1622,8 @@ function loadCadeiras(populateCadeirasInstances) {
     object.traverse(function(child) {
       if (child instanceof THREE.Mesh && child.geometry != "undefined") {
 
-        bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
-
+        //bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
+        bufferGeometry = child.geometry;
       }
     });
     populateCadeirasInstances(mesh,normalsArray,bufferGeometry); // we carry on through a callback to load the models synchronously
@@ -1491,10 +1635,34 @@ function loadCadeiras(populateCadeirasInstances) {
 //
 function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 
+  lugaresLivres = capacidade;
 
   // get the origin (from) and vertical axis vectors
   var from = new THREE.Vector3( 0,0,0 );
   var vAxis = new THREE.Vector3( -1,0,0 );
+
+  sphereGeo = new THREE.SphereGeometry( 0.1, 6, 6 );
+
+  var genericObject = new THREE.Mesh(bufferGeometry,materialcadeira);
+
+  singleGeometryNormal = new THREE.Geometry();
+  singleGeometryOcupadas = new THREE.Geometry();
+  singleGeometryDeficiente = new THREE.Geometry();
+
+  var materials = [];
+
+  if(detectmob())
+  {
+    materials.push(materialcadeiraMobile);
+    materials.push(materialcadeiraDeficienteMobile);
+    materials.push(materialcadeiraOcupadaMobile)
+  }
+  else
+  {
+    materials.push(materialcadeiraNormal);
+    materials.push(materialcadeiraDeficiente);
+    materials.push(materialcadeiraOcupada)
+  }
 
   // for each point in the point cloud
   for(i=0; i<mesh.geometry.vertices.length; i++){
@@ -1502,23 +1670,16 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 
     if(detectmob())
     {
-      // create the material
-      var materialcadeira = new THREE.MeshBasicMaterial( {
-        map: texturaCadeira
-      });
+      var materialcadeira = materialcadeiraMobile.clone();
     }
     else
     {
-      // create the material
-      var materialcadeira = new THREE.MeshPhongMaterial( {
-        map: texturaCadeira,
-        normalMap: texturaCadeiraNormalMap
-      });
-
+      var materialcadeira = materialcadeiraNormal.clone();
     }
 
     // create the new instance
-    newObject = new THREE.Mesh(bufferGeometry,materialcadeira);
+    newObject = genericObject.clone(genericObject);
+    genericObject.material = materialcadeira;
 
     // if this instance has a normal vector
     if (normalsArray[i] != null){
@@ -1540,22 +1701,61 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
       // identify the instance
       newObject.name = "CADEIRA_" + i;
       newObject.updateMatrix();
+      mesh.geometry.colorsNeedUpdate = true;
 
-      // add it to the array of chairs and to the octree
-      chairGroup.add(newObject);
-      octree.add(newObject);
+      var cadeiraCorrente ;
+
+      for(var k = 0 ; k < cadeirasJSON.length ; k++)
+      {
+        if(newObject.name == cadeirasJSON[k].nome_procedural)
+        {
+          cadeiraCorrente = cadeirasJSON[k];
+        }
+      }
+
+      if(cadeiraCorrente.estado == "OCUPADA")
+      {
+        lugaresLivres  = lugaresLivres - 1 ;
+        newObject.estado = "OCUPADA";
+        singleGeometryOcupadas.merge(newObject.geometry, newObject.matrix, 2);
+      }
+      else if(cadeiraCorrente.estado == "DEFICIENTE")
+      {
+        newObject.estado = "DEFICIENTE";
+        singleGeometryDeficiente.merge(newObject.geometry, newObject.matrix, 1);
+      }
+      else
+      {
+        newObject.estado = "LIVRE";
+        singleGeometryNormal.merge(newObject.geometry, newObject.matrix, 0);
+      }
+
+      octree.add( newObject);
     }
-
   }
 
-  // add the chairs to scene (bulk add);
-  mainScene.add(chairGroup);
+  if(!firstTimeLoading)
+    document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
+
+  //add to scene
+  var meshSG = new THREE.Mesh(singleGeometryNormal, new THREE.MeshFaceMaterial(materials));
+  meshSG.name = "singleGeometryNormal";
+  mainScene.add(meshSG);
+
+  var meshSGOcupadas = new THREE.Mesh(singleGeometryOcupadas, new THREE.MeshFaceMaterial(materials));
+  meshSGOcupadas.name = "singleGeometryOcupadas";
+  mainScene.add(meshSGOcupadas);
+
+  var meshSGDeficiente = new THREE.Mesh(singleGeometryDeficiente, new THREE.MeshFaceMaterial(materials));
+  meshSGDeficiente.name = "singleGeometryDeficiente";
+  mainScene.add(meshSGDeficiente);
 }
 
 //
 // Here we access the DB and load the chair occupation info
 //
 function carregarJSONBD(num_sessao) {
+
   $.ajax({
        url: 'php/ler_BDCinema.php', //This is the current doc
        type: "POST",
@@ -1564,63 +1764,12 @@ function carregarJSONBD(num_sessao) {
        success: function(data){
          cadeirasJSON = data;
          console.log("JSON Loaded Correctly from DB cadeiras " + num_sessao);
-         pintarCadeiras();
        },
        error:    function(textStatus,errorThrown){
          console.log(textStatus);
          console.log(errorThrown);
        }
   });
-}
-
-//
-// Here we color the chairs according to the loaded occupation info
-//
-function pintarCadeiras() {
-  lugaresLivres = capacidade;
-  for(var i=0 ; i< chairGroup.children.length ; i++)
-  {
-    for(var j=0 ; j < cadeirasJSON.length ; j++)
-    {
-      if(chairGroup.children[i].name == cadeirasJSON[j].nome_procedural)
-      {
-        switch(cadeirasJSON[j].estado) {
-          case 'OCUPADA':
-          lugaresLivres -= 1;
-          if(selectedChairs.length < 1)
-          {
-            isSelected = false;
-            chairGroup.children[i].material.map = texturaCadeiraOcupada;
-          }else{
-            for(var x=0; x<selectedChairs.length; x++)
-            {
-                if (selectedChairs[x].name == cadeirasJSON[j].nome_procedural)
-                {
-                  var removalThing = "#"+selectedChairs[x].name;
-                  $(removalThing).remove();
-                  selectedChairs[x].material.map = texturaCadeiraOcupada;
-                  selectedChairs.splice(x, 1);
-                  calculaTotal(0);
-                  var eyeSpriteToRemove = spriteEyeArray[x];
-                  mainScene.remove(eyeSpriteToRemove);
-                  octree.remove(eyeSpriteToRemove);
-                  spriteEyeArray.splice(x, 1);
-                }else{
-                  chairGroup.children[i].material.map = texturaCadeiraOcupada;
-                }
-            }
-          }
-          break;
-          case 'DEFICIENTE':
-          chairGroup.children[i].material.map = texturaCadeiraDeficiente;
-          break;
-          default:
-          chairGroup.children[i].material.map = texturaCadeira;
-        }
-      }
-    }
-  }
-  pfreeseatsNumber.innerHTML = lugaresLivres;
 }
 
 //
@@ -1778,8 +1927,6 @@ function onMouseMove(e) {
 
     intersections = raycaster.intersectOctreeObjects( octreeObjects );
 
-    //console.log(intersections);
-
     var spriteFound = false;
 
     // for each of the intersected objects
@@ -1812,73 +1959,66 @@ function onMouseMove(e) {
 
       intersectionObject = intersections[intersectionIndex].object;
 
+      var highLightChair;
+
       // if previously intersected object is not the current intersection and is not a sprite
       if ( intersected != intersectionObject && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument) {
 
         // if there was a previously intersected object
         if ( intersected )
         {
-          // change the texture of the intersected object to the old object to the original color
-          switch(uuidTexturaAntiga) {
-            case texturaCadeiraOcupada.uuid:
-            intersected.material.map = texturaCadeiraOcupada;
-            break;
-            case texturaCadeiraDeficiente.uuid:
-            intersected.material.map = texturaCadeiraDeficiente;
-            break;
-            default:
-            intersected.material.map = texturaCadeira;
-          }
+          var selectedObject = mainScene.getObjectByName("highLightChair");
+          mainScene.remove( selectedObject );
         }
 
         intersected = intersectionObject;
         uuidTexturaAntiga = intersected.material.map.uuid;
 
+        if(detectmob())
+          highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraMobileHighlight);
+        else
+          highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraHighLight);
+
+        intersected.geometry.computeBoundingBox();
+
+        var centroid = new THREE.Vector3();
+        centroid.addVectors( intersected.geometry.boundingBox.min, intersected.geometry.boundingBox.max );
+
+        centroid.applyMatrix4( intersected.matrixWorld );
+
+        highLightChair.scale.set(1.05,1.00,1.05);
+
+        highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z);
+
+        highLightChair.position.set(centroid.x-0.001,centroid.y-0.01,centroid.z);
+
+        mainScene.add(highLightChair);
+        highLightChair.name = "highLightChair";
+
         // if intersection is new : change color to highlight
-        switch(intersected.material.map.uuid) {
-          case texturaCadeiraOcupada.uuid:
-          intersected.material.map = texturaCadeiraOcupada;
+
+        switch(intersected.estado) {
+          case "OCUPADA":
+          var selectedObject = mainScene.getObjectByName("highLightChair");
+          mainScene.remove( selectedObject );
           document.body.style.cursor = 'no-drop';
           break;
-          case texturaCadeiraDeficiente.uuid:
-          intersected.material.map = texturaCadeiraHighlight;
-          document.body.style.cursor = 'pointer';
-          break;
           default:
-          intersected.material.map = texturaCadeiraHighlight;
           document.body.style.cursor = 'pointer';
-
         }
       }
     }
     else // if there are no intersections
     {
+
       // if there was a previous intersection
       if ( intersected ) {
-        // change the texture of the intersected object to the old object to the original color
-        switch(uuidTexturaAntiga) {
-          case texturaCadeira.uuid:
-          intersected.material.map = texturaCadeira;
-          break;
-          case texturaCadeiraOcupada.uuid:
-          intersected.material.map = texturaCadeiraOcupada;
-          break;
-          case texturaCadeiraDeficiente.uuid:
-          intersected.material.map = texturaCadeiraDeficiente;
-          break;
-          default:
-        }
-
         document.body.style.cursor = 'auto';
       }
+      var selectedObject = mainScene.getObjectByName("highLightChair");
+      mainScene.remove( selectedObject );
       intersected = null;
       uuidTexturaAntiga = "";
-    }
-
-    // paint all the selected chairs (check the array) with the selected color
-    for(var i=0 ; i< selectedChairs.length ; i++)
-    {
-      selectedChairs[i].material.map = texturaCadeiraSelect;
     }
   }
 
@@ -1898,6 +2038,7 @@ function onMouseDown(e) {
 
     var mouse = new THREE.Vector2();
     var raycaster = new THREE.Raycaster();
+    var raycasterSprite = new THREE.Raycaster();
 
     mouse.x = 2 * (e.clientX / window.innerWidth) - 1;
     mouse.y = 1 - 2 * (e.clientY / window.innerHeight);
@@ -1907,6 +2048,12 @@ function onMouseDown(e) {
     octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
 
     var intersects = raycaster.intersectOctreeObjects( octreeObjects );
+
+    raycasterSprite.setFromCamera( mouse, camera );
+
+    //octreeObjectsSprite = octreeSprites.search( raycasterSprite.ray.origin, raycasterSprite.ray.far, true, raycasterSprite.ray.direction );
+
+    var intersectsSprite = raycasterSprite.intersectObjects( spriteEyeArray );
 
     var textSelChairs = "";
 
@@ -1950,22 +2097,22 @@ function onMouseDown(e) {
       }
 
       // for each intersected object
-      for(var i=0; i<intersects.length; i++)
+      for(var i=0; i<intersectsSprite.length; i++)
       {
 
         // if intersected object is a sprite then call the change perspective function (which seats you down)
-        if(intersects[i].object.name == "spriteEye")
+        if(intersectsSprite[i].object.name == "spriteEye")
         {
           spriteFound = true;
 
-          var index = spriteEyeArray.indexOf(intersects[i].object);
+          var index = spriteEyeArray.indexOf(intersectsSprite[i].object);
 
           changePerspective(point.x,point.y,point.z,selectedChairs[index]);
         }
 
       }
       // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
-      if(($.inArray(obj, selectedChairs)=="-1") && (obj.material.map.uuid != texturaCadeiraOcupada.uuid) && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
+      if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
       {
         if (primeiravez == true){
           $("#menuSelect").animate({"right": '+=300px'});
@@ -1992,7 +2139,8 @@ function onMouseDown(e) {
         spriteEyeInstance.position.set(centroid.x , centroid.y+0.2, centroid.z );
         mainScene.add( spriteEyeInstance );
 
-        octree.add(spriteEyeInstance);
+        //octreeSprites.add(spriteEyeInstance);
+
         spriteEyeArray.push(spriteEyeInstance);
 
         // calculate rotation based on two vectors
@@ -2022,6 +2170,29 @@ function onMouseDown(e) {
         else if(obj.position.z < 0)
         spriteEyeInstance.rotation.y = angle;
 
+        // paint all the selected chairs (check the array) with the selected color
+        if(detectmob())
+          selectChair = new THREE.Mesh(obj.geometry,materialcadeiraMobileHighlight);
+        else
+          selectChair = new THREE.Mesh(obj.geometry,materialcadeiraHighLight);
+
+        selectChair.geometry.computeBoundingBox();
+
+        var centroid = new THREE.Vector3();
+        centroid.addVectors( obj.geometry.boundingBox.min, obj.geometry.boundingBox.max );
+
+        centroid.applyMatrix4( obj.matrixWorld );
+
+        selectChair.scale.set(1.05,1.00,1.05);
+
+        selectChair.rotation.set(obj.rotation.x,obj.rotation.y,obj.rotation.z);
+
+        selectChair.position.set(centroid.x-0.001,centroid.y-0.01,centroid.z);
+
+        selectChair.name = "selectChair_"+obj.name;
+        selectChair.material.map = texturaCadeiraHighlight;
+
+        mainScene.add(selectChair);
 
         // Add the Chair
         selectedChairs.push(obj);
@@ -2288,7 +2459,6 @@ function onMouseDown(e) {
           calculaTotal(0);
         }
 
-
         showPreco.appendChild(normal);
         showPreco.appendChild(estudante);
         showPreco.appendChild(senior);
@@ -2320,6 +2490,8 @@ function onMouseDown(e) {
 
     sittingDown = false;
     setupTweenOverview();
+
+    video.pause();
 
     for(var i=0; i<spriteEyeArray.length ; i++)
     {
@@ -2363,31 +2535,13 @@ function removeCadeira(obj) {
 
   var index = selectedChairs.indexOf(obj);
 
-  for(var i=0; i<cadeirasJSON.length; i++)
-  {
-    if(selectedChairs[index].name == cadeirasJSON[i].nome_procedural)
-    {
-      switch(cadeirasJSON[i].estado)
-      {
-        case "LIVRE":
-        selectedChairs[index].material.map = texturaCadeira;
-        break;
-        case "OCUPADA":
-        selectedChairs[index].material.map = texturaCadeiraOcupada;
-        break;
-        case "DEFICIENTE":
-        selectedChairs[index].material.map = texturaCadeiraDeficiente;
-        break;
-        default:
-
-      }
-    }
-  }
-
   var eyeSpriteToRemove = spriteEyeArray[index];
   mainScene.remove(eyeSpriteToRemove);
   octree.remove(eyeSpriteToRemove);
   calculaTotal(0);
+
+  var selectedObject = mainScene.getObjectByName("selectChair_"+obj.name);
+  mainScene.remove( selectedObject );
 
   if (index > -1)
   {
@@ -2487,6 +2641,8 @@ function animate() {
     }
 
     renderer.render( mainScene, camera );
+    rendererStats.update(renderer);
+
     statsFPS.begin();
     statsMS.begin();
     statsMB.begin();
@@ -2560,6 +2716,10 @@ function changePerspective(x, y, z,obj) {
   for(var i=0; i<spriteEyeArray.length ; i++)
   {
     spriteEyeArray[i].visible = false;
+  }
+
+  if(detectmob())
+  {
   }
 
 }
@@ -2778,7 +2938,6 @@ function setupTweenFP(obj) {
 // launch the Tween for changing perspective to overview perspective
 //
 function setupTweenOverview() {
-  console.log("entrou");
   TWEEN.removeAll();
 
   // tween the fov fowards

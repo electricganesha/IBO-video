@@ -9,6 +9,7 @@ THREE.DeviceOrientationControls = function ( object ) {
 
 	var scope = this;
 
+	var sittingDown = false;
 	var firstAlpha;
 	var firstIn = false;
 
@@ -36,6 +37,12 @@ THREE.DeviceOrientationControls = function ( object ) {
 	var onScreenOrientationChangeEvent = function () {
 
 		scope.screenOrientation = window.orientation || 0;
+
+	};
+
+	var setSittingDown = function (sd) {
+
+		sittingDown = sd;
 
 	};
 
@@ -94,7 +101,10 @@ THREE.DeviceOrientationControls = function ( object ) {
 		var gamma  = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.gamma ) : 0; // Y''
 		var orient = scope.screenOrientation       ? THREE.Math.degToRad( scope.screenOrientation       ) : 0; // O
 
-		alpha = alpha-firstAlpha;
+		if(sittingDown)
+			alpha = alpha-firstAlpha + Math.PI;
+		else
+			alpha = alpha-firstAlpha + 0;
 
 		setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
 
