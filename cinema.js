@@ -620,7 +620,7 @@ function init() {
   document.body.appendChild( statsMS.domElement );
   document.body.appendChild( statsMB.domElement );
 
-  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 50 );
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
   camera.position.x = -6.160114995658247;
   camera.position.y = 1.5;
@@ -633,6 +633,7 @@ function init() {
 
     controls = new THREE.DeviceOrientationControls(camera);
     controls.connect();
+    window.addEventListener("click", fullscreen);
   }
   else
   {
@@ -2241,11 +2242,11 @@ function onMouseMove(e) {
 
         centroid.applyMatrix4( intersected.matrixWorld );
 
-        highLightChair.scale.set(1.05,1.00,1.05);
+        highLightChair.scale.set(1.1,1.00,1.05);
 
         highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z);
 
-        highLightChair.position.set(centroid.x-0.001,centroid.y-0.01,centroid.z);
+        highLightChair.position.set(centroid.x-0.005,centroid.y-0.01,centroid.z);
 
         mainScene.add(highLightChair);
         highLightChair.name = "highLightChair";
@@ -2300,15 +2301,36 @@ function onMouseDown(e) {
 
     raycaster.setFromCamera( mouse, camera );
 
+    //octreeObjectsSprite = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
+
+    var intersectsSprite = raycaster.intersectObjects( spriteEyeArray );
+
+
+
+    if(intersectsSprite.length > 0)
+    {
+      var pointSprite = intersectsSprite[0].point;
+    // for each intersected object
+    for(var i=0; i<intersectsSprite.length; i++)
+    {
+
+      // if intersected object is a sprite then call the change perspective function (which seats you down)
+      if(intersectsSprite[i].object.name == "spriteEye")
+      {
+        spriteFound = true;
+
+        var index = spriteEyeArray.indexOf(intersectsSprite[i].object);
+
+        changePerspective(pointSprite.x,pointSprite.y,pointSprite.z,selectedChairs[index]);
+      }
+
+    }
+    }
+    else {
+
     octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
 
     var intersects = raycaster.intersectOctreeObjects( octreeObjects );
-
-    raycasterSprite.setFromCamera( mouse, camera );
-
-    //octreeObjectsSprite = octreeSprites.search( raycasterSprite.ray.origin, raycasterSprite.ray.far, true, raycasterSprite.ray.direction );
-
-    var intersectsSprite = raycasterSprite.intersectObjects( spriteEyeArray );
 
     var textSelChairs = "";
 
@@ -2351,21 +2373,7 @@ function onMouseDown(e) {
 
       }
 
-      // for each intersected object
-      for(var i=0; i<intersectsSprite.length; i++)
-      {
-
-        // if intersected object is a sprite then call the change perspective function (which seats you down)
-        if(intersectsSprite[i].object.name == "spriteEye")
-        {
-          spriteFound = true;
-
-          var index = spriteEyeArray.indexOf(intersectsSprite[i].object);
-
-          changePerspective(point.x,point.y,point.z,selectedChairs[index]);
-        }
-
-      }
+          }
       // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
       if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
       {
@@ -2438,11 +2446,11 @@ function onMouseDown(e) {
 
         centroid.applyMatrix4( obj.matrixWorld );
 
-        selectChair.scale.set(1.05,1.00,1.05);
+        selectChair.scale.set(1.1,1.00,1.05);
 
         selectChair.rotation.set(obj.rotation.x,obj.rotation.y,obj.rotation.z);
 
-        selectChair.position.set(centroid.x-0.001,centroid.y-0.01,centroid.z);
+        selectChair.position.set(centroid.x-0.005,centroid.y-0.01,centroid.z);
 
         selectChair.name = "selectChair_"+obj.name;
         selectChair.material.map = texturaCadeiraHighlight;
@@ -2849,7 +2857,7 @@ function onMouseWheel(e) {
       if(alreadyScrolledBack){
           //tween the fov backwards
           tweenFov = new TWEEN.Tween(camera).to({
-            fov:45
+            fov:60
           },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
             camera.updateProjectionMatrix();
           }).onComplete(function () {
@@ -3001,7 +3009,7 @@ function changePerspectiveOrtographic(x, y, z,obj) {
 
   centroid.applyMatrix4( obj.matrixWorld );
   //sittingDown = true;
-  camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 50 );
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
   camera.position.x = centroid.x;
   camera.position.y = centroid.y+0.25; // head height
@@ -3130,7 +3138,7 @@ function setupTweenFP(obj) {
 
   // tween the fov fowards
   tweenFov = new TWEEN.Tween(camera).to({
-    fov:45
+    fov:70
   },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
     camera.updateProjectionMatrix();
   }).onComplete(function () {
@@ -3153,7 +3161,6 @@ function setupTweenFP(obj) {
   // front vector
   var direction = new THREE.Vector3( -1, 0, 0 );
   matrix.multiplyVector3( direction );
-
 
   // vector pointing at the reference sphere
   dis1 = screenReferenceSphere.position.x - obj.position.x ;
@@ -3197,7 +3204,7 @@ function setupTweenOverview() {
 
   // tween the fov fowards
   tweenFov = new TWEEN.Tween(camera).to({
-    fov:45
+    fov:60
   },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
     camera.updateProjectionMatrix();
   }).onComplete(function () {
@@ -3308,7 +3315,7 @@ function switchToOrtho() {
 
     $("#ecraDiv").hide();
 
-    camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 50 );
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
     camera.position.x = -6.160114995658247;
     camera.position.y = 1.5;
