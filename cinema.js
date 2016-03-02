@@ -239,6 +239,9 @@ var sessoesJSON;
 var num_sessao = "0";
 var n_sessao_select;
 
+var deviceOrientationSelectedObject;
+var deviceOrientationSelectedPoint;
+
 // RANDOM
 
 var screenReferenceSphere; // the sphere (invisible) located in the middle of the screen, to lookAt
@@ -419,7 +422,6 @@ THREE.DeviceOrientationControls = function ( object ) {
       var mouse2 = new THREE.Vector2();
       mouse2.x = 2 * ((window.innerWidth/2) / window.innerWidth) - 1;
       mouse2.y = 1 - 2 * ((window.innerHeight/2) / window.innerHeight);
-      console.log("entrou");
       // normal raycasting variables
       var intersectedOne = false;
       var intersectedObject = new THREE.Object3D();
@@ -472,10 +474,9 @@ THREE.DeviceOrientationControls = function ( object ) {
         // if previously intersected object is not the current intersection and is not a sprite
         if ( intersected != intersectionObject && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument) {
 
-          timer = setTimeout(function(){
 
-            changePerspective(pointSpriteVR.x,pointSpriteVR.y,pointSpriteVR.z,intersections[0].object);
-          },4000);
+          deviceOrientationSelectedObject = intersections[0].object;
+          deviceOrientationSelectedPoint = intersections[0].point;
 
           // if there was a previously intersected object
           if ( intersected )
@@ -523,12 +524,6 @@ THREE.DeviceOrientationControls = function ( object ) {
       }
       else // if there are no intersections
       {
-        // if there was a previous intersection
-        if ( intersected ) {
-          console.log("limpou");
-          clearTimeout(timer);
-        }
-        clearTimeout(timer);
         var selectedObject = mainScene.getObjectByName("highLightChair");
         mainScene.remove( selectedObject );
         intersected = null;
@@ -810,24 +805,58 @@ function showMenuSelect(){
     });
   }
 
-  function carregarData() {
-    $.ajax({
-      url: 'php/ler_BDData.php', //This is the current doc
-      type: "POST",
-      dataType:'json', // add json datatype to get json
-      data: ({cinema: nCinemaSelecionado}),
-      success: function(data){
-        dias = data - 1;
-        console.log("Dias Carregados");
-        showData.style.pointerEvents = "all";
-        showData.style.cursor = "auto";
-        showData.style.color = "#1bbc9b";
-      },
-      error:    function(textStatus,errorThrown){
-        console.log(textStatus);
-        console.log(errorThrown);
+  if (window.DeviceMotionEvent) {
+  window.addEventListener('devicemotion', deviceMotionHandler, false);
+  }
+
+  function deviceMotionHandler(eventData) {
+
+    // Grab the acceleration from the results
+    var acceleration = eventData.acceleration;
+
+    if(acceleration.x > 3 || acceleration.x < -3)
+    {
+      if(sittingDown)
+      {
+        sittingDown = false;
+        setupTweenOverview();
+
+        video.pause();
+
+        for(var i=0; i<spriteEyeArray.length ; i++)
+        {
+          spriteEyeArray[i].visible = true;
+        }
+
+        deviceOrientationSelectedPoint = undefined;
+        deviceOrientationSelectedObject = undefined;
       }
-    });
+      else
+      {
+        if(deviceOrientationSelectedPoint != undefined && deviceOrientationSelectedObject != undefined)
+          changePerspective(deviceOrientationSelectedPoint.x,deviceOrientationSelectedPoint.y,deviceOrientationSelectedPoint.z,deviceOrientationSelectedObject);
+      }
+    }
+  }
+
+    function carregarData() {
+      $.ajax({
+        url: 'php/ler_BDData.php', //This is the current doc
+        type: "POST",
+        dataType:'json', // add json datatype to get json
+        data: ({cinema: nCinemaSelecionado}),
+        success: function(data){
+          dias = data - 1;
+          console.log("Dias Carregados");
+          showData.style.pointerEvents = "all";
+          showData.style.cursor = "auto";
+          showData.style.color = "#1bbc9b";
+        },
+        error:    function(textStatus,errorThrown){
+          console.log(textStatus);
+          console.log(errorThrown);
+        }
+      });
   }
 
   function carregarSessao() {
@@ -3254,7 +3283,7 @@ function setupTweenFP(obj) {
 // launch the Tween for changing perspective to overview perspective
 //
 function setupTweenOverview() {
-  TWEEN.removeAll();
+  //TWEEN.removeAll();
 
   // tween the fov fowards
   tweenFov = new TWEEN.Tween(camera).to({
@@ -3295,13 +3324,6 @@ function setupTweenOverview() {
       lon:lastControlsLon
     },2000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
   }).start();
-
-
-
-
-
-
-
 }
 
 // calculate the total amount of tickets
