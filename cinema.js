@@ -2020,8 +2020,8 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
     }
   }
 
-  if(firstTimeInit)
-    document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
+  //if(firstTimeInit)
+    //document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
 
   //add to scene
   var meshSG = new THREE.Mesh(singleGeometryNormal, new THREE.MeshFaceMaterial(materials));
@@ -2422,6 +2422,9 @@ function onMouseDown(e) {
         }
 
       }
+
+      if(obj != undefined)
+      {
       // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
       if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
       {
@@ -2791,6 +2794,7 @@ function onMouseDown(e) {
 
       }
 
+    }
     }
     calculaTotal(0); // considers with the initial value
   }
