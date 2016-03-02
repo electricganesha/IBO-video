@@ -185,7 +185,7 @@ var clock = new THREE.Clock();
 
 var container;
 
-var camera, scene, renderer, renderVR;
+var camera, scene, renderer, renderVR, vr;
 
 var spriteEyeModel = new THREE.Mesh();
 
@@ -229,6 +229,7 @@ var slidedown = false;
 var slidedownpreco = false;
 var slidedowndata = false;
 var slidedownsessao = false;
+var mudousessao = false;
 var anterior = "";
 var icon_anterior = "";
 var capacidade = 0;
@@ -301,7 +302,6 @@ var materialcadeiraOcupada = new THREE.MeshPhongMaterial( {
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 element = renderer.domElement;
-//renderer.sortObjects = false;
 container = document.body;
 container.appendChild(element);
 
@@ -711,7 +711,6 @@ function init() {
 
   // create the main selection menu
   var iDiv = document.createElement('div');
-  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
   iDiv.style.width = '100%';
   iDiv.style.cursor = "pointer";
   iDiv.style.textAlign = "center";
@@ -788,6 +787,7 @@ function init() {
 // create a show the selection menu
 //
 function showMenuSelect(){
+
   function carregarCinemas() {
     $.ajax({
       url:        'php/ler_BDCc.php',
@@ -966,10 +966,9 @@ function showMenuSelect(){
         }
 
         isSelected = false;
-        $("#menuSelect").animate({"right": '-=300px'});
         primeiravez = true;
-        mouseIsOnMenu = false;
-
+        mouseIsOnMenu = true;
+        mudousessao = true
         selectedChairs = [];
 
         for(var j= 0; j< spriteEyeArray.length ; j++)
@@ -1037,7 +1036,6 @@ function showMenuSelect(){
     legEsq.id = 'legEsq';
 
     legEsq.onclick = function() {
-      //window.addEventListener("click", fullscreen);
       switchToVr();
     }
     legEsq.onmouseover = function() {
@@ -1284,7 +1282,6 @@ function showMenuSelect(){
     pcapacity.style.marginTop = "0px";
 
     var pcapacityNumber = document.createElement('p');
-    pcapacityNumber.innerHTML = capacidade;
     pcapacityNumber.id = "pcapacityNumber";
     pcapacityNumber.style.color = "#FFF";
     pcapacityNumber.style.fontSize = "17px";
@@ -1316,7 +1313,6 @@ function showMenuSelect(){
     pfreeseats.style.marginTop = "0px";
 
     var pfreeseatsNumber = document.createElement('p');
-    pfreeseatsNumber.innerHTML = lugaresLivres;
     pfreeseatsNumber.id = "pfreeseatsNumber";
     pfreeseatsNumber.style.color = "#FFF";
     pfreeseatsNumber.style.fontSize = "17px";
@@ -1327,7 +1323,6 @@ function showMenuSelect(){
     freeseatsDiv.appendChild(pfreeseats);
     freeseatsDiv.appendChild(pfreeseatsNumber);
     legMid.appendChild(freeseatsDiv);
-
     var ptrocapresp = document.createElement('p');
     ptrocapresp.innerHTML = "Ver Planta";
     ptrocapresp.style.color = "#FFF";
@@ -1707,7 +1702,7 @@ function showMenuSelect(){
         nome_filme: document.getElementById("movieName").innerHTML,
         info_filme: document.getElementById("movieInfo").innerHTML,
         cinema: document.getElementById("showDivCinemas").text,
-        data: document.getElemeentById("showData").text,
+        data: document.getElementById("showData").text,
         sala: document.getElementById("showRoomNumber").text,
         sessao: document.getElementById("showSessao").className
       }
@@ -1933,6 +1928,8 @@ function loadCadeiras(populateCadeirasInstances) {
       capacidade += 1;
     }
     capacidade -= 1;
+    if (!detectmob())
+      document.getElementById("pcapacityNumber").innerHTML = capacidade;
   });
 
 
@@ -1942,8 +1939,6 @@ function loadCadeiras(populateCadeirasInstances) {
     var bufferGeometry;
     object.traverse(function(child) {
       if (child instanceof THREE.Mesh && child.geometry != "undefined") {
-
-        //bufferGeometry = new THREE.BufferGeometry().fromGeometry( child.geometry );
         bufferGeometry = child.geometry;
       }
     });
@@ -1955,9 +1950,7 @@ function loadCadeiras(populateCadeirasInstances) {
 // 3. here we iterate on the point cloud to replicate the instances and position each instance in the correct place
 //
 function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
-
   lugaresLivres = capacidade;
-
   // get the origin (from) and vertical axis vectors
   var from = new THREE.Vector3( 0,0,0 );
   var vAxis = new THREE.Vector3( -1,0,0 );
@@ -2053,10 +2046,9 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 
       octree.add( newObject);
     }
+    if (!detectmob())
+      document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
   }
-
-  //if(firstTimeInit)
-  //document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
 
   //add to scene
   var meshSG = new THREE.Mesh(singleGeometryNormal, new THREE.MeshFaceMaterial(materials));
@@ -2076,7 +2068,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 // Here we access the DB and load the chair occupation info
 //
 function carregarJSONBD(num_sessao) {
-
   $.ajax({
     url: 'php/ler_BDCinema.php', //This is the current doc
     type: "POST",
@@ -2102,7 +2093,7 @@ function carregarJSONBDInitial(num_sessao) {
     data: ({sessao: "cadeiras"+num_sessao}),
     success: function(data){
       cadeirasJSON = data;
-      console.log("JSON Loaded Correctly from DB cadeiras " + num_sessao);
+      console.log("JSON Loaded Correctly from DB Initial cadeiras " + num_sessao);
       loadScene();
     },
     error:    function(textStatus,errorThrown){
@@ -2386,11 +2377,7 @@ function onMouseDown(e) {
 
     raycaster.setFromCamera( mouse, camera );
 
-    //octreeObjectsSprite = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
-
     var intersectsSprite = raycaster.intersectObjects( spriteEyeArray );
-
-
 
     if(intersectsSprite.length > 0)
     {
@@ -2398,19 +2385,15 @@ function onMouseDown(e) {
       // for each intersected object
       for(var i=0; i<intersectsSprite.length; i++)
       {
-
         // if intersected object is a sprite then call the change perspective function (which seats you down)
         if(intersectsSprite[i].object.name == "spriteEye")
         {
           spriteFound = true;
-
           var index = spriteEyeArray.indexOf(intersectsSprite[i].object);
           changePerspective(pointSprite.x,pointSprite.y,pointSprite.z,selectedChairs[index]);
         }
-
       }
     } else {
-
       octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
 
       var intersects = raycaster.intersectOctreeObjects( octreeObjects );
@@ -2464,7 +2447,8 @@ function onMouseDown(e) {
         if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
         {
           if (primeiravez == true){
-            $("#menuSelect").animate({"right": '+=300px'});
+            if (document.getElementById("menuSelect").style.right == "-300px")
+              $("#menuSelect").animate({"right": '+=300px'});
             primeiravez = false;
           }
           // calculate intersected object centroid
@@ -2861,16 +2845,6 @@ function onMouseDown(e) {
       spriteEyeArray[i].visible = true;
     }
   }
-
-  // if left mouse button is pressed - clean all the selection
-  /*if(e.which == 3)
-  {
-  for(var i=0 ; i< selectedChairs.length ; i++)
-  {
-  selectedChairs[i].material.map = texturaCadeira;
-}
-selectedChairs = new Array();
-}*/
 }
 
 //
@@ -3153,7 +3127,7 @@ iDiv.style.width = "100%";
 iDiv.style.textAlign = "center";
 iDiv.id = "ecraDiv";
 iDiv.style.fontFamily = "osb";
-iDiv.style.color = "#243141";
+iDiv.style.color = "#FFF";
 iDiv.style.top = '30px';
 iDiv.style.fontSize = "38px";
 document.body.appendChild(iDiv);
@@ -3412,7 +3386,7 @@ function switchToOrtho() {
 }
 
 function animateVr() {
-  requestAnimationFrame(animateVr);
+  vr = requestAnimationFrame(animateVr);
   update(clock.getDelta());
   render(clock.getDelta());
 }
@@ -3423,19 +3397,19 @@ function switchToVr() {
     document.getElementById ('ptrocavr').innerHTML = "3D";
     document.getElementById("ptrocavrImg").src="img/icon - cadeiras 3D.png";
     isVR = true;
-    animateVr();
-    var reticle = vreticle.Reticle(camera);
-    mainScene.add(camera);
-
+    if (detectmob()){
+      animateVr();
+      var reticle = vreticle.Reticle(camera);
+      mainScene.add(camera);
+    }
   }
   else // change back to 3D view
   {
     document.getElementById ('ptrocavr').innerHTML = "VR";
     document.getElementById("ptrocavrImg").src="img/VR-icon.png";
     isVR = false;
-    element = renderer.domElement;
-    container = document.body;
-    container.appendChild(element);
+    cancelAnimationFrame(vr);
+    renderer.setSize( window.innerWidth, window.innerHeight );
   }
 }
 
