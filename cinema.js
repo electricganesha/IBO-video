@@ -857,7 +857,7 @@ function showMenuSelect(){
           console.log(errorThrown);
         }
       });
-  }
+    }
 
   function carregarSessao() {
     $.ajax({
@@ -1282,6 +1282,7 @@ function showMenuSelect(){
     pcapacity.style.marginTop = "0px";
 
     var pcapacityNumber = document.createElement('p');
+    pcapacityNumber.innerHTML = capacidade;
     pcapacityNumber.id = "pcapacityNumber";
     pcapacityNumber.style.color = "#FFF";
     pcapacityNumber.style.fontSize = "17px";
@@ -1313,6 +1314,7 @@ function showMenuSelect(){
     pfreeseats.style.marginTop = "0px";
 
     var pfreeseatsNumber = document.createElement('p');
+    pfreeseatsNumber.innerHTML = lugaresLivres;
     pfreeseatsNumber.id = "pfreeseatsNumber";
     pfreeseatsNumber.style.color = "#FFF";
     pfreeseatsNumber.style.fontSize = "17px";
@@ -1323,6 +1325,7 @@ function showMenuSelect(){
     freeseatsDiv.appendChild(pfreeseats);
     freeseatsDiv.appendChild(pfreeseatsNumber);
     legMid.appendChild(freeseatsDiv);
+
     var ptrocapresp = document.createElement('p');
     ptrocapresp.innerHTML = "Ver Planta";
     ptrocapresp.style.color = "#FFF";
@@ -1928,8 +1931,7 @@ function loadCadeiras(populateCadeirasInstances) {
       capacidade += 1;
     }
     capacidade -= 1;
-    if (!detectmob())
-      document.getElementById("pcapacityNumber").innerHTML = capacidade;
+
   });
 
 
@@ -2046,8 +2048,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 
       octree.add( newObject);
     }
-    if (!detectmob())
-      document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
   }
 
   //add to scene
