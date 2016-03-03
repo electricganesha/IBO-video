@@ -328,7 +328,7 @@ if(firstTimeRunning)
   firstTimeRunning = false;
 }
 
-loadingScene = new THREE.Scene();
+
 mainScene = new THREE.Scene();
 startLoadingScene();
 
@@ -1071,27 +1071,12 @@ function showMenuSelect(){
     legDiv.id = 'LegDiv';
     // create sub main legenda for cinema
     var legenda = document.createElement('div');
-    legenda.style.width = '900px';
+    legenda.style.width = '810px';
     legenda.style.margin = "auto";
     legenda.style.textAlign = "center";
     legenda.style.height = '200px';
     legenda.style.borderRadius = "10px";
     legenda.id = 'legenda';
-
-    var legEsq = document.createElement('div');
-    legEsq.style.width = '90px';
-    legEsq.style.float = "left";
-    legEsq.style.textAlign = "center";
-    legEsq.style.height = '200px';
-    legEsq.style.background = '#1cbb9b';
-    legEsq.style.borderRadius = "10px";
-    legEsq.id = 'legEsq';
-    legEsq.onclick = function() {
-      switchToVr();
-    }
-    legEsq.onmouseover = function() {
-      legEsq.style.cursor = 'pointer';
-    }
 
     // create legend for cinema
     var legMid = document.createElement('div');
@@ -1338,26 +1323,10 @@ function showMenuSelect(){
     ptrocaprespImg.id = "ptrocaprespImg";
     ptrocaprespImg.style.marginTop = "2px";
 
-    var ptrocavr = document.createElement('p');
-    ptrocavr.innerHTML = "VR";
-    ptrocavr.style.color = "#FFF";
-    ptrocavr.style.fontSize = "13px";
-    ptrocavr.style.fontFamily = "osr";
-    ptrocavr.style.marginTop = "15px";
-    ptrocavr.id = "ptrocavr";
-
-    var ptrocavrImg = document.createElement('img');
-    ptrocavrImg.id = "ptrocavrImg";
-    ptrocavrImg.style.marginTop = "-4px";
-
-    legEsq.appendChild(ptrocavr);
-    legEsq.appendChild(ptrocavrImg);
-
     legDir.appendChild(ptrocapresp);
     legDir.appendChild(ptrocaprespImg);
 
     legDiv.appendChild(legenda);
-    legenda.appendChild(legEsq);
     legenda.appendChild(legMid);
     legenda.appendChild(legDir);
     document.body.appendChild(legDiv);
@@ -1367,7 +1336,6 @@ function showMenuSelect(){
     document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
     document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
     document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
-    document.getElementById("ptrocavrImg").src="img/VR-icon.png";
 
 
     // create the main selection menu
@@ -2045,7 +2013,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
         newObject.estado = "LIVRE";
         singleGeometryNormal.merge(newObject.geometry, newObject.matrix, 0);
       }
-
       octree.add( newObject);
     }
   }
@@ -2446,7 +2413,7 @@ function onMouseDown(e) {
         // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
         if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
         {
-          if (primeiravez == true){
+          if (primeiravez == true && !detectmob()){
             if (document.getElementById("menuSelect").style.right == "-300px")
               $("#menuSelect").animate({"right": '+=300px'});
             primeiravez = false;
@@ -3401,6 +3368,8 @@ function switchToVr() {
       animateVr();
       var reticle = vreticle.Reticle(camera);
       mainScene.add(camera);
+    }else{
+
     }
   }
   else // change back to 3D view
@@ -3410,6 +3379,7 @@ function switchToVr() {
     isVR = false;
     cancelAnimationFrame(vr);
     renderer.setSize( window.innerWidth, window.innerHeight );
+    mainScene.remove(camera);
   }
 }
 
