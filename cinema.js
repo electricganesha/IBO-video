@@ -91,21 +91,6 @@ $.ajax({
 
 $.ajax({
   type: "GET",
-  url: "js/jquery-ui.js",
-  url: "js/EffectComposer.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/BloomPass.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/vreticle.js",
   dataType: "script",
   async: false
@@ -230,6 +215,7 @@ var slidedownpreco = false;
 var slidedowndata = false;
 var slidedownsessao = false;
 var mudousessao = false;
+var clickfull = false;
 var anterior = "";
 var icon_anterior = "";
 var capacidade = 0;
@@ -314,7 +300,6 @@ waterMarkDiv.style.width = '200px';
 waterMarkDiv.style.height = '82px';
 waterMarkDiv.style.position = "absolute";
 waterMarkDiv.id = 'watermarkDiv';
-//waterMarkDiv.style.top = '0';
 waterMarkDiv.style.bottom = "5%";
 waterMarkDiv.style.left = "5%";
 waterMarkDiv.innerHTML = "<img src='img/Push_Logo_transparente.png'> </img>";
@@ -328,7 +313,7 @@ if(firstTimeRunning)
   firstTimeRunning = false;
 }
 
-loadingScene = new THREE.Scene();
+
 mainScene = new THREE.Scene();
 startLoadingScene();
 
@@ -382,14 +367,32 @@ function startLoadingScene() {
 //
 
 function fullscreen() {
-  if (container.requestFullscreen) {
-    container.requestFullscreen();
-  } else if (container.msRequestFullscreen) {
-    container.msRequestFullscreen();
-  } else if (container.mozRequestFullScreen) {
-    container.mozRequestFullScreen();
-  } else if (container.webkitRequestFullscreen) {
-    container.webkitRequestFullscreen();
+  if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {
+    if (!detectmob()){
+      document.getElementById("ptrocafsImg").src="img/exit-full-screen.png";
+    }
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    }
+  } else {
+    if (!detectmob()){
+      document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
+    }
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
   }
 }
 
@@ -857,7 +860,7 @@ function showMenuSelect(){
           console.log(errorThrown);
         }
       });
-  }
+    }
 
   function carregarSessao() {
     $.ajax({
@@ -1087,7 +1090,13 @@ function showMenuSelect(){
     legEsq.style.borderRadius = "10px";
     legEsq.id = 'legEsq';
     legEsq.onclick = function() {
-      switchToVr();
+      if (!clickfull){
+        fullscreen();
+        clickfull = true;
+      }else{
+        fullscreen();
+        clickfull = false;
+      }
     }
     legEsq.onmouseover = function() {
       legEsq.style.cursor = 'pointer';
@@ -1282,6 +1291,7 @@ function showMenuSelect(){
     pcapacity.style.marginTop = "0px";
 
     var pcapacityNumber = document.createElement('p');
+    pcapacityNumber.innerHTML = capacidade;
     pcapacityNumber.id = "pcapacityNumber";
     pcapacityNumber.style.color = "#FFF";
     pcapacityNumber.style.fontSize = "17px";
@@ -1313,6 +1323,7 @@ function showMenuSelect(){
     pfreeseats.style.marginTop = "0px";
 
     var pfreeseatsNumber = document.createElement('p');
+    pfreeseatsNumber.innerHTML = lugaresLivres;
     pfreeseatsNumber.id = "pfreeseatsNumber";
     pfreeseatsNumber.style.color = "#FFF";
     pfreeseatsNumber.style.fontSize = "17px";
@@ -1323,6 +1334,7 @@ function showMenuSelect(){
     freeseatsDiv.appendChild(pfreeseats);
     freeseatsDiv.appendChild(pfreeseatsNumber);
     legMid.appendChild(freeseatsDiv);
+
     var ptrocapresp = document.createElement('p');
     ptrocapresp.innerHTML = "Ver Planta";
     ptrocapresp.style.color = "#FFF";
@@ -1335,20 +1347,20 @@ function showMenuSelect(){
     ptrocaprespImg.id = "ptrocaprespImg";
     ptrocaprespImg.style.marginTop = "2px";
 
-    var ptrocavr = document.createElement('p');
-    ptrocavr.innerHTML = "VR";
-    ptrocavr.style.color = "#FFF";
-    ptrocavr.style.fontSize = "13px";
-    ptrocavr.style.fontFamily = "osr";
-    ptrocavr.style.marginTop = "15px";
-    ptrocavr.id = "ptrocavr";
+    var ptrocafs = document.createElement('p');
+    ptrocafs.innerHTML = "FullScreen";
+    ptrocafs.style.color = "#FFF";
+    ptrocafs.style.fontSize = "13px";
+    ptrocafs.style.fontFamily = "osr";
+    ptrocafs.style.marginTop = "15px";
+    ptrocafs.id = "ptrocafs";
 
-    var ptrocavrImg = document.createElement('img');
-    ptrocavrImg.id = "ptrocavrImg";
-    ptrocavrImg.style.marginTop = "-4px";
+    var ptrocafsImg = document.createElement('img');
+    ptrocafsImg.id = "ptrocafsImg";
+    ptrocafsImg.style.marginTop = "-4px";
 
-    legEsq.appendChild(ptrocavr);
-    legEsq.appendChild(ptrocavrImg);
+    legEsq.appendChild(ptrocafs);
+    legEsq.appendChild(ptrocafsImg);
 
     legDir.appendChild(ptrocapresp);
     legDir.appendChild(ptrocaprespImg);
@@ -1364,7 +1376,7 @@ function showMenuSelect(){
     document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
     document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
     document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
-    document.getElementById("ptrocavrImg").src="img/VR-icon.png";
+    document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
 
 
     // create the main selection menu
@@ -1928,8 +1940,7 @@ function loadCadeiras(populateCadeirasInstances) {
       capacidade += 1;
     }
     capacidade -= 1;
-    if (!detectmob())
-      document.getElementById("pcapacityNumber").innerHTML = capacidade;
+
   });
 
 
@@ -2043,11 +2054,8 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
         newObject.estado = "LIVRE";
         singleGeometryNormal.merge(newObject.geometry, newObject.matrix, 0);
       }
-
       octree.add( newObject);
     }
-    if (!detectmob())
-      document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
   }
 
   //add to scene
@@ -2446,7 +2454,7 @@ function onMouseDown(e) {
         // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
         if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
         {
-          if (primeiravez == true){
+          if (primeiravez == true && !detectmob()){
             if (document.getElementById("menuSelect").style.right == "-300px")
               $("#menuSelect").animate({"right": '+=300px'});
             primeiravez = false;
@@ -3401,6 +3409,8 @@ function switchToVr() {
       animateVr();
       var reticle = vreticle.Reticle(camera);
       mainScene.add(camera);
+    }else{
+
     }
   }
   else // change back to 3D view
@@ -3410,6 +3420,7 @@ function switchToVr() {
     isVR = false;
     cancelAnimationFrame(vr);
     renderer.setSize( window.innerWidth, window.innerHeight );
+    mainScene.remove(camera);
   }
 }
 
