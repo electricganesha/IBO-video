@@ -91,21 +91,6 @@ $.ajax({
 
 $.ajax({
   type: "GET",
-  url: "js/jquery-ui.js",
-  url: "js/EffectComposer.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/BloomPass.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/vreticle.js",
   dataType: "script",
   async: false
@@ -230,6 +215,7 @@ var slidedownpreco = false;
 var slidedowndata = false;
 var slidedownsessao = false;
 var mudousessao = false;
+var clickfull = false;
 var anterior = "";
 var icon_anterior = "";
 var capacidade = 0;
@@ -314,7 +300,6 @@ waterMarkDiv.style.width = '200px';
 waterMarkDiv.style.height = '82px';
 waterMarkDiv.style.position = "absolute";
 waterMarkDiv.id = 'watermarkDiv';
-//waterMarkDiv.style.top = '0';
 waterMarkDiv.style.bottom = "5%";
 waterMarkDiv.style.left = "5%";
 waterMarkDiv.innerHTML = "<img src='img/Push_Logo_transparente.png'> </img>";
@@ -382,14 +367,32 @@ function startLoadingScene() {
 //
 
 function fullscreen() {
-  if (container.requestFullscreen) {
-    container.requestFullscreen();
-  } else if (container.msRequestFullscreen) {
-    container.msRequestFullscreen();
-  } else if (container.mozRequestFullScreen) {
-    container.mozRequestFullScreen();
-  } else if (container.webkitRequestFullscreen) {
-    container.webkitRequestFullscreen();
+  if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {
+    if (!detectmob()){
+      document.getElementById("ptrocafsImg").src="img/exit-full-screen.png";
+    }
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    }
+  } else {
+    if (!detectmob()){
+      document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
+    }
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
   }
 }
 
@@ -1071,12 +1074,33 @@ function showMenuSelect(){
     legDiv.id = 'LegDiv';
     // create sub main legenda for cinema
     var legenda = document.createElement('div');
-    legenda.style.width = '810px';
+    legenda.style.width = '900px';
     legenda.style.margin = "auto";
     legenda.style.textAlign = "center";
     legenda.style.height = '200px';
     legenda.style.borderRadius = "10px";
     legenda.id = 'legenda';
+
+    var legEsq = document.createElement('div');
+    legEsq.style.width = '90px';
+    legEsq.style.float = "left";
+    legEsq.style.textAlign = "center";
+    legEsq.style.height = '200px';
+    legEsq.style.background = '#1cbb9b';
+    legEsq.style.borderRadius = "10px";
+    legEsq.id = 'legEsq';
+    legEsq.onclick = function() {
+      if (!clickfull){
+        fullscreen();
+        clickfull = true;
+      }else{
+        fullscreen();
+        clickfull = false;
+      }
+    }
+    legEsq.onmouseover = function() {
+      legEsq.style.cursor = 'pointer';
+    }
 
     // create legend for cinema
     var legMid = document.createElement('div');
@@ -1323,10 +1347,26 @@ function showMenuSelect(){
     ptrocaprespImg.id = "ptrocaprespImg";
     ptrocaprespImg.style.marginTop = "2px";
 
+    var ptrocafs = document.createElement('p');
+    ptrocafs.innerHTML = "FullScreen";
+    ptrocafs.style.color = "#FFF";
+    ptrocafs.style.fontSize = "13px";
+    ptrocafs.style.fontFamily = "osr";
+    ptrocafs.style.marginTop = "15px";
+    ptrocafs.id = "ptrocafs";
+
+    var ptrocafsImg = document.createElement('img');
+    ptrocafsImg.id = "ptrocafsImg";
+    ptrocafsImg.style.marginTop = "-4px";
+
+    legEsq.appendChild(ptrocafs);
+    legEsq.appendChild(ptrocafsImg);
+
     legDir.appendChild(ptrocapresp);
     legDir.appendChild(ptrocaprespImg);
 
     legDiv.appendChild(legenda);
+    legenda.appendChild(legEsq);
     legenda.appendChild(legMid);
     legenda.appendChild(legDir);
     document.body.appendChild(legDiv);
@@ -1336,6 +1376,7 @@ function showMenuSelect(){
     document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
     document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
     document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
+    document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
 
 
     // create the main selection menu
