@@ -217,6 +217,7 @@ var slidedownsessao = false;
 var mudousessao = false;
 var clickfull = false;
 var isLoadOcup = false;
+var isLoadingInfo = true;
 var anterior = "";
 var icon_anterior = "";
 var capacidade = 0;
@@ -672,8 +673,8 @@ function init() {
 
     controls.lookVertical = true;
     controls.constrainVertical = true;
-    controls.verticalMin = Math.PI/3;
-    controls.verticalMax = 2*Math.PI/3;
+    controls.verticalMin = THREE.Math.degToRad(95);
+    controls.verticalMax = THREE.Math.degToRad(110);
 
     controls.movementSpeed = 0;
     controls.autoForward = false;
@@ -719,7 +720,7 @@ function init() {
   iDiv.style.textAlign = "center";
   iDiv.style.height = '100%';
   iDiv.style.position = "absolute";
-  iDiv.style.background = 'rgba(0,0,0,1)';
+  iDiv.style.background = 'rgba(0,0,0,0.4)';
   iDiv.id = 'loadedScreen';
   iDiv.style.top = '0';
   iDiv.style.display = "block";
@@ -770,6 +771,9 @@ function init() {
   document.getElementById("helpScreenArrow").src="img/help.png";
 
   $("#loadedScreen" ).click(function() {
+    mouse.x = 100;
+    mouse.y = 200;
+    isLoadingInfo = false;
     $("#helpScreen").fadeIn("slow");
     $("#loadedScreen").fadeOut("slow");
     video.play();
@@ -2981,7 +2985,7 @@ function animate() {
     statsMS.begin();
     statsMB.begin();
 
-    if(controls != undefined && !isLoadOcup)
+    if(controls != undefined && !isLoadOcup && !isLoadingInfo)
       controls.update(clock.getDelta()); //for cameras
 
     octree.update();
@@ -3012,18 +3016,18 @@ function animate() {
     {
       // if we reach the edges of the screen with the mouse, the camera stops
       if(controls.lon <= 0){
-        if(controls.lon < -60)
+        if(controls.lon < -20)
         {
           controls.lookSpeed = 0.001;
-          controls.lon = -60;
+          controls.lon = -20;
         }
       }
       else
       {
-        if(controls.lon > 60)
+        if(controls.lon > 20)
         {
           controls.lookSpeed = 0.001;
-          controls.lon = 60;
+          controls.lon = 20;
         }
       }
     }
