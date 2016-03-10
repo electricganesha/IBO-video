@@ -73,10 +73,8 @@ vreticle.Reticle = function(camera) {
     new_reticle.create_reticle = function(camera) {
         this.camera = camera;
         this.reticle_arm_object = new THREE.Object3D();
-        this.reticle_object = this.create_default_object(new THREE.Vector3(0, 0, -.5), false, .004, undefined, true);
+        this.reticle_object = this.create_default_object(new THREE.Vector3(0, 0, -.6), false, .004, undefined, true);
 
-        //this.reticle_object.material.transparent = true;
-        //this.reticle_object.material.opacity = 0.5;
         this.reticle_arm_object.add(this.reticle_object);
         this.camera.add(this.reticle_arm_object);
     }
@@ -101,60 +99,6 @@ vreticle.Reticle = function(camera) {
         var intersects = ray.intersectObjects(this.colliders);
         //if an object is hit
 
-        if (intersects.length > 0) {
-            //save the new hit object and time
-            this.reticle_hit_object = intersects[0].object;
-            this.reticle_hit_time = this.clock.getElapsedTime();
-            //is the hit object gazeable
-            if (this.reticle_hit_object.gazeable) {
-                this.reticle_object.material = this.get_random_hex_material();
-                //check if there's a gazing object
-                if (this.gazing_object != null) {
-                    //if the gazing object is the same as the hit object: check to see if the elapsed time exceeds the hover duration
-                    if (this.gazing_object == this.reticle_hit_object) {
-                        //if it does: trigger the click
-                        if (this.reticle_hit_time - this.gazing_time >= this.gazing_duration) {
-                            if(this.gazing_object.ongazelong != undefined){
-                            this.gazing_object.ongazelong();
-                        }
-                            //reset gazing time
-                            this.gazing_time = this.reticle_hit_time;
-                        }
-                    } else {
-                        //if there is but it doesn't match the hit object: save the new hit object and time
-                        console.log("gaze out");
-                        this.gazing_object = this.reticle_hit_object;
-                        this.gazing_time = this.reticle_hit_time;
-                        if(this.gazing_object.ongazeout != undefined){
-                            this.gazing_object.ongazeout();
-                        }
-                    }
-
-                } else {
-                    //if there is not: save the time and object as gazing
-                    console.log("gaze over");
-                    this.gazing_object = this.reticle_hit_object;
-                    this.gazing_time = this.reticle_hit_time;
-                    if(this.gazing_object.ongazeover != undefined){
-                        this.gazing_object.ongazeover();
-                    }
-                }
-
-            }
-        } else {
-            if (this.gazing_object != null) {
-                console.log("gaze out");
-                    if(this.gazing_object.ongazeout != undefined){
-                        this.gazing_object.ongazeout();
-                    }
-                //clear gazing and hit object and times
-                this.reticle_hit_object = null;
-                this.reticle_hit_time = null;
-                this.gazing_object = null;
-                this.gazing_time = null;
-                this.reticle_object.material = this.default_material();
-            }
-        }
     }
 
     new_reticle.remove_from_list = function(object_in, list_in) {
