@@ -216,6 +216,8 @@ var slidedowndata = false;
 var slidedownsessao = false;
 var mudousessao = false;
 var clickfull = false;
+var isLoadOcup = false;
+var isLoadingInfo = true;
 var anterior = "";
 var icon_anterior = "";
 var capacidade = 0;
@@ -489,7 +491,6 @@ THREE.DeviceOrientationControls = function ( object ) {
           }
 
           intersected = intersectionObject;
-          uuidTexturaAntiga = intersected.material.map.uuid;
 
           if(detectmob())
           highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraMobileHighlight);
@@ -605,12 +606,6 @@ THREE.DeviceOrientationControls = function ( object ) {
 };
 
 function init() {
-  // STATS
-
-  rendererStats.domElement.style.position   = 'absolute'
-  rendererStats.domElement.style.left  = '0px'
-  rendererStats.domElement.style.bottom    = '0px'
-  //document.body.appendChild( rendererStats.domElement )
   // 0: fps, 1: ms, 2: mb
   statsFPS.setMode( 0 );
   statsMS.setMode( 1 );
@@ -620,17 +615,7 @@ function init() {
   statsFPS.domElement.style.left = '0px';
   statsFPS.domElement.style.top = '0px';
 
-  statsMS.domElement.style.position = 'absolute';
-  statsMS.domElement.style.left = '80px';
-  statsMS.domElement.style.top = '0px';
-
-  statsMB.domElement.style.position = 'absolute';
-  statsMB.domElement.style.left = '160px';
-  statsMB.domElement.style.top = '0px';
-
-  //document.body.appendChild( statsFPS.domElement );
-  //document.body.appendChild( statsMS.domElement );
-  //document.body.appendChild( statsMB.domElement );
+  document.body.appendChild( statsFPS.domElement );
 
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
@@ -672,8 +657,8 @@ function init() {
 
     controls.lookVertical = true;
     controls.constrainVertical = true;
-    controls.verticalMin = Math.PI/3;
-    controls.verticalMax = 2*Math.PI/3;
+    controls.verticalMin = THREE.Math.degToRad(95);
+    controls.verticalMax = THREE.Math.degToRad(120);
 
     controls.movementSpeed = 0;
     controls.autoForward = false;
@@ -730,7 +715,7 @@ function init() {
   textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
   +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
   +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
-  +"<br><br><br><br> Click anywhere to continue";
+  +"<br><br><br><br> Click on the text to continue";
   textDiv.style.width = '50%';
   textDiv.style.textAlign = "center";
   textDiv.style.fontFamily = "osb";
@@ -770,6 +755,9 @@ function init() {
   document.getElementById("helpScreenArrow").src="img/help.png";
 
   $("#loadedScreen" ).click(function() {
+    mouse.x = 100;
+    mouse.y = 200;
+    isLoadingInfo = false;
     $("#helpScreen").fadeIn("slow");
     $("#loadedScreen").fadeOut("slow");
     video.play();
@@ -791,6 +779,31 @@ function init() {
 //
 function showMenuSelect(){
 
+  var loading_seats = document.createElement('div');
+  loading_seats.style.width = '100%';
+  loading_seats.style.cursor = "pointer";
+  loading_seats.style.textAlign = "center";
+  loading_seats.style.height = '100%';
+  loading_seats.style.position = "absolute";
+  loading_seats.style.background = 'rgba(0,0,0,1)';
+  loading_seats.id = 'loading_seats';
+  loading_seats.style.top = '0';
+  loading_seats.style.display = "none";
+
+  var textDivLoading = document.createElement('div');
+  textDivLoading.style.color = "white";
+  textDivLoading.style.cursor = "pointer";
+  textDivLoading.innerHTML = "Loading Occupation";
+  textDivLoading.style.width = '50%';
+  textDivLoading.style.textAlign = "center";
+  textDivLoading.style.fontFamily = "osb";
+  textDivLoading.style.fontSize= "50px";
+  textDivLoading.style.position = "absolute";
+  textDivLoading.id = 'textDivLoading';
+  textDivLoading.style.left = '24%';
+  textDivLoading.style.top = '40%';
+  loading_seats.appendChild(textDivLoading);
+  document.body.appendChild(loading_seats);
   function carregarCinemas() {
     $.ajax({
       url:        'php/ler_BDCc.php',
@@ -798,7 +811,6 @@ function showMenuSelect(){
       success:    function(data){
         cinemasJSON = data;
         loadCinemas();
-        console.log("Lista de cinemas carregados");
       },
       error:    function(textStatus,errorThrown){
         console.log(textStatus);
@@ -842,7 +854,7 @@ function showMenuSelect(){
     }
   }
 
-    function carregarData() {
+  function carregarData() {
       $.ajax({
         url: 'php/ler_BDData.php', //This is the current doc
         type: "POST",
@@ -850,7 +862,6 @@ function showMenuSelect(){
         data: ({cinema: nCinemaSelecionado}),
         success: function(data){
           dias = data - 1;
-          console.log("Dias Carregados");
           showData.style.pointerEvents = "all";
           showData.style.cursor = "auto";
           showData.style.color = "#1bbc9b";
@@ -870,7 +881,6 @@ function showMenuSelect(){
         sessoesJSON = data;
         $("#showSessaoDiv").html("");
         loadSessoes();
-        console.log("Lista de sessões carregadas");
         showSessao.style.pointerEvents = "all";
         showSessao.style.cursor = "auto";
         showSessao.style.color = "#1bbc9b";
@@ -929,6 +939,7 @@ function showMenuSelect(){
   }
 
   function loadSessoes (){
+    var intervalo_ecra;
     for( var p=0 ; p<sessoesJSON.length ; p++){
       var n_sessao = sessoesJSON[p].id_sessao;
       var n_sessao = document.createElement("a");
@@ -948,63 +959,65 @@ function showMenuSelect(){
         this.style.color = "#FFF";
       }
       n_sessao.onclick = function() {
-        btnComprar.style.display = "inline-block";
-        showSessao.text = this.text;
-        showSessao.className = this.text;
-        showSessao.appendChild(iconSessao);
-        n_sessao_select = this.id;
-        carregarJSONBD(this.id);
-        $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-        $('#showSessaoDiv').slideUp();
-        slidedownsessao = false;
+          $("#menuSelect").animate({"right": '-=300px'});
+          document.getElementById("loading_seats").style.display = "block";
+          isLoadOcup = true;
+          btnComprar.style.display = "inline-block";
+          showSessao.text = this.text;
+          showSessao.className = this.text;
+          showSessao.appendChild(iconSessao);
+          n_sessao_select = this.id;
+          carregarJSONBDInitial(this.id);
+          $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+          $('#showSessaoDiv').slideUp();
+          slidedownsessao = false;
+          for(var j= 0; j< selectedChairs.length ; j++)
+          {
+            var selectedObject = mainScene.getObjectByName("selectChair_"+selectedChairs[j].name);
+            mainScene.remove( selectedObject );
+            var removalThing = "#"+selectedChairs[j].name;
+            $(removalThing).remove();
+          }
+          isSelected = false;
+          primeiravez = true;
+          mouseIsOnMenu = true;
+          mudousessao = true
+          selectedChairs = [];
 
-        for(var j= 0; j< selectedChairs.length ; j++)
-        {
-          var selectedObject = mainScene.getObjectByName("selectChair_"+selectedChairs[j].name);
+          for(var j= 0; j< spriteEyeArray.length ; j++)
+          {
+            var selectedObject = mainScene.getObjectByName(spriteEyeArray[j].name);
+            mainScene.remove( selectedObject );
+          }
+
+          spriteEyeArray = [];
+
+          var selectedObject = mainScene.getObjectByName("singleGeometryNormal");
           mainScene.remove( selectedObject );
 
-          var removalThing = "#"+selectedChairs[j].name;
-
-          $(removalThing).remove();
-        }
-
-        isSelected = false;
-        primeiravez = true;
-        mouseIsOnMenu = true;
-        mudousessao = true
-        selectedChairs = [];
-
-        for(var j= 0; j< spriteEyeArray.length ; j++)
-        {
-          var selectedObject = mainScene.getObjectByName(spriteEyeArray[j].name);
+          var selectedObject = mainScene.getObjectByName("singleGeometryOcupadas");
           mainScene.remove( selectedObject );
-        }
 
-        spriteEyeArray = [];
+          var selectedObject = mainScene.getObjectByName("singleGeometryDeficiente");
+          mainScene.remove( selectedObject );
 
-        var selectedObject = mainScene.getObjectByName("singleGeometryNormal");
-        mainScene.remove( selectedObject );
+          // we are using an octree for increasing the performance on raycasting
+          octree = new THREE.Octree( {
+            undeferred: true,
+            depthMax: Infinity,
+            objectsThreshold: 8,
+            overlapPct: 0.15
+          } );
 
-        var selectedObject = mainScene.getObjectByName("singleGeometryOcupadas");
-        mainScene.remove( selectedObject );
+          lugaresLivres = 0;
+          capacidade = 0;
 
-        var selectedObject = mainScene.getObjectByName("singleGeometryDeficiente");
-        mainScene.remove( selectedObject );
-
-        // we are using an octree for increasing the performance on raycasting
-        octree = new THREE.Octree( {
-          undeferred: true,
-          depthMax: Infinity,
-          objectsThreshold: 8,
-          overlapPct: 0.15
-        } );
-
-        lugaresLivres = 0;
-        capacidade = 0;
-
-        loadCadeiras(populateCadeirasInstances);
-
-
+        intervalo_ecra = setInterval(function() {
+          console.log("entrou");
+          $("#loading_seats").fadeOut("fast");
+          isLoadOcup = false;
+          clearInterval(intervalo_ecra);
+        }, 1500);
       }
       showSessaoDiv.appendChild(n_sessao);
     }
@@ -1741,7 +1754,6 @@ function showMenuSelect(){
         data: ({dados: jsonChairs}),
         success: function(data){
           console.log(jsonChairs);
-          console.log("Estado das cadeiras selecionado");
         },
         error:    function(textStatus,errorThrown){
           console.log(textStatus);
@@ -1857,7 +1869,6 @@ function loadSala() {
 
   loaderJSON.load( "models/Cinema_Motta/tela_final.js", function( geometry,material ) {
     telaFinal = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({map:textureVideo}));
-    //console.log(telaFinal);
     telaFinal.position.y += 0.5;
     mainScene.add(telaFinal);
   });
@@ -2028,7 +2039,7 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
       newObject.updateMatrix();
       mesh.geometry.colorsNeedUpdate = true;
 
-      var cadeiraCorrente ;
+      var cadeiraCorrente = "";
 
       for(var k = 0 ; k < cadeirasJSON.length ; k++)
       {
@@ -2037,7 +2048,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
           cadeiraCorrente = cadeirasJSON[k];
         }
       }
-
       if(cadeiraCorrente.estado == "OCUPADA")
       {
         lugaresLivres  = lugaresLivres - 1 ;
@@ -2055,9 +2065,10 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
         singleGeometryNormal.merge(newObject.geometry, newObject.matrix, 0);
       }
       octree.add( newObject);
-    }
-  }
 
+    }
+
+  }
   //add to scene
   var meshSG = new THREE.Mesh(singleGeometryNormal, new THREE.MeshFaceMaterial(materials));
   meshSG.name = "singleGeometryNormal";
@@ -2075,22 +2086,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 //
 // Here we access the DB and load the chair occupation info
 //
-function carregarJSONBD(num_sessao) {
-  $.ajax({
-    url: 'php/ler_BDCinema.php', //This is the current doc
-    type: "POST",
-    dataType:'json', // add json datatype to get json
-    data: ({sessao: "cadeiras"+num_sessao}),
-    success: function(data){
-      cadeirasJSON = data;
-      console.log("JSON Loaded Correctly from DB cadeiras " + num_sessao);
-    },
-    error:    function(textStatus,errorThrown){
-      console.log(textStatus);
-      console.log(errorThrown);
-    }
-  });
-}
 
 function carregarJSONBDInitial(num_sessao) {
 
@@ -2244,14 +2239,13 @@ function onMouseMove(e) {
   if(!isSelected && !sittingDown && !mouseIsOnMenu && !mouseIsOutOfDocument)
   controls.lookSpeed = (Math.abs(mouse.x) + Math.abs(mouse.y)) * 0.05;
   else if (isSelected && !sittingDown && !mouseIsOnMenu && !mouseIsOutOfDocument)
-  controls.lookSpeed = 0.15;
+  controls.lookSpeed = 0.10;
   else if (sittingDown)
   controls.lookSpeed = (Math.abs(mouse.x) + Math.abs(mouse.y)) * 0.2;
 
   // if we are in the cinema overview
   if(!sittingDown)
   {
-
     // normal raycasting variables
     var intersectedOne = false;
     var intersectedObject = new THREE.Object3D();
@@ -2272,7 +2266,6 @@ function onMouseMove(e) {
     // for each of the intersected objects
     for(var i=0; i<intersections.length; i++)
     {
-
       // if intersected object is a sprite
       if(intersections[i].object.name == "spriteEye")
       {
@@ -2312,7 +2305,6 @@ function onMouseMove(e) {
         }
 
         intersected = intersectionObject;
-        uuidTexturaAntiga = intersected.material.map.uuid;
 
         if(detectmob())
         highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraMobileHighlight);
@@ -2339,12 +2331,12 @@ function onMouseMove(e) {
 
         switch(intersected.estado) {
           case "OCUPADA":
-          var selectedObject = mainScene.getObjectByName("highLightChair");
-          mainScene.remove( selectedObject );
-          document.body.style.cursor = 'no-drop';
-          break;
+            var selectedObject = mainScene.getObjectByName("highLightChair");
+            mainScene.remove( selectedObject );
+            document.body.style.cursor = 'no-drop';
+            break;
           default:
-          document.body.style.cursor = 'pointer';
+            document.body.style.cursor = 'pointer';
         }
       }
     }
@@ -2371,8 +2363,7 @@ var primeiravez = true;
 //
 function onMouseDown(e) {
   // if we are in the cinema overview
-  if(!sittingDown && insideHelp == false)
-  {
+  if(!sittingDown && insideHelp == false) {
     // normal raycaster variables
     var intersectedOne = false;
 
@@ -2939,7 +2930,6 @@ function onMouseWheel(e) {
   return false;
 }
 
-
 function render(dt) {
   renderVR.render(mainScene, camera);
 }
@@ -2968,25 +2958,20 @@ function animate() {
     {
       spriteEyeArray[i].position.x += 0.002*Math.sin(clock.getElapsedTime() * 3);
       spriteEyeArray[i].position.z += 0.0005*Math.cos(clock.getElapsedTime() * 3);
-      spriteEyeArray[i].rotation.y += 0.01 * Math.sin(clock.getElapsedTime() * (Math.sin(0.6)*5));
+      //spriteEyeArray[i].rotation.y += 0.01 * Math.sin(clock.getElapsedTime() * (Math.sin(0.6)*5));
     }
 
     renderer.render( mainScene, camera );
-    rendererStats.update(renderer);
 
     statsFPS.begin();
-    statsMS.begin();
-    statsMB.begin();
 
-    if(controls != undefined)
+    if(controls != undefined && !isLoadOcup && !isLoadingInfo)
       controls.update(clock.getDelta()); //for cameras
 
     octree.update();
     TWEEN.update();
 
     statsFPS.end();
-    statsMS.end();
-    statsMB.end();
 
     // clean all the sprites
     if(isPerspectiveOrtho || sittingDown)
@@ -3009,25 +2994,44 @@ function animate() {
     {
       // if we reach the edges of the screen with the mouse, the camera stops
       if(controls.lon <= 0){
-        if(controls.lon < -60)
-        {
-          controls.lookSpeed = 0.001;
-          controls.lon = -60;
+        if(alreadyScrolledFront){
+          if(controls.lon < -15)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = -15;
+            console.log(controls.lon);
+          }
+        }else{
+          if(controls.lon < -40)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = -40;
+            console.log(controls.lon);
+          }
         }
       }
       else
       {
-        if(controls.lon > 60)
-        {
-          controls.lookSpeed = 0.001;
-          controls.lon = 60;
+        if(alreadyScrolledFront){
+          if(controls.lon > 15)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = 15;
+            console.log(controls.lon);
+          }
+        }else{
+          if(controls.lon > 40)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = 40;
+            console.log(controls.lon);
+          }
         }
       }
     }
   }
 
 }
-
 animate();
 
 //
@@ -3179,10 +3183,6 @@ requestAnimationFrame(function animate(nowMsec) {
   lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60
   var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
   lastTimeMsec = nowMsec
-  // call each update function
-  /*updateFcts.forEach(function(updateFn) {
-  updateFn(deltaMsec / 1000, nowMsec / 1000)
-})*/
 })
 
 //
@@ -3394,7 +3394,7 @@ function switchToOrtho() {
 }
 
 function animateVr() {
-  vr = requestAnimationFrame(animateVr);
+  requestAnimationFrame(animateVr);
   update(clock.getDelta());
   render(clock.getDelta());
 }
@@ -3424,7 +3424,6 @@ function switchToVr() {
   }
 }
 
-// detect if we are using a mobile
 function detectmob() {
   if( navigator.userAgent.match(/Android/i)
   || navigator.userAgent.match(/webOS/i)
