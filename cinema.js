@@ -606,12 +606,6 @@ THREE.DeviceOrientationControls = function ( object ) {
 };
 
 function init() {
-  // STATS
-
-  rendererStats.domElement.style.position   = 'absolute'
-  rendererStats.domElement.style.left  = '0px'
-  rendererStats.domElement.style.bottom    = '0px'
-  //document.body.appendChild( rendererStats.domElement )
   // 0: fps, 1: ms, 2: mb
   statsFPS.setMode( 0 );
   statsMS.setMode( 1 );
@@ -621,17 +615,7 @@ function init() {
   statsFPS.domElement.style.left = '0px';
   statsFPS.domElement.style.top = '0px';
 
-  statsMS.domElement.style.position = 'absolute';
-  statsMS.domElement.style.left = '80px';
-  statsMS.domElement.style.top = '0px';
-
-  statsMB.domElement.style.position = 'absolute';
-  statsMB.domElement.style.left = '160px';
-  statsMB.domElement.style.top = '0px';
-
-  //document.body.appendChild( statsFPS.domElement );
-  //document.body.appendChild( statsMS.domElement );
-  //document.body.appendChild( statsMB.domElement );
+  document.body.appendChild( statsFPS.domElement );
 
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
@@ -674,7 +658,7 @@ function init() {
     controls.lookVertical = true;
     controls.constrainVertical = true;
     controls.verticalMin = THREE.Math.degToRad(95);
-    controls.verticalMax = THREE.Math.degToRad(110);
+    controls.verticalMax = THREE.Math.degToRad(120);
 
     controls.movementSpeed = 0;
     controls.autoForward = false;
@@ -720,7 +704,7 @@ function init() {
   iDiv.style.textAlign = "center";
   iDiv.style.height = '100%';
   iDiv.style.position = "absolute";
-  iDiv.style.background = 'rgba(0,0,0,0.4)';
+  iDiv.style.background = 'rgba(0,0,0,1)';
   iDiv.id = 'loadedScreen';
   iDiv.style.top = '0';
   iDiv.style.display = "block";
@@ -731,7 +715,7 @@ function init() {
   textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
   +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
   +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
-  +"<br><br><br><br> Click anywhere to continue";
+  +"<br><br><br><br> Click on the text to continue";
   textDiv.style.width = '50%';
   textDiv.style.textAlign = "center";
   textDiv.style.fontFamily = "osb";
@@ -814,7 +798,6 @@ function showMenuSelect(){
   textDivLoading.style.textAlign = "center";
   textDivLoading.style.fontFamily = "osb";
   textDivLoading.style.fontSize= "50px";
-  textDivLoading.style.border = "solid 2px red";
   textDivLoading.style.position = "absolute";
   textDivLoading.id = 'textDivLoading';
   textDivLoading.style.left = '24%';
@@ -2975,15 +2958,12 @@ function animate() {
     {
       spriteEyeArray[i].position.x += 0.002*Math.sin(clock.getElapsedTime() * 3);
       spriteEyeArray[i].position.z += 0.0005*Math.cos(clock.getElapsedTime() * 3);
-      spriteEyeArray[i].rotation.y += 0.01 * Math.sin(clock.getElapsedTime() * (Math.sin(0.6)*5));
+      //spriteEyeArray[i].rotation.y += 0.01 * Math.sin(clock.getElapsedTime() * (Math.sin(0.6)*5));
     }
 
     renderer.render( mainScene, camera );
-    rendererStats.update(renderer);
 
     statsFPS.begin();
-    statsMS.begin();
-    statsMB.begin();
 
     if(controls != undefined && !isLoadOcup && !isLoadingInfo)
       controls.update(clock.getDelta()); //for cameras
@@ -2992,8 +2972,6 @@ function animate() {
     TWEEN.update();
 
     statsFPS.end();
-    statsMS.end();
-    statsMB.end();
 
     // clean all the sprites
     if(isPerspectiveOrtho || sittingDown)
@@ -3016,18 +2994,38 @@ function animate() {
     {
       // if we reach the edges of the screen with the mouse, the camera stops
       if(controls.lon <= 0){
-        if(controls.lon < -20)
-        {
-          controls.lookSpeed = 0.001;
-          controls.lon = -20;
+        if(alreadyScrolledFront){
+          if(controls.lon < -15)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = -15;
+            console.log(controls.lon);
+          }
+        }else{
+          if(controls.lon < -40)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = -40;
+            console.log(controls.lon);
+          }
         }
       }
       else
       {
-        if(controls.lon > 20)
-        {
-          controls.lookSpeed = 0.001;
-          controls.lon = 20;
+        if(alreadyScrolledFront){
+          if(controls.lon > 15)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = 15;
+            console.log(controls.lon);
+          }
+        }else{
+          if(controls.lon > 40)
+          {
+            controls.lookSpeed = 0.001;
+            controls.lon = 40;
+            console.log(controls.lon);
+          }
         }
       }
     }
@@ -3396,7 +3394,7 @@ function switchToOrtho() {
 }
 
 function animateVr() {
-  vr = requestAnimationFrame(animateVr);
+  requestAnimationFrame(animateVr);
   update(clock.getDelta());
   render(clock.getDelta());
 }
