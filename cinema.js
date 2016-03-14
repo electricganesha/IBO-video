@@ -91,56 +91,6 @@ $.ajax({
 
 $.ajax({
   type: "GET",
-  url: "js/EffectComposer.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/RenderPass.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/ShaderPass.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/MaskPass.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/CopyShader.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/ConvolutionShader.js",
-  dataType: "script",
-  async: false
-});
-
-
-$.ajax({
-  type: "GET",
-  url: "js/BloomPass.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/vreticle.js",
   dataType: "script",
   async: false
@@ -152,22 +102,6 @@ $.ajax({
   dataType: "script",
   async: false
 });
-
-$.ajax({
-  type: "GET",
-  url: "js/Wagner.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/Wagner.base.js",
-  dataType: "script",
-  async: false
-});
-
-
 
 // TEXTURES
 var loader = new THREE.TextureLoader();
@@ -356,8 +290,6 @@ element = renderer.domElement;
 container = document.body;
 container.appendChild(element);
 
-//var composer = new THREE.EffectComposer( renderer );
-
 renderVR = new THREE.StereoEffect(renderer);
 renderVR.eyeSeparation = 0.01;
 
@@ -393,16 +325,6 @@ THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
   {
     firstTimeLoading = false;
     init();
-
-    var renderModel = new THREE.RenderPass( mainScene, camera );
-    var effectBloom = new THREE.BloomPass( 1.0, 10.0, 5.0, 256 );
-    var copyPass = new THREE.ShaderPass( THREE.CopyShader );
-    copyPass.renderToScreen = true;
-
-    composer.addPass( renderModel );
-    composer.addPass( effectBloom );
-    composer.addPass( copyPass );
-
   }
 };
 
@@ -425,13 +347,6 @@ var rtParameters = {
 
 				var rtWidth  = window.innerWidth / 2;
 				var rtHeight = window.innerHeight / 2;
-
-/*var composer = new WAGNER.Composer( renderer );
-composer.setSize( window.innerWidth, window.innerHeight ); // or whatever resolution
-
-var multiPassBloomPass = new WAGNER.MultiPassBloomPass();
-
-multiPassBloomPass.params.blurAmount = 0.001;*/
 
 //
 // This method shows the loading scene, while the items are not loaded
@@ -3099,18 +3014,8 @@ function animate() {
     {
       spriteEyeArray[i].position.x += 0.002*Math.sin(clock.getElapsedTime() * 3);
       spriteEyeArray[i].position.z += 0.0005*Math.cos(clock.getElapsedTime() * 3);
-      //spriteEyeArray[i].rotation.y += 0.01 * Math.sin(clock.getElapsedTime() * (Math.sin(0.6)*5));
     }
 
-    /*renderer.autoClearColor = true;
-    composer.reset();
-    composer.render( mainScene, camera );
-    composer.pass( multiPassBloomPass );
-    composer.toScreen();*/
-    //renderer.clear();
-    //composer.render(0.01);
-    //renderer.render( mainScene, camera );
-    //rendererStats.update(renderer);
     renderer.render( mainScene, camera );
 
     statsFPS.begin();
