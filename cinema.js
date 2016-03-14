@@ -495,6 +495,7 @@ THREE.DeviceOrientationControls = function ( object ) {
 
   var firstAlpha;
   var firstIn = false;
+  var entrouOri = false;
 
   this.object = object;
 
@@ -505,6 +506,33 @@ THREE.DeviceOrientationControls = function ( object ) {
   this.deviceOrientation = {};
 
   this.screenOrientation = 0;
+
+  var iDivOri = document.createElement('div');
+  iDivOri.style.width = '100%';
+  iDivOri.style.cursor = "pointer";
+  iDivOri.style.textAlign = "center";
+  iDivOri.style.height = '100%';
+  iDivOri.style.position = "absolute";
+  iDivOri.style.background = 'rgba(0,0,0,1)';
+  iDivOri.id = 'loadedScreenOri';
+  iDivOri.style.top = '0';
+  iDivOri.style.display = "none";
+
+  var textDivOri = document.createElement('div');
+  textDivOri.style.color = "white";
+  textDivOri.style.cursor = "pointer";
+  textDivOri.innerHTML = " Rotate phone";
+  textDivOri.style.width = '50%';
+  textDivOri.style.textAlign = "center";
+  textDivOri.style.fontFamily = "osb";
+  textDivOri.style.height = '100%';
+  textDivOri.style.position = "absolute";
+  textDivOri.id = 'textScreenOri';
+  textDivOri.style.left = '24%';
+  textDivOri.style.top = '30%';
+
+  iDivOri.appendChild(textDivOri);
+  document.body.appendChild(iDivOri);
 
   var onDeviceOrientationChangeEvent = function ( event ) {
     scope.deviceOrientation = event;
@@ -628,9 +656,14 @@ THREE.DeviceOrientationControls = function ( object ) {
   };
 
   var onScreenOrientationChangeEvent = function () {
-
-    scope.screenOrientation = window.orientation || 0;
-
+    if(window.orientation == 0){
+      $("#loadedScreenOri").fadeIn("fast");
+      scope.screenOrientation = window.orientation || 0;
+    }else{
+      $("#loadedScreenOri").fadeOut("fast");
+      scope.screenOrientation = window.orientation || 0;
+      console.profile();
+    }
   };
 
   // The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
@@ -2426,11 +2459,11 @@ function onMouseMove(e) {
 
         centroid.applyMatrix4( intersected.matrixWorld );
 
-        highLightChair.scale.set(1.1,1.00,1.05);
+        highLightChair.scale.set(1.15,1.00,1.05);
 
-        highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z);
+        highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z+0.035);
 
-        highLightChair.position.set(centroid.x-0.005,centroid.y-0.01,centroid.z);
+        highLightChair.position.set(centroid.x-0.005,centroid.y-0.006,centroid.z);
 
         mainScene.add(highLightChair);
         highLightChair.name = "highLightChair";
@@ -2622,11 +2655,11 @@ function onMouseDown(e) {
 
           centroid.applyMatrix4( obj.matrixWorld );
 
-          selectChair.scale.set(1.1,1.00,1.05);
+          selectChair.scale.set(1.15,1.00,1.05);
 
-          selectChair.rotation.set(obj.rotation.x,obj.rotation.y,obj.rotation.z);
+          selectChair.rotation.set(obj.rotation.x,obj.rotation.y,obj.rotation.z+0.035);
 
-          selectChair.position.set(centroid.x-0.005,centroid.y-0.01,centroid.z);
+          selectChair.position.set(centroid.x-0.005,centroid.y-0.006,centroid.z);
 
           selectChair.name = "selectChair_"+obj.name;
           selectChair.material.map = texturaCadeiraHighlight;
@@ -3112,18 +3145,16 @@ function animate() {
       // if we reach the edges of the screen with the mouse, the camera stops
       if(controls.lon <= 0){
         if(alreadyScrolledFront){
-          if(controls.lon < -15)
+          if(controls.lon < -20)
           {
             controls.lookSpeed = 0.001;
-            controls.lon = -15;
-            console.log(controls.lon);
+            controls.lon = -20;
           }
         }else{
-          if(controls.lon < -40)
+          if(controls.lon < -45)
           {
             controls.lookSpeed = 0.001;
-            controls.lon = -40;
-            console.log(controls.lon);
+            controls.lon = -45;
           }
         }
       }
