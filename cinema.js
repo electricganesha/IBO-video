@@ -356,7 +356,7 @@ element = renderer.domElement;
 container = document.body;
 container.appendChild(element);
 
-var composer = new THREE.EffectComposer( renderer );
+//var composer = new THREE.EffectComposer( renderer );
 
 renderVR = new THREE.StereoEffect(renderer);
 renderVR.eyeSeparation = 0.01;
@@ -623,11 +623,11 @@ THREE.DeviceOrientationControls = function ( object ) {
 
           centroid.applyMatrix4( intersected.matrixWorld );
 
-          highLightChair.scale.set(1.1,1.00,1.05);
+          highLightChair.scale.set(1.15,1.00,1.05);
 
-          highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z);
+          highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z+0.035);
 
-          highLightChair.position.set(centroid.x-0.005,centroid.y-0.01,centroid.z);
+          highLightChair.position.set(centroid.x-0.005,centroid.y-0.006,centroid.z);
 
           mainScene.add(highLightChair);
           highLightChair.name = "highLightChair";
@@ -953,7 +953,7 @@ function showMenuSelect(){
     // Grab the acceleration from the results
     var acceleration = eventData.acceleration;
 
-    if(acceleration.x > 3 || acceleration.x < -3)
+    if((acceleration.x > 3 || acceleration.x < -3) && (acceleration.y > 3 || acceleration.y < -3) && acceleration.z > 3 || acceleration.z < -3)
     {
       if(sittingDown)
       {
@@ -3359,7 +3359,7 @@ function setupTweenFP(obj) {
 
   // tween camera movement
   tweenFP = new TWEEN.Tween(camera.position).to({
-    x: centroid.x,
+    x: centroid.x-0.05,
     y: centroid.y+0.25, // head height
     z: centroid.z
   },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
