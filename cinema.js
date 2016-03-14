@@ -1,5 +1,12 @@
 $.ajax({
   type: "GET",
+  url: "js/jquery-ui.js",
+  dataType: "script",
+  async: false
+});
+
+$.ajax({
+  type: "GET",
   url: "js/three.js",
   dataType: "script",
   async: false
@@ -77,13 +84,6 @@ $.ajax({
 
 $.ajax({
   type: "GET",
-  url: "js/jquery-ui.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/threex.rendererstats.js",
   dataType: "script",
   async: false
@@ -102,8 +102,6 @@ $.ajax({
   dataType: "script",
   async: false
 });
-
-
 
 // TEXTURES
 var loader = new THREE.TextureLoader();
@@ -284,7 +282,6 @@ var materialcadeiraOcupada = new THREE.MeshPhongMaterial( {
   normalMap: texturaCadeiraNormalMap
 });
 
-
 // STRUCTURAL / DOM / RENDERER
 
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
@@ -341,6 +338,15 @@ THREE.DefaultLoadingManager.onError = function () {
   ('there has been an error');
 };
 
+var rtParameters = {
+					minFilter: THREE.LinearFilter,
+					magFilter: THREE.LinearFilter,
+					format: THREE.RGBFormat,
+					stencilBuffer: true
+				};
+
+				var rtWidth  = window.innerWidth / 2;
+				var rtHeight = window.innerHeight / 2;
 
 //
 // This method shows the loading scene, while the items are not loaded
@@ -532,11 +538,11 @@ THREE.DeviceOrientationControls = function ( object ) {
 
           centroid.applyMatrix4( intersected.matrixWorld );
 
-          highLightChair.scale.set(1.1,1.00,1.05);
+          highLightChair.scale.set(1.15,1.00,1.05);
 
-          highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z);
+          highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z+0.035);
 
-          highLightChair.position.set(centroid.x-0.005,centroid.y-0.01,centroid.z);
+          highLightChair.position.set(centroid.x-0.005,centroid.y-0.006,centroid.z);
 
           mainScene.add(highLightChair);
           highLightChair.name = "highLightChair";
@@ -862,7 +868,7 @@ function showMenuSelect(){
     // Grab the acceleration from the results
     var acceleration = eventData.acceleration;
 
-    if(acceleration.x > 3 || acceleration.x < -3)
+    if((acceleration.x > 3 || acceleration.x < -3) && (acceleration.y > 3 || acceleration.y < -3) && acceleration.z > 3 || acceleration.z < -3)
     {
       if(sittingDown)
       {
@@ -1917,19 +1923,36 @@ function loadSala() {
     materials[3] = new THREE.MeshBasicMaterial(materials[3]);
 
     material1 = new THREE.MeshBasicMaterial();
+    console.log(material1)
     material1.map = materials[0].map;
+    material1.map.magFilter = THREE.NearestFilter;
+    material1.map.minFilter = THREE.LinearMipMapNearestFilter;
+    material1.map.anisotropy = 16;
+    material1.overdraw = 1.0;
     materials[0] = material1;
 
     material2 = new THREE.MeshBasicMaterial();
     material2.map = materials[1].map;
+    material2.map.magFilter = THREE.NearestFilter;
+    material2.map.minFilter = THREE.LinearMipMapNearestFilter;
+    material2.map.anisotropy = 16;
+    material2.overdraw = 1.0;
     materials[1] = material2;
 
     material3 = new THREE.MeshBasicMaterial();
     material3.map = materials[2].map;
+    material3.map.magFilter = THREE.NearestFilter;
+    material3.map.minFilter = THREE.LinearMipMapNearestFilter;
+    material3.map.anisotropy = 16;
+    material3.overdraw = 1.0;
     materials[2] = material3;
 
     material4 = new THREE.MeshBasicMaterial();
     material4.map = materials[3].map;
+    material4.map.magFilter = THREE.NearestFilter;
+    material4.map.minFilter = THREE.LinearMipMapNearestFilter;
+    material4.map.anisotropy = 16;
+    material4.overdraw = 1.0;
     materials[3] = material4;
 
 
@@ -2980,8 +3003,8 @@ function animate() {
   // if we are rendering the loading scene
   if(isLoading)
   {
-    renderer.render( loadingScene, camera );
-    loaderMesh.rotation.y -= 0.03;
+    //renderer.render( loadingScene, camera );
+    //loaderMesh.rotation.y -= 0.03;
   }
   // if we are rendering the main scene
   else
@@ -2991,7 +3014,6 @@ function animate() {
     {
       spriteEyeArray[i].position.x += 0.002*Math.sin(clock.getElapsedTime() * 3);
       spriteEyeArray[i].position.z += 0.0005*Math.cos(clock.getElapsedTime() * 3);
-      //spriteEyeArray[i].rotation.y += 0.01 * Math.sin(clock.getElapsedTime() * (Math.sin(0.6)*5));
     }
 
     renderer.render( mainScene, camera );
@@ -3242,7 +3264,7 @@ function setupTweenFP(obj) {
 
   // tween camera movement
   tweenFP = new TWEEN.Tween(camera.position).to({
-    x: centroid.x,
+    x: centroid.x-0.05,
     y: centroid.y+0.25, // head height
     z: centroid.z
   },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
