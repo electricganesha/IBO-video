@@ -63,42 +63,7 @@ $.ajax({
 
 $.ajax({
   type: "GET",
-  url: "js/StereoEffect.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/Stats.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/threex.videotexture.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/threex.rendererstats.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/vreticle.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/OrbitControls.js",
   dataType: "script",
   async: false
 });
@@ -126,7 +91,7 @@ var texturaBraco = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diff
 
 var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
 
-video = document.getElementById( 'video' );
+var video = document.getElementById( 'video' );
 textureVideo = new THREE.VideoTexture( video );
 textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
@@ -173,10 +138,7 @@ var camera, scene, renderer, renderVR, vr;
 var spriteEyeModel = new THREE.Mesh();
 
 // STATISTICS (FPS, MS, MB)
-var rendererStats  = new THREEx.RendererStats();
 var statsFPS = new Stats();
-var statsMS = new Stats();
-var statsMB = new Stats();
 
 var firstTimeRunning = true;
 var firstTimeLoading = true;
@@ -225,6 +187,7 @@ var dias;
 var sessoesJSON;
 var num_sessao = "0";
 var n_sessao_select;
+var carregouFreeSeats = false;
 
 var deviceOrientationSelectedObject;
 var deviceOrientationSelectedPoint;
@@ -290,9 +253,6 @@ element = renderer.domElement;
 container = document.body;
 container.appendChild(element);
 
-renderVR = new THREE.StereoEffect(renderer);
-renderVR.eyeSeparation = 0.01;
-
 // create the main selection menu
 var waterMarkDiv = document.createElement('div');
 waterMarkDiv.style.width = '200px';
@@ -306,8 +266,7 @@ document.body.appendChild(waterMarkDiv);
 
 // Load the initial scenes
 
-if(firstTimeRunning)
-{
+if(firstTimeRunning){
   carregarJSONBDInitial(0);
   firstTimeRunning = false;
 }
@@ -376,9 +335,7 @@ function startLoadingScene() {
 
 function fullscreen() {
   if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {
-    if (!detectmob()){
-      document.getElementById("ptrocafsImg").src="img/exit-full-screen.png";
-    }
+    document.getElementById("ptrocafsImg").src="img/exit-full-screen.png";
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen();
     } else if (document.documentElement.msRequestFullscreen) {
@@ -389,9 +346,7 @@ function fullscreen() {
       document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
     }
   } else {
-    if (!detectmob()){
-      document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
-    }
+    document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.msExitFullscreen) {
@@ -404,251 +359,9 @@ function fullscreen() {
   }
 }
 
-THREE.DeviceOrientationControls = function ( object ) {
-
-  var scope = this;
-
-  var firstAlpha;
-  var firstIn = false;
-  var entrouOri = false;
-
-  this.object = object;
-
-  this.object.rotation.reorder( "YXZ" );
-
-  this.freeze = true;
-
-  this.deviceOrientation = {};
-
-  this.screenOrientation = 0;
-
-  var iDivOri = document.createElement('div');
-  iDivOri.style.width = '100%';
-  iDivOri.style.cursor = "pointer";
-  iDivOri.style.textAlign = "center";
-  iDivOri.style.height = '100%';
-  iDivOri.style.position = "absolute";
-  iDivOri.style.background = 'rgba(0,0,0,1)';
-  iDivOri.id = 'loadedScreenOri';
-  iDivOri.style.top = '0';
-  iDivOri.style.display = "none";
-
-  var textDivOri = document.createElement('div');
-  textDivOri.style.color = "white";
-  textDivOri.style.cursor = "pointer";
-  textDivOri.innerHTML = " Rotate phone";
-  textDivOri.style.width = '50%';
-  textDivOri.style.textAlign = "center";
-  textDivOri.style.fontFamily = "osb";
-  textDivOri.style.height = '100%';
-  textDivOri.style.position = "absolute";
-  textDivOri.id = 'textScreenOri';
-  textDivOri.style.left = '24%';
-  textDivOri.style.top = '30%';
-
-  iDivOri.appendChild(textDivOri);
-  document.body.appendChild(iDivOri);
-
-  var onDeviceOrientationChangeEvent = function ( event ) {
-    scope.deviceOrientation = event;
-    if(!firstIn)
-    {
-      firstAlpha = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.alpha ) : 0;
-      firstIn = true;
-    }
-    if(!sittingDown && isVR)
-    {
-      var mouse2 = new THREE.Vector2();
-      mouse2.x = 2 * ((window.innerWidth/2) / window.innerWidth) - 1;
-      mouse2.y = 1 - 2 * ((window.innerHeight/2) / window.innerHeight);
-      // normal raycasting variables
-      var intersectedOne = false;
-      var intersectedObject = new THREE.Object3D();
-
-      var raycaster = new THREE.Raycaster();
-
-      var intersections;
-
-      raycaster.setFromCamera( mouse2, camera );
-
-      // search the raycasted objects in the octree
-      octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
-
-      intersections = raycaster.intersectOctreeObjects( octreeObjects );
-
-      var spriteFound = false;
-
-      // for each of the intersected objects
-      for(var i=0; i<intersections.length; i++)
-      {
-        var pointSpriteVR = intersections[0].point;
-        var index = spriteEyeArray.indexOf(intersections[i].object);
-        // if intersected object is a sprite
-        if(intersections[i].object.name == "spriteEye")
-        {
-          spriteFound = true;
-          //var index = spriteEyeArray.indexOf(intersections[i].object);
-        }
-      }
-      // if there is an intersection
-      if ( intersections.length > 0 ) {
-
-        // Check if the objects are in front of each other
-        var intersectionIndex = 0;
-
-        for(var i = 0 ; i < intersections.length ; i++)
-        {
-          var lowerX = intersections[0].object.position.x;
-
-          if( intersections[i].object.position.x < lowerX){
-            lowerX = intersections[i].object.position.x;
-            intersectionIndex = i;
-          }
-        }
-
-        intersectionObject = intersections[intersectionIndex].object;
-
-        var highLightChair;
-
-        // if previously intersected object is not the current intersection and is not a sprite
-        if ( intersected != intersectionObject && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument) {
-
-
-          deviceOrientationSelectedObject = intersections[0].object;
-          deviceOrientationSelectedPoint = intersections[0].point;
-
-          // if there was a previously intersected object
-          if ( intersected )
-          {
-            var selectedObject = mainScene.getObjectByName("highLightChair");
-            mainScene.remove( selectedObject );
-          }
-
-          intersected = intersectionObject;
-
-          if(detectmob())
-          highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraMobileHighlight);
-          else
-          highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraHighLight);
-
-          intersected.geometry.computeBoundingBox();
-
-          var centroid = new THREE.Vector3();
-          centroid.addVectors( intersected.geometry.boundingBox.min, intersected.geometry.boundingBox.max );
-
-          centroid.applyMatrix4( intersected.matrixWorld );
-
-          highLightChair.scale.set(1.15,1.00,1.05);
-
-          highLightChair.rotation.set(intersected.rotation.x,intersected.rotation.y,intersected.rotation.z+0.035);
-
-          highLightChair.position.set(centroid.x-0.005,centroid.y-0.006,centroid.z);
-
-          mainScene.add(highLightChair);
-          highLightChair.name = "highLightChair";
-
-          // if intersection is new : change color to highlight
-
-          switch(intersected.estado) {
-            case "OCUPADA":
-            var selectedObject = mainScene.getObjectByName("highLightChair");
-            mainScene.remove( selectedObject );
-            document.body.style.cursor = 'no-drop';
-            break;
-            default:
-            document.body.style.cursor = 'pointer';
-          }
-        }
-      }
-      else // if there are no intersections
-      {
-        var selectedObject = mainScene.getObjectByName("highLightChair");
-        mainScene.remove( selectedObject );
-        intersected = null;
-        uuidTexturaAntiga = "";
-      }
-    }
-  };
-
-  var onScreenOrientationChangeEvent = function () {
-    if(window.orientation == 0){
-      $("#loadedScreenOri").fadeIn("fast");
-      scope.screenOrientation = window.orientation || 0;
-    }else{
-      $("#loadedScreenOri").fadeOut("fast");
-      scope.screenOrientation = window.orientation || 0;
-      console.profile();
-    }
-  };
-
-  // The angles alpha, beta and gamma form a set of intrinsic Tait-Bryan angles of type Z-X'-Y''
-
-  var setObjectQuaternion = function () {
-
-    var zee = new THREE.Vector3( 0, 0, 1 );
-
-    var euler = new THREE.Euler();
-
-    var q0 = new THREE.Quaternion();
-
-    var q1 = new THREE.Quaternion( - Math.sqrt( 0.5 ), 0, 0, Math.sqrt( 0.5 ) ); // - PI/2 around the x-axis
-
-    return function ( quaternion, alpha, beta, gamma, orient ) {
-
-      euler.set( beta, alpha, - gamma, 'YXZ' );                       // 'ZXY' for the device, but 'YXZ' for us
-
-      quaternion.setFromEuler( euler );                               // orient the device
-
-      quaternion.multiply( q1 );                                      // camera looks out the back of the device, not the top
-
-      quaternion.multiply( q0.setFromAxisAngle( zee, - orient ) );    // adjust for screen orientation
-
-    }
-
-  }();
-
-  this.connect = function() {
-
-    onScreenOrientationChangeEvent(); // run once on load
-
-    window.addEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
-    window.addEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
-
-    scope.freeze = false;
-
-  };
-
-  this.disconnect = function() {
-
-    scope.freeze = true;
-
-    window.removeEventListener( 'orientationchange', onScreenOrientationChangeEvent, false );
-    window.removeEventListener( 'deviceorientation', onDeviceOrientationChangeEvent, false );
-
-  };
-
-  this.update = function () {
-
-    if ( scope.freeze ) return;
-
-    var alpha  = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.alpha ) : 0; // Z
-    var beta   = scope.deviceOrientation.beta  ? THREE.Math.degToRad( scope.deviceOrientation.beta  ) : 0; // X'
-    var gamma  = scope.deviceOrientation.gamma ? THREE.Math.degToRad( scope.deviceOrientation.gamma ) : 0; // Y''
-    var orient = scope.screenOrientation       ? THREE.Math.degToRad( scope.screenOrientation       ) : 0; // O
-
-    alpha = alpha-firstAlpha;
-
-    setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
-
-  };
-
-};
-
 function init() {
   // 0: fps, 1: ms, 2: mb
   statsFPS.setMode( 0 );
-  statsMS.setMode( 1 );
-  statsMB.setMode( 2 );
 
   statsFPS.domElement.style.position = 'absolute';
   statsFPS.domElement.style.left = '0px';
@@ -661,56 +374,26 @@ function init() {
   camera.position.x = -6.160114995658247;
   camera.position.y = 1.5;
   camera.position.z = 0.009249939938009306;
-  camera.lookAt(mainScene.position);
-  camera.target = mainScene.position.clone();
 
-  if(detectmob())
-  {
-    var check = {
-      gyroscope: function (callback) {
-        function handler(event) {
-          var hasGyro = typeof event.alpha === 'number'
-          && typeof event.beta  === 'number'
-          && typeof event.gamma === 'number';
-          window.removeEventListener('deviceorientation', handler, false);
-          callback(hasGyro);
-        }
-        window.addEventListener('deviceorientation', handler, false);
-      }
-    };
+  controls = new THREE.FirstPersonControls(camera);
+  controls.lon = 0;
+  controls.lat = -45;
 
-    check.gyroscope(function (hasGyroscope) {
-      if(hasGyroscope) {
-        controls = new THREE.DeviceOrientationControls(camera);
-        controls.connect();
-      } else {
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-      }
-    });
-  }
-  else
-  {
-    controls = new THREE.FirstPersonControls(camera);
-    controls.lon = 0;
-    controls.lat = -45;
+  controls.lookVertical = true;
+  controls.constrainVertical = true;
+  controls.verticalMin = THREE.Math.degToRad(70);
+  controls.verticalMax = THREE.Math.degToRad(130);
 
-    controls.lookVertical = true;
-    controls.constrainVertical = true;
-    controls.verticalMin = THREE.Math.degToRad(95);
-    controls.verticalMax = THREE.Math.degToRad(120);
+  controls.minPolarAngle = 0; // radians
+  controls.maxPolarAngle = Math.PI; // radians
 
-    controls.movementSpeed = 0;
-    controls.autoForward = false;
-  }
+  controls.movementSpeed = 0;
+  controls.autoForward = false;
 
 
   // lights
   var light = new THREE.HemisphereLight( 0xffffff, 0x000000, 1.0 );
   mainScene.add( light );
-
-  /*var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
-  directionalLight.position.set( 0, 1, 0 );
-  mainScene.add( directionalLight );*/
 
   // model
   group = new THREE.Object3D();
@@ -719,7 +402,6 @@ function init() {
   document.addEventListener('mousemove', onMouseMove, false);
   document.addEventListener('mousedown', onMouseDown, false);
   document.addEventListener('mousewheel', onMouseWheel, false);
-  document.addEventListener("keydown", onKeyDown, false);
 
   $(window).mouseleave(function() {
     // cursor has left the building
@@ -792,7 +474,6 @@ function init() {
   iDiv1.appendChild(iDivhelp);
   document.body.appendChild(iDiv1);
   document.getElementById("helpScreenArrow").src="img/help.png";
-
   $("#loadedScreen" ).click(function() {
     mouse.x = 100;
     mouse.y = 200;
@@ -804,9 +485,6 @@ function init() {
     setInterval(function() {
       $("#helpScreen").fadeOut("slow");
       insideHelp = false;
-      if (detectmob()){
-        window.addEventListener("click", fullscreen);
-      }
     }, 0);
   });
   isLoading = false;
@@ -860,7 +538,7 @@ function showMenuSelect(){
   }
 
   if (window.DeviceMotionEvent) {
-  window.addEventListener('devicemotion', deviceMotionHandler, false);
+    window.addEventListener('devicemotion', deviceMotionHandler, false);
   }
 
   function deviceMotionHandler(eventData) {
@@ -1052,7 +730,6 @@ function showMenuSelect(){
           capacidade = 0;
 
         intervalo_ecra = setInterval(function() {
-          console.log("entrou");
           $("#loading_seats").fadeOut("fast");
           isLoadOcup = false;
           clearInterval(intervalo_ecra);
@@ -1062,813 +739,754 @@ function showMenuSelect(){
     }
   }
 
-  if(detectmob())
-  {
-    // create main legenda for cinema
-    var legDiv = document.createElement('div');
-    legDiv.style.width = '100%';
-    legDiv.style.top = "100%";
-    legDiv.style.marginTop = "-80px";
-    legDiv.style.height = '160px';
-    legDiv.style.position = "absolute";
-    legDiv.id = 'LegDiv';
-    // create sub main legenda for cinema
-    var legenda = document.createElement('div');
-    legenda.style.width = '900px';
-    legenda.style.margin = "auto";
-    legenda.style.textAlign = "center";
-    legenda.style.height = '200px';
-    legenda.style.borderRadius = "10px";
-    legenda.id = 'legenda';
+  // create main legenda for cinema
+  var legDiv = document.createElement('div');
+  legDiv.style.width = '100%';
+  legDiv.style.top = "100%";
+  legDiv.style.marginTop = "-80px";
+  legDiv.style.height = '160px';
+  legDiv.style.position = "absolute";
+  legDiv.id = 'LegDiv';
+  // create sub main legenda for cinema
+  var legenda = document.createElement('div');
+  legenda.style.width = '900px';
+  legenda.style.margin = "auto";
+  legenda.style.textAlign = "center";
+  legenda.style.height = '200px';
+  legenda.style.borderRadius = "10px";
+  legenda.id = 'legenda';
 
-    var legEsq = document.createElement('div');
-    legEsq.style.width = '90px';
-    legEsq.style.float = "left";
-    legEsq.style.textAlign = "center";
-    legEsq.style.height = '200px';
-    legEsq.style.background = '#1cbb9b';
-    legEsq.style.borderRadius = "10px";
-    legEsq.id = 'legEsq';
-
-    legEsq.onclick = function() {
-      switchToVr();
+  var legEsq = document.createElement('div');
+  legEsq.style.width = '90px';
+  legEsq.style.float = "left";
+  legEsq.style.textAlign = "center";
+  legEsq.style.height = '200px';
+  legEsq.style.background = '#1cbb9b';
+  legEsq.style.borderRadius = "10px";
+  legEsq.id = 'legEsq';
+  legEsq.onclick = function() {
+    if (!clickfull){
+      fullscreen();
+      clickfull = true;
+    }else{
+      fullscreen();
+      clickfull = false;
     }
-    legEsq.onmouseover = function() {
-      legEsq.style.cursor = 'pointer';
-    }
+  }
+  legEsq.onmouseover = function() {
+    legEsq.style.cursor = 'pointer';
+  }
 
-    var ptrocavr = document.createElement('p');
-    ptrocavr.innerHTML = "VR";
-    ptrocavr.style.color = "#FFF";
-    ptrocavr.style.fontSize = "13px";
-    ptrocavr.style.fontFamily = "osr";
-    ptrocavr.style.marginTop = "15px";
-    ptrocavr.id = "ptrocavr";
+  // create legend for cinema
+  var legMid = document.createElement('div');
+  legMid.style.width = '670px';
+  legMid.style.float = "left";
+  legMid.style.textAlign = "center";
+  legMid.style.height = '200px';
+  legMid.style.marginLeft = '25px';
+  legMid.style.background = '#243141';
+  legMid.style.borderRadius = "10px";
+  legMid.id = 'legMid';
+  // create legend for cinema
+  var legDir = document.createElement('div');
+  legDir.style.width = '90px';
+  legDir.style.float = "right";
+  legDir.style.textAlign = "center";
+  legDir.style.height = '200px';
+  legDir.style.background = '#1cbb9b';
+  legDir.style.borderRadius = "10px";
+  legDir.id = 'legDir';
+  legDir.onclick = function() {
+    switchToOrtho();
+  }
+  legDir.onmouseover = function() {
+    legDir.style.cursor = 'pointer';
+  }
 
-    var ptrocavrImg = document.createElement('img');
-    ptrocavrImg.id = "ptrocavrImg";
-    ptrocavrImg.style.marginTop = "-4px";
+  //Topic see prespective
+  var topicDiv1 = document.createElement('div');
+  topicDiv1.style.textAlign = "center";
+  topicDiv1.style.float = "left";
+  topicDiv1.style.width = "120px";
+  topicDiv1.style.marginTop = "15px";
+  //topicDiv1.style.border = "solid 2px red";
+  topicDiv1.style.marginLeft = "23px";
+  topicDiv1.style.height = "28px";
+  topicDiv1.id = 'topicDiv1';
 
-    legEsq.appendChild(ptrocavr);
-    legEsq.appendChild(ptrocavrImg);
-    legDiv.appendChild(legenda);
-    legenda.appendChild(legEsq);
-    document.body.appendChild(legDiv);
-    document.getElementById("ptrocavrImg").src="img/VR-icon.png";
-  } else {
-    // create main legenda for cinema
-    var legDiv = document.createElement('div');
-    legDiv.style.width = '100%';
-    legDiv.style.top = "100%";
-    legDiv.style.marginTop = "-80px";
-    legDiv.style.height = '160px';
-    legDiv.style.position = "absolute";
-    legDiv.id = 'LegDiv';
-    // create sub main legenda for cinema
-    var legenda = document.createElement('div');
-    legenda.style.width = '900px';
-    legenda.style.margin = "auto";
-    legenda.style.textAlign = "center";
-    legenda.style.height = '200px';
-    legenda.style.borderRadius = "10px";
-    legenda.id = 'legenda';
+  var pverPresp = document.createElement('p');
+  pverPresp.innerHTML = "Ver Perspectiva";
+  pverPresp.style.color = "#FFF";
+  pverPresp.style.fontSize = "12px";
+  pverPresp.style.fontFamily = "osr";
+  pverPresp.style.float = "right";
+  pverPresp.style.marginTop = "4px";
 
-    var legEsq = document.createElement('div');
-    legEsq.style.width = '90px';
-    legEsq.style.float = "left";
-    legEsq.style.textAlign = "center";
-    legEsq.style.height = '200px';
-    legEsq.style.background = '#1cbb9b';
-    legEsq.style.borderRadius = "10px";
-    legEsq.id = 'legEsq';
-    legEsq.onclick = function() {
-      if (!clickfull){
-        fullscreen();
-        clickfull = true;
-      }else{
-        fullscreen();
-        clickfull = false;
-      }
-    }
-    legEsq.onmouseover = function() {
-      legEsq.style.cursor = 'pointer';
-    }
+  var pverPrespImg = document.createElement('img');
+  pverPrespImg.id = "pverPrespImg";
+  pverPrespImg.style.float = "left";
 
-    // create legend for cinema
-    var legMid = document.createElement('div');
-    legMid.style.width = '670px';
-    legMid.style.float = "left";
-    legMid.style.textAlign = "center";
-    legMid.style.height = '200px';
-    legMid.style.marginLeft = '25px';
-    legMid.style.background = '#243141';
-    legMid.style.borderRadius = "10px";
-    legMid.id = 'legMid';
-    // create legend for cinema
-    var legDir = document.createElement('div');
-    legDir.style.width = '90px';
-    legDir.style.float = "right";
-    legDir.style.textAlign = "center";
-    legDir.style.height = '200px';
-    legDir.style.background = '#1cbb9b';
-    legDir.style.borderRadius = "10px";
-    legDir.id = 'legDir';
-    legDir.onclick = function() {
-      switchToOrtho();
-    }
-    legDir.onmouseover = function() {
-      legDir.style.cursor = 'pointer';
-    }
+  topicDiv1.appendChild(pverPrespImg);
+  topicDiv1.appendChild(pverPresp);
+  legMid.appendChild(topicDiv1);
 
-    //Topic see prespective
-    var topicDiv1 = document.createElement('div');
-    topicDiv1.style.textAlign = "center";
-    topicDiv1.style.float = "left";
-    topicDiv1.style.width = "120px";
-    topicDiv1.style.marginTop = "15px";
-    //topicDiv1.style.border = "solid 2px red";
-    topicDiv1.style.marginLeft = "23px";
-    topicDiv1.style.height = "28px";
-    topicDiv1.id = 'topicDiv1';
+  //Topic available
+  var topicDiv2 = document.createElement('div');
+  topicDiv2.style.textAlign = "center";
+  topicDiv2.style.float = "left";
+  topicDiv2.style.width = "77px";
+  //topicDiv2.style.border = "solid 2px red";
+  topicDiv2.style.marginTop = "15px";
+  topicDiv2.style.marginLeft = "23px";
+  topicDiv2.style.height = "20px";
+  topicDiv2.id = 'topicDiv2';
+  topicDiv2.style.marginTop = '20px';
 
-    var pverPresp = document.createElement('p');
-    pverPresp.innerHTML = "Ver Perspectiva";
-    pverPresp.style.color = "#FFF";
-    pverPresp.style.fontSize = "12px";
-    pverPresp.style.fontFamily = "osr";
-    pverPresp.style.float = "right";
-    pverPresp.style.marginTop = "4px";
+  var pavailable = document.createElement('p');
+  pavailable.innerHTML = "Disponível";
+  pavailable.style.color = "#FFF";
+  pavailable.style.fontSize = "12px";
+  pavailable.style.fontFamily = "osr";
+  pavailable.style.float = "right";
+  pavailable.style.marginTop = "0px";
 
-    var pverPrespImg = document.createElement('img');
-    pverPrespImg.id = "pverPrespImg";
-    pverPrespImg.style.float = "left";
+  var pavailableImg = document.createElement('img');
+  pavailableImg.id = "pavailableImg";
+  pavailableImg.style.float = "left";
+  pavailableImg.style.marginTop = "2px";
 
-    topicDiv1.appendChild(pverPrespImg);
-    topicDiv1.appendChild(pverPresp);
-    legMid.appendChild(topicDiv1);
+  topicDiv2.appendChild(pavailableImg);
+  topicDiv2.appendChild(pavailable);
+  legMid.appendChild(topicDiv2);
 
-    //Topic available
-    var topicDiv2 = document.createElement('div');
-    topicDiv2.style.textAlign = "center";
-    topicDiv2.style.float = "left";
-    topicDiv2.style.width = "77px";
-    //topicDiv2.style.border = "solid 2px red";
-    topicDiv2.style.marginTop = "15px";
-    topicDiv2.style.marginLeft = "23px";
-    topicDiv2.style.height = "20px";
-    topicDiv2.id = 'topicDiv2';
-    topicDiv2.style.marginTop = '20px';
+  //Topic selected
+  var topicDiv3 = document.createElement('div');
+  topicDiv3.style.textAlign = "center";
+  topicDiv3.style.float = "left";
+  topicDiv3.style.width = "85px";
+  //topicDiv3.style.border = "solid 2px red";
+  topicDiv3.style.marginTop = "15px";
+  topicDiv3.style.marginLeft = "23px";
+  topicDiv3.style.height = "20px";
+  topicDiv3.id = 'topicDiv3';
+  topicDiv3.style.marginTop = '20px';
 
-    var pavailable = document.createElement('p');
-    pavailable.innerHTML = "Disponível";
-    pavailable.style.color = "#FFF";
-    pavailable.style.fontSize = "12px";
-    pavailable.style.fontFamily = "osr";
-    pavailable.style.float = "right";
-    pavailable.style.marginTop = "0px";
+  var pselected = document.createElement('p');
+  pselected.innerHTML = "Selecionado";
+  pselected.style.color = "#FFF";
+  pselected.style.fontSize = "12px";
+  pselected.style.fontFamily = "osr";
+  pselected.style.float = "right";
+  pselected.style.marginTop = "0px";
 
-    var pavailableImg = document.createElement('img');
-    pavailableImg.id = "pavailableImg";
-    pavailableImg.style.float = "left";
-    pavailableImg.style.marginTop = "2px";
+  var pselectedImg = document.createElement('img');
+  pselectedImg.id = "pselectedImg";
+  pselectedImg.style.float = "left";
+  pselectedImg.style.marginTop = "2px";
 
-    topicDiv2.appendChild(pavailableImg);
-    topicDiv2.appendChild(pavailable);
-    legMid.appendChild(topicDiv2);
+  topicDiv3.appendChild(pselectedImg);
+  topicDiv3.appendChild(pselected);
+  legMid.appendChild(topicDiv3);
 
-    //Topic selected
-    var topicDiv3 = document.createElement('div');
-    topicDiv3.style.textAlign = "center";
-    topicDiv3.style.float = "left";
-    topicDiv3.style.width = "85px";
-    //topicDiv3.style.border = "solid 2px red";
-    topicDiv3.style.marginTop = "15px";
-    topicDiv3.style.marginLeft = "23px";
-    topicDiv3.style.height = "20px";
-    topicDiv3.id = 'topicDiv3';
-    topicDiv3.style.marginTop = '20px';
+  //Topic defecient
+  var topicDiv4 = document.createElement('div');
+  topicDiv4.style.textAlign = "center";
+  topicDiv4.style.float = "left";
+  topicDiv4.style.width = "162px";
+  //topicDiv4.style.border = "solid 2px red";
+  topicDiv4.style.marginTop = "15px";
+  topicDiv4.style.marginLeft = "23px";
+  topicDiv4.style.height = "20px";
+  topicDiv4.id = 'topicDiv3';
+  topicDiv4.style.marginTop = '20px';
 
-    var pselected = document.createElement('p');
-    pselected.innerHTML = "Selecionado";
-    pselected.style.color = "#FFF";
-    pselected.style.fontSize = "12px";
-    pselected.style.fontFamily = "osr";
-    pselected.style.float = "right";
-    pselected.style.marginTop = "0px";
+  var pdefecient = document.createElement('p');
+  pdefecient.innerHTML = "Mobilidade Condicionada";
+  pdefecient.style.color = "#FFF";
+  pdefecient.style.fontSize = "12px";
+  pdefecient.style.fontFamily = "osr";
+  pdefecient.style.float = "right";
+  pdefecient.style.marginTop = "0px";
 
-    var pselectedImg = document.createElement('img');
-    pselectedImg.id = "pselectedImg";
-    pselectedImg.style.float = "left";
-    pselectedImg.style.marginTop = "2px";
+  var pdefecientImg = document.createElement('img');
+  pdefecientImg.id = "pdefecientImg";
+  pdefecientImg.style.float = "left";
+  pdefecientImg.style.marginTop = "2px";
 
-    topicDiv3.appendChild(pselectedImg);
-    topicDiv3.appendChild(pselected);
-    legMid.appendChild(topicDiv3);
+  topicDiv4.appendChild(pdefecientImg);
+  topicDiv4.appendChild(pdefecient);
+  legMid.appendChild(topicDiv4);
 
-    //Topic defecient
-    var topicDiv4 = document.createElement('div');
-    topicDiv4.style.textAlign = "center";
-    topicDiv4.style.float = "left";
-    topicDiv4.style.width = "162px";
-    //topicDiv4.style.border = "solid 2px red";
-    topicDiv4.style.marginTop = "15px";
-    topicDiv4.style.marginLeft = "23px";
-    topicDiv4.style.height = "20px";
-    topicDiv4.id = 'topicDiv3';
-    topicDiv4.style.marginTop = '20px';
+  //Topic not available
+  var topicDiv5 = document.createElement('div');
+  topicDiv5.style.textAlign = "center";
+  topicDiv5.style.float = "left";
+  topicDiv5.style.width = "85px";
+  //topicDiv5.style.border = "solid 2px red";
+  topicDiv5.style.marginTop = "15px";
+  topicDiv5.style.marginLeft = "23px";
+  topicDiv5.style.height = "20px";
+  topicDiv5.id = 'topicDiv5';
+  topicDiv5.style.marginTop = '20px';
 
-    var pdefecient = document.createElement('p');
-    pdefecient.innerHTML = "Mobilidade Condicionada";
-    pdefecient.style.color = "#FFF";
-    pdefecient.style.fontSize = "12px";
-    pdefecient.style.fontFamily = "osr";
-    pdefecient.style.float = "right";
-    pdefecient.style.marginTop = "0px";
+  var pnotava = document.createElement('p');
+  pnotava.innerHTML = "Indisponível";
+  pnotava.style.color = "#FFF";
+  pnotava.style.fontSize = "12px";
+  pnotava.style.fontFamily = "osr";
+  pnotava.style.float = "right";
+  pnotava.style.marginTop = "0px";
 
-    var pdefecientImg = document.createElement('img');
-    pdefecientImg.id = "pdefecientImg";
-    pdefecientImg.style.float = "left";
-    pdefecientImg.style.marginTop = "2px";
+  var pnotavaImg = document.createElement('img');
+  pnotavaImg.id = "pnotavaImg";
+  pnotavaImg.style.float = "left";
+  pnotavaImg.style.marginTop = "2px";
 
-    topicDiv4.appendChild(pdefecientImg);
-    topicDiv4.appendChild(pdefecient);
-    legMid.appendChild(topicDiv4);
+  topicDiv5.appendChild(pnotavaImg);
+  topicDiv5.appendChild(pnotava);
+  legMid.appendChild(topicDiv5);
 
-    //Topic not available
-    var topicDiv5 = document.createElement('div');
-    topicDiv5.style.textAlign = "center";
-    topicDiv5.style.float = "left";
-    topicDiv5.style.width = "85px";
-    //topicDiv5.style.border = "solid 2px red";
-    topicDiv5.style.marginTop = "15px";
-    topicDiv5.style.marginLeft = "23px";
-    topicDiv5.style.height = "20px";
-    topicDiv5.id = 'topicDiv5';
-    topicDiv5.style.marginTop = '20px';
+  //Topic Capacity
+  var capacityDiv = document.createElement('div');
+  capacityDiv.style.textAlign = "center";
+  capacityDiv.style.float = "left";
+  capacityDiv.style.width = "135px";
+  //topicDiv5.style.border = "solid 2px red";
+  capacityDiv.style.marginLeft = "23px";
+  capacityDiv.style.height = "20px";
+  capacityDiv.id = 'capacityDiv';
+  capacityDiv.style.marginTop = '10px';
 
-    var pnotava = document.createElement('p');
-    pnotava.innerHTML = "Indisponível";
-    pnotava.style.color = "#FFF";
-    pnotava.style.fontSize = "12px";
-    pnotava.style.fontFamily = "osr";
-    pnotava.style.float = "right";
-    pnotava.style.marginTop = "0px";
+  var pcapacity = document.createElement('p');
+  pcapacity.innerHTML = "Capacidade:";
+  pcapacity.style.color = "#1cbb9b";
+  pcapacity.style.fontSize = "17px";
+  pcapacity.style.fontFamily = "osb";
+  pcapacity.style.float = "left";
+  pcapacity.style.marginTop = "0px";
 
-    var pnotavaImg = document.createElement('img');
-    pnotavaImg.id = "pnotavaImg";
-    pnotavaImg.style.float = "left";
-    pnotavaImg.style.marginTop = "2px";
+  var pcapacityNumber = document.createElement('p');
+  pcapacityNumber.innerHTML = capacidade;
+  pcapacityNumber.id = "pcapacityNumber";
+  pcapacityNumber.style.color = "#FFF";
+  pcapacityNumber.style.fontSize = "17px";
+  pcapacityNumber.style.fontFamily = "osb";
+  pcapacityNumber.style.float = "right";
+  pcapacityNumber.style.marginTop = "0px";
 
-    topicDiv5.appendChild(pnotavaImg);
-    topicDiv5.appendChild(pnotava);
-    legMid.appendChild(topicDiv5);
+  capacityDiv.appendChild(pcapacity);
+  capacityDiv.appendChild(pcapacityNumber);
+  legMid.appendChild(capacityDiv);
 
-    //Topic Capacity
-    var capacityDiv = document.createElement('div');
-    capacityDiv.style.textAlign = "center";
-    capacityDiv.style.float = "left";
-    capacityDiv.style.width = "135px";
-    //topicDiv5.style.border = "solid 2px red";
-    capacityDiv.style.marginLeft = "23px";
-    capacityDiv.style.height = "20px";
-    capacityDiv.id = 'capacityDiv';
-    capacityDiv.style.marginTop = '10px';
+  //Topic Free seats
+  var freeseatsDiv = document.createElement('div');
+  freeseatsDiv.style.textAlign = "center";
+  freeseatsDiv.style.float = "left";
+  freeseatsDiv.style.width = "155px";
+  //topicDiv5.style.border = "solid 2px red";
+  freeseatsDiv.style.marginLeft = "23px";
+  freeseatsDiv.style.height = "20px";
+  freeseatsDiv.id = 'freeseatsDiv';
+  freeseatsDiv.style.marginTop = '10px';
 
-    var pcapacity = document.createElement('p');
-    pcapacity.innerHTML = "Capacidade:";
-    pcapacity.style.color = "#1cbb9b";
-    pcapacity.style.fontSize = "17px";
-    pcapacity.style.fontFamily = "osb";
-    pcapacity.style.float = "left";
-    pcapacity.style.marginTop = "0px";
+  var pfreeseats = document.createElement('p');
+  pfreeseats.innerHTML = "Lugares livres:";
+  pfreeseats.style.color = "#1cbb9b";
+  pfreeseats.style.fontSize = "17px";
+  pfreeseats.style.fontFamily = "osb";
+  pfreeseats.style.float = "left";
+  pfreeseats.style.marginTop = "0px";
 
-    var pcapacityNumber = document.createElement('p');
-    pcapacityNumber.innerHTML = capacidade;
-    pcapacityNumber.id = "pcapacityNumber";
-    pcapacityNumber.style.color = "#FFF";
-    pcapacityNumber.style.fontSize = "17px";
-    pcapacityNumber.style.fontFamily = "osb";
-    pcapacityNumber.style.float = "right";
-    pcapacityNumber.style.marginTop = "0px";
+  var pfreeseatsNumber = document.createElement('p');
+  pfreeseatsNumber.innerHTML = lugaresLivres;
+  pfreeseatsNumber.id = "pfreeseatsNumber";
+  pfreeseatsNumber.style.color = "#FFF";
+  carregouFreeSeats = true;
+  pfreeseatsNumber.style.fontSize = "17px";
+  pfreeseatsNumber.style.fontFamily = "osb";
+  pfreeseatsNumber.style.float = "right";
+  pfreeseatsNumber.style.marginTop = "0px";
 
-    capacityDiv.appendChild(pcapacity);
-    capacityDiv.appendChild(pcapacityNumber);
-    legMid.appendChild(capacityDiv);
+  freeseatsDiv.appendChild(pfreeseats);
+  freeseatsDiv.appendChild(pfreeseatsNumber);
+  legMid.appendChild(freeseatsDiv);
 
-    //Topic Free seats
-    var freeseatsDiv = document.createElement('div');
-    freeseatsDiv.style.textAlign = "center";
-    freeseatsDiv.style.float = "left";
-    freeseatsDiv.style.width = "155px";
-    //topicDiv5.style.border = "solid 2px red";
-    freeseatsDiv.style.marginLeft = "23px";
-    freeseatsDiv.style.height = "20px";
-    freeseatsDiv.id = 'freeseatsDiv';
-    freeseatsDiv.style.marginTop = '10px';
+  var ptrocapresp = document.createElement('p');
+  ptrocapresp.innerHTML = "Ver Planta";
+  ptrocapresp.style.color = "#FFF";
+  ptrocapresp.style.fontSize = "13px";
+  ptrocapresp.style.fontFamily = "osr";
+  ptrocapresp.style.marginTop = "15px";
+  ptrocapresp.id = "ptrocapresp";
 
-    var pfreeseats = document.createElement('p');
-    pfreeseats.innerHTML = "Lugares livres:";
-    pfreeseats.style.color = "#1cbb9b";
-    pfreeseats.style.fontSize = "17px";
-    pfreeseats.style.fontFamily = "osb";
-    pfreeseats.style.float = "left";
-    pfreeseats.style.marginTop = "0px";
+  var ptrocaprespImg = document.createElement('img');
+  ptrocaprespImg.id = "ptrocaprespImg";
+  ptrocaprespImg.style.marginTop = "2px";
 
-    var pfreeseatsNumber = document.createElement('p');
-    pfreeseatsNumber.innerHTML = lugaresLivres;
-    pfreeseatsNumber.id = "pfreeseatsNumber";
-    pfreeseatsNumber.style.color = "#FFF";
-    pfreeseatsNumber.style.fontSize = "17px";
-    pfreeseatsNumber.style.fontFamily = "osb";
-    pfreeseatsNumber.style.float = "right";
-    pfreeseatsNumber.style.marginTop = "0px";
+  var ptrocafs = document.createElement('p');
+  ptrocafs.innerHTML = "FullScreen";
+  ptrocafs.style.color = "#FFF";
+  ptrocafs.style.fontSize = "13px";
+  ptrocafs.style.fontFamily = "osr";
+  ptrocafs.style.marginTop = "15px";
+  ptrocafs.id = "ptrocafs";
 
-    freeseatsDiv.appendChild(pfreeseats);
-    freeseatsDiv.appendChild(pfreeseatsNumber);
-    legMid.appendChild(freeseatsDiv);
+  var ptrocafsImg = document.createElement('img');
+  ptrocafsImg.id = "ptrocafsImg";
+  ptrocafsImg.style.marginTop = "-4px";
 
-    var ptrocapresp = document.createElement('p');
-    ptrocapresp.innerHTML = "Ver Planta";
-    ptrocapresp.style.color = "#FFF";
-    ptrocapresp.style.fontSize = "13px";
-    ptrocapresp.style.fontFamily = "osr";
-    ptrocapresp.style.marginTop = "15px";
-    ptrocapresp.id = "ptrocapresp";
+  legEsq.appendChild(ptrocafs);
+  legEsq.appendChild(ptrocafsImg);
 
-    var ptrocaprespImg = document.createElement('img');
-    ptrocaprespImg.id = "ptrocaprespImg";
-    ptrocaprespImg.style.marginTop = "2px";
+  legDir.appendChild(ptrocapresp);
+  legDir.appendChild(ptrocaprespImg);
 
-    var ptrocafs = document.createElement('p');
-    ptrocafs.innerHTML = "FullScreen";
-    ptrocafs.style.color = "#FFF";
-    ptrocafs.style.fontSize = "13px";
-    ptrocafs.style.fontFamily = "osr";
-    ptrocafs.style.marginTop = "15px";
-    ptrocafs.id = "ptrocafs";
-
-    var ptrocafsImg = document.createElement('img');
-    ptrocafsImg.id = "ptrocafsImg";
-    ptrocafsImg.style.marginTop = "-4px";
-
-    legEsq.appendChild(ptrocafs);
-    legEsq.appendChild(ptrocafsImg);
-
-    legDir.appendChild(ptrocapresp);
-    legDir.appendChild(ptrocaprespImg);
-
-    legDiv.appendChild(legenda);
-    legenda.appendChild(legEsq);
-    legenda.appendChild(legMid);
-    legenda.appendChild(legDir);
-    document.body.appendChild(legDiv);
-    document.getElementById("pverPrespImg").src="img/ver.png";
-    document.getElementById("pavailableImg").src="img/Bola_0001_vermelho.png";
-    document.getElementById("pselectedImg").src="img/Bola_0003_verde.png";
-    document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
-    document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
-    document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
-    document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
+  legDiv.appendChild(legenda);
+  legenda.appendChild(legEsq);
+  legenda.appendChild(legMid);
+  legenda.appendChild(legDir);
+  document.body.appendChild(legDiv);
+  document.getElementById("pverPrespImg").src="img/ver.png";
+  document.getElementById("pavailableImg").src="img/Bola_0001_vermelho.png";
+  document.getElementById("pselectedImg").src="img/Bola_0003_verde.png";
+  document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
+  document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
+  document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
+  document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
 
 
-    // create the main selection menu
-    var iDiv = document.createElement('div');
-    //iDiv.innerHTML = " Cadeiras seleccionadas : ";
-    iDiv.style.width = '300px';
-    iDiv.style.textAlign = "center";
-    iDiv.style.height = '100vh';
-    iDiv.style.position = "absolute";
-    iDiv.style.background = '#fff';
-    iDiv.id = 'menuSelect';
-    iDiv.style.right = '-300px';
-    iDiv.style.top = '0';
+  // create the main selection menu
+  var iDiv = document.createElement('div');
+  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
+  iDiv.style.width = '300px';
+  iDiv.style.textAlign = "center";
+  iDiv.style.height = '100vh';
+  iDiv.style.position = "absolute";
+  iDiv.style.background = '#fff';
+  iDiv.id = 'menuSelect';
+  iDiv.style.right = '-300px';
+  iDiv.style.top = '0';
 
-    // create div for collect information about movie
-    var divInfoMovie = document.createElement('div');
-    divInfoMovie.style.width = '100%';
-    divInfoMovie.style.height = '150px';
-    divInfoMovie.style.padding = '0';
-    divInfoMovie.style.position = "absolute";
-    divInfoMovie.style.background = '#FFF';
-    divInfoMovie.id = 'divInfoMovie';
-    divInfoMovie.style.right = '0';
-    divInfoMovie.style.top = '0';
+  // create div for collect information about movie
+  var divInfoMovie = document.createElement('div');
+  divInfoMovie.style.width = '100%';
+  divInfoMovie.style.height = '150px';
+  divInfoMovie.style.padding = '0';
+  divInfoMovie.style.position = "absolute";
+  divInfoMovie.style.background = '#FFF';
+  divInfoMovie.id = 'divInfoMovie';
+  divInfoMovie.style.right = '0';
+  divInfoMovie.style.top = '0';
 
-    // create element for logo
-    var logoCinema = document.createElement("img");
-    logoCinema.id = "logoCinema";
-    logoCinema.style.marginTop = "3%";
+  // create element for logo
+  var logoCinema = document.createElement("img");
+  logoCinema.id = "logoCinema";
+  logoCinema.style.marginTop = "3%";
 
-    // create element for name of movie
-    var movieName = document.createElement("p");
-    movieName.id = "movieName";
-    movieName.innerHTML = "Deadpool | 3D";
-    movieName.style.fontFamily = "osb";
-    movieName.style.lineHeight ="80%";
-    movieName.style.color = "#243141";
-    movieName.style.fontSize = "18px";
+  // create element for name of movie
+  var movieName = document.createElement("p");
+  movieName.id = "movieName";
+  movieName.innerHTML = "Deadpool | 3D";
+  movieName.style.fontFamily = "osb";
+  movieName.style.lineHeight ="80%";
+  movieName.style.color = "#243141";
+  movieName.style.fontSize = "18px";
 
-    // create element for info of movie
-    var movieInfo = document.createElement("p");
-    movieInfo.id = "movieInfo";
-    movieInfo.innerHTML = "Acção, Aventura, Comedia | M/14";
-    movieInfo.style.fontFamily = "osr";
-    movieInfo.style.lineHeight ="80%";
-    movieInfo.style.color = "#243141";
-    movieInfo.style.fontSize = "14px";
+  // create element for info of movie
+  var movieInfo = document.createElement("p");
+  movieInfo.id = "movieInfo";
+  movieInfo.innerHTML = "Acção, Aventura, Comedia | M/14";
+  movieInfo.style.fontFamily = "osr";
+  movieInfo.style.lineHeight ="80%";
+  movieInfo.style.color = "#243141";
+  movieInfo.style.fontSize = "14px";
 
-    // create div for collect information
-    var divInfo = document.createElement('div');
-    divInfo.style.width = '100%';
-    divInfo.style.height = '100%';
-    divInfo.style.padding = '0';
-    divInfo.style.position = "absolute";
-    divInfo.style.background = '#2d3e50';
-    divInfo.id = 'menuInfo';
-    divInfo.setAttribute('class', 'menuInfo');
-    divInfo.style.right = '0';
-    divInfo.style.top = '150px';
+  // create div for collect information
+  var divInfo = document.createElement('div');
+  divInfo.style.width = '100%';
+  divInfo.style.height = '100%';
+  divInfo.style.padding = '0';
+  divInfo.style.position = "absolute";
+  divInfo.style.background = '#2d3e50';
+  divInfo.id = 'menuInfo';
+  divInfo.setAttribute('class', 'menuInfo');
+  divInfo.style.right = '0';
+  divInfo.style.top = '150px';
 
-    // create link to show the cinemas
-    var showDivCinemas = document.createElement("a");
-    showDivCinemas.href = "#";
-    showDivCinemas.style.display = "block";
-    showDivCinemas.style.height = '25px';
-    showDivCinemas.style.width = "100%";
-    showDivCinemas.style.marginTop = "5px";
-    showDivCinemas.style.borderBottom = "solid 2px #344b5d";
-    showDivCinemas.id = "showDivCinemas";
-    showDivCinemas.style.color = "#1bbc9b";
-    showDivCinemas.text = "Escolha o Cinema";
-    showDivCinemas.style.fontFamily = "ossb";
-    showDivCinemas.style.textDecoration = "none";
-    showDivCinemas.onclick = function() {
-      $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-      if (slidedown == false){
-        if (slidedowndata == true) {
-          $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-          $('#showDataDiv').slideUp();
-          slidedowndata = false;
-        }
-        if (slidedownsessao == true) {
-          $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-          $('#showSessaoDiv').slideUp();
-          slidedownsessao = false;
-        }
-        $('#showCinemas').slideDown();
-        slidedown = true;
-      }else{
-        $('#showCinemas').slideUp();
-        slidedown = false;
-      }
-    }
-
-    // create icon for link show cinemas
-    var icon = document.createElement("i");
-    icon.className = "fa fa-angle-down";
-    icon.style.float = "right";
-    icon.id = "icon";
-    icon.style.marginRight = "10px";
-    icon.style.marginTop = "4px";
-
-    // create div that contain the list of cinemas
-    var showCinemas = document.createElement("div");
-    showCinemas.style.display = "none";
-    showCinemas.style.height = '115px';
-    showCinemas.style.width = "100%";
-    showCinemas.id = "showCinemas";
-    showCinemas.style.textAlign = "left";
-    showCinemas.style.backgroundColor = "#263343";
-    showCinemas.text = "Escolha o Cinema";
-    showCinemas.style.fontFamily = "ossb";
-    showCinemas.style.overflowY = "auto";
-
-    carregarCinemas();
-
-    // create link to show the calendar
-    var showData = document.createElement("a");
-    showData.href = "#";
-    showData.style.pointerEvents = "none";
-    showData.style.cursor = "default";
-    showData.style.float = "left";
-    showData.style.height = '30px';
-    showData.style.width = "33.2%";
-    showData.style.borderRight = "solid 2px #344b5d";
-    showData.id = "showData";
-    showData.style.color = "#446368";
-    showData.innerHTML = "Data";
-    showData.style.fontFamily = "ossb";
-    showData.style.textDecoration = "none";
-    showData.onclick = function() {
-      $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-      if (slidedowndata == false){
-        $('#showDataDiv').datepicker('destroy');
-        if (slidedown == true) {
-          $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
-          $('#showCinemas').slideUp();
-          slidedown = false;
-        }
-        if (slidedownsessao == false){
-          $('#showDataDiv').slideDown();
-          slidedowndata = true;
-          $('#showDataDiv').datepicker({
-            inline: true,
-            minDate: 0,
-            maxDate: "+" + dias + "D",
-            dateFormat: 'd M',
-            onSelect: function(dateText, inst) {
-              carregarSessao();
-              showData.text = $(this).val();
-              showData.appendChild(iconData);
-              $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-              $('#showDataDiv').slideUp();
-              slidedowndata = false;
-              showSessao.style.pointerEvents = "all";
-              showSessao.style.cursor = "auto";
-              showSessao.style.color = "#1bbc9b";
-            }
-          });
-        }else{
-          $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-          $('#showSessaoDiv').slideUp();
-          slidedownsessao = false;
-          $('#showDataDiv').slideDown();
-          slidedowndata = true;
-          $('#showDataDiv').datepicker({
-            inline: true,
-            minDate: 0,
-            maxDate: "+" + dias + "D",
-            dateFormat: 'd M',
-            onSelect: function(dateText, inst) {
-              carregarSessao();
-              showData.text = $(this).val();
-              showData.appendChild(iconData);
-              $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-              $('#showDataDiv').slideUp();
-              slidedowndata = false;
-              showSessao.style.pointerEvents = "all";
-              showSessao.style.cursor = "auto";
-              showSessao.style.color = "#1bbc9b";
-            }
-          });
-        }
-      }else{
+  // create link to show the cinemas
+  var showDivCinemas = document.createElement("a");
+  showDivCinemas.href = "#";
+  showDivCinemas.style.display = "block";
+  showDivCinemas.style.height = '25px';
+  showDivCinemas.style.width = "100%";
+  showDivCinemas.style.marginTop = "5px";
+  showDivCinemas.style.borderBottom = "solid 2px #344b5d";
+  showDivCinemas.id = "showDivCinemas";
+  showDivCinemas.style.color = "#1bbc9b";
+  showDivCinemas.text = "Escolha o Cinema";
+  showDivCinemas.style.fontFamily = "ossb";
+  showDivCinemas.style.textDecoration = "none";
+  showDivCinemas.onclick = function() {
+    $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
+    if (slidedown == false){
+      if (slidedowndata == true) {
+        $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
         $('#showDataDiv').slideUp();
         slidedowndata = false;
       }
-    }
-
-    // create icon for link show calendar
-    var iconData = document.createElement("i");
-    iconData.className = "fa fa-angle-down";
-    iconData.style.float = "right";
-    iconData.id ="iconData";
-    iconData.style.marginRight = "10px";
-    iconData.style.marginTop = "4px";
-
-    // create div that contain the calendar
-    var showDataDiv = document.createElement("div");
-    showDataDiv.style.display = "none";
-    showDataDiv.style.height = '190px';
-    showDataDiv.style.width = "100%";
-    showDataDiv.id = "showDataDiv";
-    showDataDiv.style.textAlign = "left";
-    showDataDiv.style.backgroundColor = "#263343";
-    showDataDiv.style.marginTop = "-30px";
-    showDataDiv.style.fontFamily = "ossb";
-    showDataDiv.style.textAlign = "center";
-    showDataDiv.style.overflowY = "hidden";
-
-    // create link to show the session
-    var showSessao = document.createElement("a");
-    showSessao.href = "#";
-    showSessao.style.pointerEvents = "none";
-    showSessao.style.cursor = "default";
-    showSessao.style.display = "inline-block";
-    showSessao.style.height = '30px';
-    showSessao.style.width = "32%";
-    showSessao.style.borderRight = "solid 2px #344b5d";
-    showSessao.id = "showSessao";
-    showSessao.style.color = "#446368";
-    showSessao.text = "Sessão";
-    showSessao.style.fontFamily = "ossb";
-    showSessao.style.textDecoration = "none";
-    showSessao.onclick = function() {
-      $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-      if (slidedownsessao == false){
-        if (slidedown == true) {
-          $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
-          $('#showCinemas').slideUp();
-          slidedown = false;
-        }
-        if (slidedowndata == false){
-          $('#showSessaoDiv').slideDown();
-          slidedownsessao = true;
-        }else{
-          $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-          $('#showDataDiv').slideUp();
-          slidedowndata = false;
-          $('#showSessaoDiv').slideDown();
-          slidedownsessao = true;
-        }
-      }else{
+      if (slidedownsessao == true) {
+        $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
         $('#showSessaoDiv').slideUp();
         slidedownsessao = false;
       }
+      $('#showCinemas').slideDown();
+      slidedown = true;
+    }else{
+      $('#showCinemas').slideUp();
+      slidedown = false;
     }
+  }
 
-    // create icon for link show sessao
-    var iconSessao = document.createElement("i");
-    iconSessao.className = "fa fa-angle-down";
-    iconSessao.style.float = "right";
-    iconSessao.id ="iconSessao";
-    iconSessao.style.marginRight = "10px";
-    iconSessao.style.marginTop = "4px";
+  // create icon for link show cinemas
+  var icon = document.createElement("i");
+  icon.className = "fa fa-angle-down";
+  icon.style.float = "right";
+  icon.id = "icon";
+  icon.style.marginRight = "10px";
+  icon.style.marginTop = "4px";
 
-    // create div that contain the hour
-    var showSessaoDiv = document.createElement("div");
-    showSessaoDiv.style.display = "none";
-    showSessaoDiv.style.height = '50px';
-    showSessaoDiv.style.width = "100%";
-    showSessaoDiv.id = "showSessaoDiv";
-    showSessaoDiv.style.backgroundColor = "#263343";
-    showSessaoDiv.style.fontFamily = "ossb";
-    showSessaoDiv.style.overflowY = "hidden";
+  // create div that contain the list of cinemas
+  var showCinemas = document.createElement("div");
+  showCinemas.style.display = "none";
+  showCinemas.style.height = '115px';
+  showCinemas.style.width = "100%";
+  showCinemas.id = "showCinemas";
+  showCinemas.style.textAlign = "left";
+  showCinemas.style.backgroundColor = "#263343";
+  showCinemas.text = "Escolha o Cinema";
+  showCinemas.style.fontFamily = "ossb";
+  showCinemas.style.overflowY = "auto";
 
-    // create element for Room Number
-    var showRoomNumber = document.createElement("a");
-    showRoomNumber.href = "#";
-    showRoomNumber.style.pointerEvents = "none";
-    showRoomNumber.style.cursor = "default";
-    showRoomNumber.style.float = "right";
-    showRoomNumber.style.display = "inline-block";
-    showRoomNumber.style.height = '30px';
-    showRoomNumber.style.width = "33.2%";
-    showRoomNumber.id = "showRoomNumber";
-    showRoomNumber.style.color = "#1bbc9b";
-    showRoomNumber.text = "Sala 2";
-    showRoomNumber.style.fontFamily = "ossb";
-    showRoomNumber.style.textDecoration = "none";
+  carregarCinemas();
 
-    // create red element for display seats
-    var bannerSeats = document.createElement("p");
-    bannerSeats.id = "movieInfo";
-    bannerSeats.innerHTML = "Lugares";
-    bannerSeats.style.width = "100%";
-    bannerSeats.style.height = "20px";
-    bannerSeats.style.backgroundColor = "#e54b65";
-    bannerSeats.style.display = "inline-block";
-    bannerSeats.style.fontFamily = "ossb";
-    bannerSeats.style.lineHeight ="80%";
-    bannerSeats.style.color = "#FFF";
-    bannerSeats.style.fontSize = "14px";
-    bannerSeats.style.paddingTop = "7px";
-    bannerSeats.style.marginTop = "-30px";
-
-    // create div that contain the list of selected seats
-    var selectLugares = document.createElement("div");
-    selectLugares.style.height = 'auto';
-    selectLugares.style.maxHeight = '30%'
-    selectLugares.style.width = "100%";
-    selectLugares.id = "selectLugares";
-    selectLugares.style.marginTop = "-14px";
-    selectLugares.style.backgroundColor = "#263343";
-    selectLugares.style.overflowY = "auto";
-
-    var total = document.createElement("p");
-    total.style.fontFamily = "osb";
-    total.style.color = "#FFF";
-    total.id = "total";
-    total.style.fontSize = "17px";
-    total.style.display = "block";
-    total.style.width = "145px";
-    total.style.textAlign = "left";
-    total.style.marginLeft = "8%";
-    total.style.float = "left";
-
-    var btnComprar = document.createElement("a");
-    btnComprar.href = "#";
-    btnComprar.style.backgroundImage = "url('img/btncomprar.png')";
-    btnComprar.style.backgroundRepeat = "no-repeat";
-    btnComprar.style.float = "right";
-    btnComprar.style.marginTop = "17px";
-    btnComprar.style.display = "none";
-    btnComprar.style.height = '30px';
-    btnComprar.style.width = "104px";
-    btnComprar.id = "btnComprar";
-    btnComprar.style.marginRight = "7%";
-    btnComprar.style.textDecoration = "none";
-
-    btnComprar.addEventListener('click', function(e) {
-      var jsonArray = [];
-      var cabecalho =
-      {
-        nome_filme: document.getElementById("movieName").innerHTML,
-        info_filme: document.getElementById("movieInfo").innerHTML,
-        cinema: document.getElementById("showDivCinemas").text,
-        data: document.getElementById("showData").text,
-        sala: document.getElementById("showRoomNumber").text,
-        sessao: document.getElementById("showSessao").className
+  // create link to show the calendar
+  var showData = document.createElement("a");
+  showData.href = "#";
+  showData.style.pointerEvents = "none";
+  showData.style.cursor = "default";
+  showData.style.float = "left";
+  showData.style.height = '30px';
+  showData.style.width = "33.2%";
+  showData.style.borderRight = "solid 2px #344b5d";
+  showData.id = "showData";
+  showData.style.color = "#446368";
+  showData.innerHTML = "Data";
+  showData.style.fontFamily = "ossb";
+  showData.style.textDecoration = "none";
+  showData.onclick = function() {
+    $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
+    if (slidedowndata == false){
+      $('#showDataDiv').datepicker('destroy');
+      if (slidedown == true) {
+        $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
+        $('#showCinemas').slideUp();
+        slidedown = false;
       }
-      jsonArray.push(cabecalho);
-      for(var i=0 ; i<selectedChairs.length ; i++){
-        for( var j=0 ; j<cadeirasJSON.length ; j++){
-          if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
-            var item =
-            {
-              sessao: "cadeiras"+ n_sessao_select,
-              fila: cadeirasJSON[j].fila,
-              lugar:cadeirasJSON[j].lugar,
-              tipoBilhete:selectedChairs[i].class
-            }
-            jsonArray.push(item);
+      if (slidedownsessao == false){
+        $('#showDataDiv').slideDown();
+        slidedowndata = true;
+        $('#showDataDiv').datepicker({
+          inline: true,
+          minDate: 0,
+          maxDate: "+" + dias + "D",
+          dateFormat: 'd M',
+          onSelect: function(dateText, inst) {
+            carregarSessao();
+            showData.text = $(this).val();
+            showData.appendChild(iconData);
+            $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+            $('#showDataDiv').slideUp();
+            slidedowndata = false;
+            showSessao.style.pointerEvents = "all";
+            showSessao.style.cursor = "auto";
+            showSessao.style.color = "#1bbc9b";
           }
+        });
+      }else{
+        $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
+        $('#showSessaoDiv').slideUp();
+        slidedownsessao = false;
+        $('#showDataDiv').slideDown();
+        slidedowndata = true;
+        $('#showDataDiv').datepicker({
+          inline: true,
+          minDate: 0,
+          maxDate: "+" + dias + "D",
+          dateFormat: 'd M',
+          onSelect: function(dateText, inst) {
+            carregarSessao();
+            showData.text = $(this).val();
+            showData.appendChild(iconData);
+            $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+            $('#showDataDiv').slideUp();
+            slidedowndata = false;
+            showSessao.style.pointerEvents = "all";
+            showSessao.style.cursor = "auto";
+            showSessao.style.color = "#1bbc9b";
+          }
+        });
+      }
+    }else{
+      $('#showDataDiv').slideUp();
+      slidedowndata = false;
+    }
+  }
+
+  // create icon for link show calendar
+  var iconData = document.createElement("i");
+  iconData.className = "fa fa-angle-down";
+  iconData.style.float = "right";
+  iconData.id ="iconData";
+  iconData.style.marginRight = "10px";
+  iconData.style.marginTop = "4px";
+
+  // create div that contain the calendar
+  var showDataDiv = document.createElement("div");
+  showDataDiv.style.display = "none";
+  showDataDiv.style.height = '190px';
+  showDataDiv.style.width = "100%";
+  showDataDiv.id = "showDataDiv";
+  showDataDiv.style.textAlign = "left";
+  showDataDiv.style.backgroundColor = "#263343";
+  showDataDiv.style.marginTop = "-30px";
+  showDataDiv.style.fontFamily = "ossb";
+  showDataDiv.style.textAlign = "center";
+  showDataDiv.style.overflowY = "hidden";
+
+  // create link to show the session
+  var showSessao = document.createElement("a");
+  showSessao.href = "#";
+  showSessao.style.pointerEvents = "none";
+  showSessao.style.cursor = "default";
+  showSessao.style.display = "inline-block";
+  showSessao.style.height = '30px';
+  showSessao.style.width = "32%";
+  showSessao.style.borderRight = "solid 2px #344b5d";
+  showSessao.id = "showSessao";
+  showSessao.style.color = "#446368";
+  showSessao.text = "Sessão";
+  showSessao.style.fontFamily = "ossb";
+  showSessao.style.textDecoration = "none";
+  showSessao.onclick = function() {
+    $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
+    if (slidedownsessao == false){
+      if (slidedown == true) {
+        $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
+        $('#showCinemas').slideUp();
+        slidedown = false;
+      }
+      if (slidedowndata == false){
+        $('#showSessaoDiv').slideDown();
+        slidedownsessao = true;
+      }else{
+        $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
+        $('#showDataDiv').slideUp();
+        slidedowndata = false;
+        $('#showSessaoDiv').slideDown();
+        slidedownsessao = true;
+      }
+    }else{
+      $('#showSessaoDiv').slideUp();
+      slidedownsessao = false;
+    }
+  }
+
+  // create icon for link show sessao
+  var iconSessao = document.createElement("i");
+  iconSessao.className = "fa fa-angle-down";
+  iconSessao.style.float = "right";
+  iconSessao.id ="iconSessao";
+  iconSessao.style.marginRight = "10px";
+  iconSessao.style.marginTop = "4px";
+
+  // create div that contain the hour
+  var showSessaoDiv = document.createElement("div");
+  showSessaoDiv.style.display = "none";
+  showSessaoDiv.style.height = '50px';
+  showSessaoDiv.style.width = "100%";
+  showSessaoDiv.id = "showSessaoDiv";
+  showSessaoDiv.style.backgroundColor = "#263343";
+  showSessaoDiv.style.fontFamily = "ossb";
+  showSessaoDiv.style.overflowY = "hidden";
+
+  // create element for Room Number
+  var showRoomNumber = document.createElement("a");
+  showRoomNumber.href = "#";
+  showRoomNumber.style.pointerEvents = "none";
+  showRoomNumber.style.cursor = "default";
+  showRoomNumber.style.float = "right";
+  showRoomNumber.style.display = "inline-block";
+  showRoomNumber.style.height = '30px';
+  showRoomNumber.style.width = "33.2%";
+  showRoomNumber.id = "showRoomNumber";
+  showRoomNumber.style.color = "#1bbc9b";
+  showRoomNumber.text = "Sala 2";
+  showRoomNumber.style.fontFamily = "ossb";
+  showRoomNumber.style.textDecoration = "none";
+
+  // create red element for display seats
+  var bannerSeats = document.createElement("p");
+  bannerSeats.id = "movieInfo";
+  bannerSeats.innerHTML = "Lugares";
+  bannerSeats.style.width = "100%";
+  bannerSeats.style.height = "20px";
+  bannerSeats.style.backgroundColor = "#e54b65";
+  bannerSeats.style.display = "inline-block";
+  bannerSeats.style.fontFamily = "ossb";
+  bannerSeats.style.lineHeight ="80%";
+  bannerSeats.style.color = "#FFF";
+  bannerSeats.style.fontSize = "14px";
+  bannerSeats.style.paddingTop = "7px";
+  bannerSeats.style.marginTop = "-30px";
+
+  // create div that contain the list of selected seats
+  var selectLugares = document.createElement("div");
+  selectLugares.style.height = 'auto';
+  selectLugares.style.maxHeight = '30%'
+  selectLugares.style.width = "100%";
+  selectLugares.id = "selectLugares";
+  selectLugares.style.marginTop = "-14px";
+  selectLugares.style.backgroundColor = "#263343";
+  selectLugares.style.overflowY = "auto";
+
+  var total = document.createElement("p");
+  total.style.fontFamily = "osb";
+  total.style.color = "#FFF";
+  total.id = "total";
+  total.style.fontSize = "17px";
+  total.style.display = "block";
+  total.style.width = "145px";
+  total.style.textAlign = "left";
+  total.style.marginLeft = "8%";
+  total.style.float = "left";
+
+  var btnComprar = document.createElement("a");
+  btnComprar.href = "#";
+  btnComprar.style.backgroundImage = "url('img/btncomprar.png')";
+  btnComprar.style.backgroundRepeat = "no-repeat";
+  btnComprar.style.float = "right";
+  btnComprar.style.marginTop = "17px";
+  btnComprar.style.display = "none";
+  btnComprar.style.height = '30px';
+  btnComprar.style.width = "104px";
+  btnComprar.id = "btnComprar";
+  btnComprar.style.marginRight = "7%";
+  btnComprar.style.textDecoration = "none";
+
+  btnComprar.addEventListener('click', function(e) {
+    var jsonArray = [];
+    var cabecalho =
+    {
+      nome_filme: document.getElementById("movieName").innerHTML,
+      info_filme: document.getElementById("movieInfo").innerHTML,
+      cinema: document.getElementById("showDivCinemas").text,
+      data: document.getElementById("showData").text,
+      sala: document.getElementById("showRoomNumber").text,
+      sessao: document.getElementById("showSessao").className
+    }
+    jsonArray.push(cabecalho);
+    for(var i=0 ; i<selectedChairs.length ; i++){
+      for( var j=0 ; j<cadeirasJSON.length ; j++){
+        if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
+          var item =
+          {
+            sessao: "cadeiras"+ n_sessao_select,
+            fila: cadeirasJSON[j].fila,
+            lugar:cadeirasJSON[j].lugar,
+            tipoBilhete:selectedChairs[i].class
+          }
+          jsonArray.push(item);
         }
       }
-      jsonChairs = JSON.stringify(jsonArray);
-      $.ajax({
-        url: 'php/ler_BDUpdateCadeiras.php', //This is the current doc
-        type: "POST",
-        dataType:'json', // add json datatype to get json
-        data: ({dados: jsonChairs}),
-        success: function(data){
-          console.log(jsonChairs);
-        },
-        error:    function(textStatus,errorThrown){
-          console.log(textStatus);
-          console.log(errorThrown);
-        }
-      });
-      document.cookie="dados=" + jsonChairs;
-      document.location.href = "resultados.php";
-    },false);
+    }
+    jsonChairs = JSON.stringify(jsonArray);
+    $.ajax({
+      url: 'php/ler_BDUpdateCadeiras.php', //This is the current doc
+      type: "POST",
+      dataType:'json', // add json datatype to get json
+      data: ({dados: jsonChairs}),
+      success: function(data){
+        console.log(jsonChairs);
+      },
+      error:    function(textStatus,errorThrown){
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+    document.cookie="dados=" + jsonChairs;
+    document.location.href = "resultados.php";
+  },false);
 
-    // create div that contain the advertise
-    var pub = document.createElement("div");
-    pub.style.height = '250px';
-    pub.style.width = "100%";
-    pub.id = "pub";
-    pub.style.bottom = "150px";
-    pub.style.right = "0";
-    pub.style.position = "absolute";
+  // create div that contain the advertise
+  var pub = document.createElement("div");
+  pub.style.height = '250px';
+  pub.style.width = "100%";
+  pub.id = "divImagem";
+  pub.style.bottom = "150px";
+  pub.style.right = "0";
+  pub.style.position = "absolute";
 
-    var imgPub = document.createElement("img");
-    imgPub.id = "imgPub";
-    imgPub.style.height = '100%';
-    imgPub.style.width = "90%";
+  var imgPub = document.createElement("img");
+  imgPub.id = "imagem";
+  imgPub.style.height = '100%';
+  imgPub.style.width = "90%";
 
-    divInfoMovie.appendChild(logoCinema);
-    divInfoMovie.appendChild(movieName);
-    divInfoMovie.appendChild(movieInfo);
-    iDiv.appendChild(divInfoMovie);
-    iDiv.appendChild(divInfo);
-    divInfo.appendChild(showDivCinemas);
-    showDivCinemas.appendChild(icon);
-    divInfo.appendChild(showCinemas);
+  divInfoMovie.appendChild(logoCinema);
+  divInfoMovie.appendChild(movieName);
+  divInfoMovie.appendChild(movieInfo);
+  iDiv.appendChild(divInfoMovie);
+  iDiv.appendChild(divInfo);
+  divInfo.appendChild(showDivCinemas);
+  showDivCinemas.appendChild(icon);
+  divInfo.appendChild(showCinemas);
 
-    showData.appendChild(iconData);
-    showSessao.appendChild(iconSessao);
+  showData.appendChild(iconData);
+  showSessao.appendChild(iconSessao);
 
-    divInfo.appendChild(showData);
-    divInfo.appendChild(showRoomNumber);
-    divInfo.appendChild(showSessao);
+  divInfo.appendChild(showData);
+  divInfo.appendChild(showRoomNumber);
+  divInfo.appendChild(showSessao);
 
-    divInfo.appendChild(showDataDiv);
-    divInfo.appendChild(showSessaoDiv);
+  divInfo.appendChild(showDataDiv);
+  divInfo.appendChild(showSessaoDiv);
 
-    divInfo.appendChild(bannerSeats);
-    divInfo.appendChild(selectLugares);
-    divInfo.appendChild(total);
-    divInfo.appendChild(btnComprar);
-    pub.appendChild(imgPub);
-    divInfo.appendChild(pub);
-    document.body.appendChild(iDiv);
-    document.getElementById("logoCinema").src="img/logo.png";
-    document.getElementById("imgPub").src="img/publicidade.png";
+  divInfo.appendChild(bannerSeats);
+  divInfo.appendChild(selectLugares);
+  divInfo.appendChild(total);
+  divInfo.appendChild(btnComprar);
+  pub.appendChild(imgPub);
+  divInfo.appendChild(pub);
+  document.body.appendChild(iDiv);
+  document.getElementById("logoCinema").src="img/logo.png";
+  document.getElementById("imagem").src="img/imagem.png";
 
-    $('#menuSelect').bind('mouseenter' ,"*", function(e){
-      mouseIsOnMenu = true;
-      controls.lookSpeed = 0;
-    },false);
+  $('#menuSelect').bind('mouseenter' ,"*", function(e){
+    mouseIsOnMenu = true;
+    controls.lookSpeed = 0;
+  },false);
 
-    $('#menuSelect').bind('mouseleave', "*", function(e){
-      mouseIsOnMenu = false;
-    },false);
+  $('#menuSelect').bind('mouseleave', "*", function(e){
+    mouseIsOnMenu = false;
+  },false);
 
-    $('#legenda').bind('mouseenter' ,"*", function(e){
-      mouseIsOnMenu = true;
-      controls.lookSpeed = 0;
-    },false);
+  $('#legenda').bind('mouseenter' ,"*", function(e){
+    mouseIsOnMenu = true;
+    controls.lookSpeed = 0;
+  },false);
 
-    $('#legenda').bind('mouseleave', "*", function(e){
-      mouseIsOnMenu = false;
-    },false);
-  }
-
-  if(detectmob())
-  {
-    document.getElementById("watermarkDiv").style.display = "none";
-  }
+  $('#legenda').bind('mouseleave', "*", function(e){
+    mouseIsOnMenu = false;
+  },false);
 }
 
 //
@@ -1887,13 +1505,13 @@ function loadScene() {
   });
 
   // create the cinema screen
-  /*var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
+  var geometry = new THREE.PlaneGeometry( 7, 2.5, 10, 10);
   var material = new THREE.MeshBasicMaterial( {side:THREE.DoubleSide, map:textureVideo} );
   var plane = new THREE.Mesh( geometry, material );
   plane.position.x = -6.5;
   plane.position.y = 1.2;
   plane.rotation.y = Math.PI/2;
-  mainScene.add( plane );*/
+  mainScene.add( plane );
 }
 
 //
@@ -1923,7 +1541,6 @@ function loadSala() {
     materials[3] = new THREE.MeshBasicMaterial(materials[3]);
 
     material1 = new THREE.MeshBasicMaterial();
-    console.log(material1)
     material1.map = materials[0].map;
     material1.map.magFilter = THREE.NearestFilter;
     material1.map.minFilter = THREE.LinearMipMapNearestFilter;
@@ -2007,6 +1624,9 @@ function loadCadeiras(populateCadeirasInstances) {
       capacidade += 1;
     }
     capacidade -= 1;
+    if (carregouFreeSeats==true){
+      document.getElementById("pcapacityNumber").innerHTML = capacidade;
+    }
 
   });
 
@@ -2043,31 +1663,15 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 
   var materials = [];
 
-  if(detectmob())
-  {
-    materials.push(materialcadeiraMobile);
-    materials.push(materialcadeiraDeficienteMobile);
-    materials.push(materialcadeiraOcupadaMobile)
-  }
-  else
-  {
-    materials.push(materialcadeiraNormal);
-    materials.push(materialcadeiraDeficiente);
-    materials.push(materialcadeiraOcupada)
-  }
+  materials.push(materialcadeiraNormal);
+  materials.push(materialcadeiraDeficiente);
+  materials.push(materialcadeiraOcupada);
 
   // for each point in the point cloud
   for(i=0; i<mesh.geometry.vertices.length; i++){
     var vertex = mesh.geometry.vertices[i];
 
-    if(detectmob())
-    {
-      var materialcadeira = materialcadeiraMobile.clone();
-    }
-    else
-    {
-      var materialcadeira = materialcadeiraNormal.clone();
-    }
+    var materialcadeira = materialcadeiraNormal.clone();
 
     // create the new instance
     newObject = genericObject.clone(genericObject);
@@ -2123,7 +1727,9 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
       octree.add( newObject);
 
     }
-
+    if (carregouFreeSeats==true){
+      document.getElementById("pfreeseatsNumber").innerHTML = lugaresLivres;
+    }
   }
   //add to scene
   var meshSG = new THREE.Mesh(singleGeometryNormal, new THREE.MeshFaceMaterial(materials));
@@ -2162,7 +1768,6 @@ function carregarJSONBDInitial(num_sessao) {
   });
 }
 
-
 //
 // here we load the chair arms
 //
@@ -2170,27 +1775,14 @@ function loadBracos(populateBracosInstances){
   // single geometry for geometry merge
   var singleGeometry = new THREE.Geometry();
 
+  // chair arm material
+  var material = new THREE.MeshPhongMaterial({
+    map: texturaBraco,
+    specular : [0.1, 0.1, 0.1],
+    shininess : 120.00,
+    normalMap: texturaBracoNormalMap
+  });
 
-  if(detectmob())
-  {
-    // chair arm material
-    var material = new THREE.MeshBasicMaterial({
-      map: texturaBraco,
-      specular : [0.1, 0.1, 0.1],
-      shininess : 120.00
-    });
-  }
-  else
-  {
-    // chair arm material
-    var material = new THREE.MeshPhongMaterial({
-      map: texturaBraco,
-      specular : [0.1, 0.1, 0.1],
-      shininess : 120.00,
-      normalMap: texturaBracoNormalMap
-    });
-
-  }
   var meshBracos = [];
   var normalsArrayBracos = [];
   var normalVector = new THREE.Vector3(0,0,0);
@@ -2275,7 +1867,6 @@ function onWindowResize() {
   renderer.setSize( window.innerWidth, window.innerHeight );
 
 }
-
 
 // memorize the last texture that was selected
 var uuidTexturaAntiga ="";
@@ -2362,9 +1953,6 @@ function onMouseMove(e) {
 
         intersected = intersectionObject;
 
-        if(detectmob())
-        highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraMobileHighlight);
-        else
         highLightChair = new THREE.Mesh(intersected.geometry,materialcadeiraHighLight);
 
         intersected.geometry.computeBoundingBox();
@@ -2501,7 +2089,7 @@ function onMouseDown(e) {
         // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
         if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
         {
-          if (primeiravez == true && !detectmob()){
+          if (primeiravez == true){
             if (document.getElementById("menuSelect").style.right == "-300px")
               $("#menuSelect").animate({"right": '+=300px'});
             primeiravez = false;
@@ -2558,9 +2146,6 @@ function onMouseDown(e) {
           spriteEyeInstance.rotation.y = angle;
 
           // paint all the selected chairs (check the array) with the selected color
-          if(detectmob())
-          selectChair = new THREE.Mesh(obj.geometry,materialcadeiraMobileHighlight);
-          else
           selectChair = new THREE.Mesh(obj.geometry,materialcadeiraHighLight);
 
           selectChair.geometry.computeBoundingBox();
@@ -2937,7 +2522,6 @@ function removeCadeira(obj) {
   }
 }
 
-
 // variables to check if we scrolled back or forth (zoom effect)
 var alreadyScrolledFront = true;
 var alreadyScrolledBack = false;
@@ -2986,25 +2570,17 @@ function onMouseWheel(e) {
   return false;
 }
 
-function render(dt) {
-  renderVR.render(mainScene, camera);
-}
-
-function update(dt) {
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderVR.setSize(window.innerWidth, window.innerHeight);
-}
-
 //
 // main render function (render cycle)
 //
 function animate() {
+
   requestAnimationFrame(animate);
   // if we are rendering the loading scene
   if(isLoading)
   {
-    //renderer.render( loadingScene, camera );
-    //loaderMesh.rotation.y -= 0.03;
+    renderer.render( loadingScene, camera );
+    loaderMesh.rotation.y -= 0.03;
   }
   // if we are rendering the main scene
   else
@@ -3050,15 +2626,14 @@ function animate() {
       // if we reach the edges of the screen with the mouse, the camera stops
       if(controls.lon <= 0){
         if(alreadyScrolledFront){
-          if(controls.lon < -20)
+          if(controls.lon < -15)
           {
-            controls.lookSpeed = 0.001;
-            controls.lon = -20;
+            //controls.lookSpeed = 0.001;
+            controls.lon = -15;
           }
         }else{
           if(controls.lon < -45)
           {
-            controls.lookSpeed = 0.001;
             controls.lon = -45;
           }
         }
@@ -3068,16 +2643,12 @@ function animate() {
         if(alreadyScrolledFront){
           if(controls.lon > 15)
           {
-            controls.lookSpeed = 0.001;
             controls.lon = 15;
-            console.log(controls.lon);
           }
         }else{
-          if(controls.lon > 40)
+          if(controls.lon > 45)
           {
-            controls.lookSpeed = 0.001;
-            controls.lon = 40;
-            console.log(controls.lon);
+            controls.lon = 45;
           }
         }
       }
@@ -3085,6 +2656,7 @@ function animate() {
   }
 
 }
+
 animate();
 
 //
@@ -3093,13 +2665,12 @@ animate();
 function changePerspective(x, y, z,obj) {
 
   $("#menuSelect").animate({"right": '-=300px'});
-  setTimeout(function(){  video.play(); }, 3000);
+  setTimeout(function(){ video.play(); }, 3000);
   sittingDown = true;
 
   lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
   lastControlsLat = controls.lat;
   lastControlsLon = controls.lon;
-
   setupTweenFP(obj);
 
   for(var i=0; i<spriteEyeArray.length ; i++)
@@ -3199,52 +2770,11 @@ document.body.appendChild(iDiv);
 $("#ecraDiv").hide();
 
 //
-// if we press the keyboard
-//
-function onKeyDown(event) {
-  var keyCode = event.which;
-
-  if ( keyCode == 112 )
-  video.play();
-
-  if ( keyCode == 32 )
-  video.pause();
-
-  if ( keyCode == 115 ) // stop video
-  {
-    video.pause();
-    video.currentTime = 0;
-  }
-
-  if ( keyCode == 114 ) // rewind video
-  video.currentTime = 0;
-}
-
-
-// ******************************************** Video Update FbF ********************************************
-
-
-updateFcts.push(function() {
-  renderer.render(scene, camera);
-})
-
-var lastTimeMsec = null
-requestAnimationFrame(function animate(nowMsec) {
-  // keep looping
-  requestAnimationFrame(animate);
-  // measure time
-  lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60
-  var deltaMsec = Math.min(200, nowMsec - lastTimeMsec)
-  lastTimeMsec = nowMsec
-})
-
-//
 // launch the Tween for changing perspective to seat perspective
 //
 function setupTweenFP(obj) {
 
   TWEEN.removeAll();
-
   // calculate centroid
   obj.geometry.computeBoundingBox();
 
@@ -3294,8 +2824,8 @@ function setupTweenFP(obj) {
 
   // tween the camera rotation vertically
   tweenLatFP = new TWEEN.Tween(controls).to({
-    lat:angle*180/Math.PI,
-  },3000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
+    lat:THREE.Math.radToDeg(angle) + 40,
+  },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
   }).onComplete(function () {
   }).start();
 
@@ -3318,7 +2848,6 @@ function setupTweenFP(obj) {
 // launch the Tween for changing perspective to overview perspective
 //
 function setupTweenOverview() {
-  //TWEEN.removeAll();
 
   // tween the fov fowards
   tweenFov = new TWEEN.Tween(camera).to({
@@ -3349,10 +2878,11 @@ function setupTweenOverview() {
     }).onComplete(function () {
       controls.lookVertical = true;
       controls.constrainVertical = true;
-      controls.verticalMin = Math.PI/3;
-      controls.verticalMax = 2*Math.PI/3;
+      controls.verticalMin = THREE.Math.degToRad(70);
+      controls.verticalMax = THREE.Math.degToRad(130);
       controls.movementSpeed = 0;
       controls.autoForward = false;
+      video.currentTime = 0;
     }).start();
     // tween camera rotation horizontally
     tweenCamRotationOver = new TWEEN.Tween(controls).to({
@@ -3390,8 +2920,7 @@ function calculaTotal(valorInicial) {
       break;
     }
   }
-  if(!detectmob())
-    document.getElementById('total').innerHTML = "Total: <u>"+ Math.round(total * 100) / 100 + "€</u>";
+  document.getElementById('total').innerHTML = "Total: <u>"+ Math.round(total * 100) / 100 + "€</u>";
 
 }
 
@@ -3443,52 +2972,5 @@ function switchToOrtho() {
     controls.autoForward = false;
     controls.lat = -45;
     controls.lookSpeed = 0;
-  }
-}
-
-function animateVr() {
-  requestAnimationFrame(animateVr);
-  update(clock.getDelta());
-  render(clock.getDelta());
-}
-
-function switchToVr() {
-  if (isVR==false) // if we're in cinema overview 3D change to VR view
-  {
-    document.getElementById ('ptrocavr').innerHTML = "3D";
-    document.getElementById("ptrocavrImg").src="img/icon - cadeiras 3D.png";
-    isVR = true;
-    if (detectmob()){
-      animateVr();
-      var reticle = vreticle.Reticle(camera);
-      mainScene.add(camera);
-    }else{
-
-    }
-  }
-  else // change back to 3D view
-  {
-    document.getElementById ('ptrocavr').innerHTML = "VR";
-    document.getElementById("ptrocavrImg").src="img/VR-icon.png";
-    isVR = false;
-    cancelAnimationFrame(vr);
-    renderer.setSize( window.innerWidth, window.innerHeight );
-    mainScene.remove(camera);
-  }
-}
-
-function detectmob() {
-  if( navigator.userAgent.match(/Android/i)
-  || navigator.userAgent.match(/webOS/i)
-  || navigator.userAgent.match(/iPhone/i)
-  || navigator.userAgent.match(/iPad/i)
-  || navigator.userAgent.match(/iPod/i)
-  || navigator.userAgent.match(/BlackBerry/i)
-  || navigator.userAgent.match(/Windows Phone/i)){
-
-    return true;
-  }
-  else{
-    return false;
   }
 }
