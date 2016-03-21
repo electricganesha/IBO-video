@@ -4,6 +4,7 @@
   <head>
     <meta charset=utf-8>
     <title>PUSH IBO - Immersive Box Office</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="css/font-awesome.css">
     <style>
         @font-face {
@@ -62,11 +63,33 @@
   </head>
 
   <body>
-    <video id="video" loop style="display:none" webkit-playsinline="true">
-			<source src="video/pushshowreel.mp4" type='video/mp4'>
+    <video id="video" loop style="display:none" preload="none">
+			<source src="video/301285658.mp4" type='video/mp4'>
 		</video>
     <script src="js/jquery-2.1.4.min.js"></script>
-    <script src="cinema.js"></script>
+    <script>
+    function detectmob() {
+      if( navigator.userAgent.match(/Android/i)
+      || navigator.userAgent.match(/webOS/i)
+      || navigator.userAgent.match(/iPhone/i)
+      || navigator.userAgent.match(/iPad/i)
+      || navigator.userAgent.match(/iPod/i)
+      || navigator.userAgent.match(/BlackBerry/i)
+      || navigator.userAgent.match(/Windows Phone/i)){
+        return true;
+
+      }
+      else{
+        return false;
+      }
+    }
+
+    if (detectmob()){
+      document.write("<script src='cinema_mobile.js'><\/script>");
+    }else{
+      document.write("<script src='cinema.js'><\/script>");
+    }
+    </script>
   </body>
 
 </html>
