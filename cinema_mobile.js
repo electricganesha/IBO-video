@@ -541,7 +541,6 @@ THREE.DeviceOrientationControls = function ( object ) {
 
     alpha = alpha-firstAlpha;
     setObjectQuaternion( scope.object.quaternion, alpha, beta, gamma, orient );
-    console.log(alpha);
   };
 
 };

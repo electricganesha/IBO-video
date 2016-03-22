@@ -271,7 +271,6 @@ if(firstTimeRunning){
   firstTimeRunning = false;
 }
 
-
 mainScene = new THREE.Scene();
 startLoadingScene();
 
@@ -535,40 +534,6 @@ function showMenuSelect(){
       }
 
     });
-  }
-
-  if (window.DeviceMotionEvent) {
-    window.addEventListener('devicemotion', deviceMotionHandler, false);
-  }
-
-  function deviceMotionHandler(eventData) {
-
-    // Grab the acceleration from the results
-    var acceleration = eventData.acceleration;
-
-    if((acceleration.x > 3 || acceleration.x < -3) && (acceleration.y > 3 || acceleration.y < -3) && acceleration.z > 3 || acceleration.z < -3)
-    {
-      if(sittingDown)
-      {
-        sittingDown = false;
-        setupTweenOverview();
-
-        video.pause();
-
-        for(var i=0; i<spriteEyeArray.length ; i++)
-        {
-          spriteEyeArray[i].visible = true;
-        }
-
-        deviceOrientationSelectedPoint = undefined;
-        deviceOrientationSelectedObject = undefined;
-      }
-      else
-      {
-        if(deviceOrientationSelectedPoint != undefined && deviceOrientationSelectedObject != undefined)
-          changePerspective(deviceOrientationSelectedPoint.x,deviceOrientationSelectedPoint.y,deviceOrientationSelectedPoint.z,deviceOrientationSelectedObject);
-      }
-    }
   }
 
   function carregarData() {
@@ -1518,11 +1483,7 @@ function loadScene() {
 // Here we load the venue model
 //
 function loadSala() {
-
-
-
   var loaderJSON = new THREE.JSONLoader();
-
 
   loaderJSON.load( "models/Cinema_Motta/tela_final.js", function( geometry,material ) {
     telaFinal = new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({map:textureVideo}));
@@ -1627,10 +1588,7 @@ function loadCadeiras(populateCadeirasInstances) {
     if (carregouFreeSeats==true){
       document.getElementById("pcapacityNumber").innerHTML = capacidade;
     }
-
   });
-
-
   // 2. load the model itself (only once) to replicate and get the geometry to pass along
   var loaderOBJ = new THREE.OBJMTLLoader();
   loaderOBJ.load( 'models/Cinema_Motta/Cadeira_Nova/Cadeira_Nova.obj', 'models/Cinema_Motta/Cadeira_Nova/Cadeira_Nova.mtl', function ( object ) {
@@ -1750,7 +1708,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 //
 
 function carregarJSONBDInitial(num_sessao) {
-
   $.ajax({
     url: 'php/ler_BDCinema.php', //This is the current doc
     type: "POST",
@@ -1797,7 +1754,7 @@ function loadBracos(populateBracosInstances){
       normalsArrayBracos.push(normalVector);
     }
 
-  } );
+  });
 
   // 2. load the model itself (only once) to replicate and get the geometry to pass along
   var loaderOBJ = new THREE.OBJMTLLoader();
@@ -1850,9 +1807,7 @@ function populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,no
 
     // merge each new instance into a single geometry to optimize
     singleGeometry.merge(newBraco.geometry, newBraco.matrix);
-
   }
-
   //add to scene
   var meshSG = new THREE.Mesh(singleGeometry, material);
   mainScene.add(meshSG);
@@ -1860,7 +1815,6 @@ function populateBracosInstances(singleGeometry,meshBracos,normalsArrayBracos,no
 
 
 function onWindowResize() {
-
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 
