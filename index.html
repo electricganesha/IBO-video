@@ -59,12 +59,36 @@
           pointer-events: all;
           cursor: auto;
         }
+
+        @-webkit-keyframes coloranim {
+            0%     {background-color:#1cbb9b;}
+            50.0%  {background-color:#e54b65;}
+            100.0%  {background-color:#1cbb9b;}
+        }
+
+        @keyframes coloranim {
+            0%     {background-color:#1cbb9b;}
+            50.0%  {background-color:#e54b65;}
+            100.0%  {background-color:#1cbb9b;}
+        }
+
+        @-webkit-keyframes coloranimbt {
+            0%     {background-color:rgba(0, 0, 0, 0.7);}
+            50.0%  {background-color:#e54b65;}
+            100.0%  {background-color:rgba(0, 0, 0, 0.7);}
+        }
+
+        @keyframes coloranimbt {
+            0%     {background-color:rgba(0, 0, 0, 0.7);}
+            50.0%  {background-color:#e54b65;}
+            100.0%  {background-color:rgba(0, 0, 0, 0.7);}
+        }
     </style>
   </head>
 
   <body>
     <video id="video" loop style="display:none" preload="none">
-			<source src="video/301285658.mp4" type='video/mp4'>
+			<source src="video/pushshowreel.mp4" type='video/mp4'>
 		</video>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script>

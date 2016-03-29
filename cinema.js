@@ -177,7 +177,6 @@ var slidedownsessao = false;
 var mudousessao = false;
 var clickfull = false;
 var isLoadOcup = false;
-var isLoadingInfo = true;
 var anterior = "";
 var icon_anterior = "";
 var capacidade = 0;
@@ -188,6 +187,7 @@ var sessoesJSON;
 var num_sessao = "0";
 var n_sessao_select;
 var carregouFreeSeats = false;
+var clickhelpbt = false;
 
 var deviceOrientationSelectedObject;
 var deviceOrientationSelectedPoint;
@@ -331,7 +331,6 @@ function startLoadingScene() {
 //
 // Here we initialise all the needed variables, like the stats, camera, and controls
 //
-
 function fullscreen() {
   if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {
     document.getElementById("ptrocafsImg").src="img/exit-full-screen.png";
@@ -358,6 +357,7 @@ function fullscreen() {
   }
 }
 
+
 function init() {
   // 0: fps, 1: ms, 2: mb
   statsFPS.setMode( 0 );
@@ -376,7 +376,7 @@ function init() {
 
   controls = new THREE.FirstPersonControls(camera);
   controls.lon = 0;
-  controls.lat = -45;
+  controls.lat = -15;
 
   controls.lookVertical = true;
   controls.constrainVertical = true;
@@ -424,70 +424,333 @@ function init() {
   iDiv.style.textAlign = "center";
   iDiv.style.height = '100%';
   iDiv.style.position = "absolute";
-  iDiv.style.background = 'rgba(0,0,0,1)';
   iDiv.id = 'loadedScreen';
   iDiv.style.top = '0';
   iDiv.style.display = "block";
 
-  var textDiv = document.createElement('div');
-  textDiv.style.color = "white";
-  textDiv.style.cursor = "pointer";
-  textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
-  +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
-  +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
-  +"<br><br><br><br> Click on the text to continue";
-  textDiv.style.width = '50%';
-  textDiv.style.textAlign = "center";
-  textDiv.style.fontFamily = "osb";
-  textDiv.style.height = '100%';
-  textDiv.style.position = "absolute";
-  textDiv.id = 'textScreen';
-  textDiv.style.left = '24%';
-  textDiv.style.top = '30%';
+  var divMain = document.createElement('div');
+  divMain.style.color = "white";
+  divMain.style.borderRadius = "15px";
+  divMain.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
+  divMain.style.cursor = "pointer";
+  divMain.style.width = '40%';
+  divMain.style.textAlign = "center";
+  divMain.style.fontFamily = "osb";
+  divMain.style.height = '530px';
+  divMain.style.position = "absolute";
+  divMain.id = 'textScreen';
+  divMain.style.left = '30%';
+  divMain.style.top = '20%';
+
+  var divtexto1 = document.createElement('div');
+  divtexto1.style.borderBottom = "solid 1px #1bbc9b";
+  divtexto1.style.width = "35%";
+  divtexto1.style.paddingTop = "15px";
+  divtexto1.style.height = "65px";
+  divtexto1.style.margin = "auto";
+
+  var textowelcome = document.createElement('p');
+  textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
+  textowelcome.style.fontFamily = "osr";
+  textowelcome.style.fontSize = "23px";
+
+  var textoespaco = document.createElement('p');
+  textoespaco.innerHTML = "<br>";
+  textoespaco.style.fontFamily = "osr";
+
+  var textoapre = document.createElement('p');
+  textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
+  textoapre.style.fontFamily = "osr";
+  textoapre.style.fontSize = "14px";
+
+  var divleft = document.createElement('div');
+  divleft.style.borderRight = "solid 1px #1bbc9b";
+  divleft.style.width = "33.2%";
+  divleft.style.marginTop = "50px";
+  divleft.style.float = "left";
+  divleft.style.height = "150px";
+
+  var divlefttext = document.createElement('p');
+  divlefttext.innerHTML = "Para navegar mova o cursor";
+  divlefttext.style.fontFamily = "osr";
+  divlefttext.style.fontSize = "14px";
+  divlefttext.style.color = "#1bbc9b";
+
+  var divleftimg = document.createElement('img');
+  divleftimg.id = "divleftimg";
+  divleftimg.style.marginTop = "5px";
 
 
-  var iDiv1 = document.createElement('div');
-  iDiv1.style.width = '100%';
-  iDiv1.style.cursor = "pointer";
-  iDiv1.style.pointerEvents = "none";
-  iDiv1.style.textAlign = "center";
-  iDiv1.style.height = '100%';
-  iDiv1.style.position = "absolute";
-  iDiv1.style.background = 'rgba(0,0,0,0.8)';
-  iDiv1.id = 'helpScreen';
-  iDiv1.style.top = '0';
-  iDiv1.style.display = "none";
+  var divmid = document.createElement('div');
+  divmid.style.borderRight = "solid 1px #1bbc9b";
+  divmid.style.width = "33.2%";
+  divmid.style.marginTop = "50px";
+  divmid.style.float = "left";
+  divmid.style.height = "150px";
 
-  var iDivhelp = document.createElement('img');
-  //iDiv.innerHTML = " Cadeiras seleccionadas : ";
-  iDivhelp.style.margin = 'auto';
-  iDivhelp.style.marginTop = '10%';
-  iDivhelp.style.width = '852px';
-  iDivhelp.style.cursor = "pointer";
-  iDivhelp.style.pointerEvents = "none";
-  iDivhelp.style.height = '523px';
-  iDivhelp.id = 'helpScreenArrow';
+  var divmidtext = document.createElement('p');
+  divmidtext.innerHTML = "Faça zoom com a roda";
+  divmidtext.style.fontFamily = "osr";
+  divmidtext.style.fontSize = "14px";
+  divmidtext.style.color = "#1bbc9b";
 
-  iDiv.appendChild(textDiv);
+  var divmidimg = document.createElement('img');
+  divmidimg.id = "divmidimg";
+  divmidimg.style.marginTop = "20px";
+
+  var divright = document.createElement('div');
+  divright.style.width = "33.2%";
+  divright.style.marginTop = "50px";
+  divright.style.float = "left";
+  divright.style.height = "150px";
+
+  var divrighttext = document.createElement('p');
+  divrighttext.innerHTML = "Selecione os seus lugares";
+  divrighttext.style.fontFamily = "osr";
+  divrighttext.style.fontSize = "14px";
+  divrighttext.style.color = "#1bbc9b";
+
+  var divrightimg = document.createElement('img');
+  divrightimg.id = "divrightimg";
+  divrightimg.style.marginTop = "20px";
+
+  var diveye = document.createElement('div');
+  diveye.style.width = "33.2%";
+  diveye.style.margin = "0 auto";
+  diveye.style.height = "150px";
+  diveye.style.paddingTop = "30px";
+  diveye.style.clear = "both";
+
+  var diveyetext = document.createElement('p');
+  diveyetext.innerHTML = "Ver perspectiva do lugar";
+  diveyetext.style.fontFamily = "osr";
+  diveyetext.style.fontSize = "14px";
+  diveyetext.style.color = "#1bbc9b";
+
+  var diveyeimg = document.createElement('img');
+  diveyeimg.id = "diveyeimg";
+  diveyeimg.style.marginTop = "20px";
+
+
+  var splashMain = document.createElement('div');
+  splashMain.style.width = '400px';
+  splashMain.style.fontFamily = "osb";
+  splashMain.style.height = '350px';
+  //splashMain.style.border = 'solid 2px green';
+  splashMain.style.position = "absolute";
+  splashMain.id = 'splashelp';
+  splashMain.style.top = '10%';
+  splashMain.style.left = '-400px';
+
+
+  var splashelp = document.createElement('div');
+  splashelp.style.color = "white";
+  splashelp.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
+  splashelp.style.width = '350px';
+  splashelp.style.textAlign = "center";
+  splashelp.style.fontFamily = "osb";
+  splashelp.style.height = '100%';
+  splashelp.id = 'splashelp';
+  splashelp.style.float = "left";
+
+  var splashelpbt = document.createElement('div');
+  splashelpbt.style.color = "white";
+  splashelpbt.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
+  splashelpbt.style.cursor = "pointer";
+  splashelpbt.style.width = '50px';
+  splashelpbt.style.textAlign = "center";
+  splashelpbt.style.fontFamily = "osb";
+  splashelpbt.style.height = '50px';
+  splashelpbt.style.float = "right";
+  splashelpbt.id = 'splashelpbt';
+  splashelpbt.onclick = function() {
+    if (!clickhelpbt){
+      console.log("entrei+");
+      $("#splashelp").animate({"left": '+=350px'});
+      clickhelpbt = true;
+    }else{
+      console.log("entrei-");
+      $("#splashelp").animate({"left": '-=350px'});
+      clickhelpbt = false;
+    }
+  }
+
+  var splashelpbttext = document.createElement('p');
+  splashelpbttext.innerHTML = "?";
+  splashelpbttext.style.fontFamily = "osb";
+  splashelpbttext.style.fontSize = "32px";
+  splashelpbttext.style.color = "#1bbc9b";
+  splashelpbttext.style.marginTop = "0px";
+
+  var divlefth = document.createElement('div');
+  divlefth.style.borderRight = "solid 1px #1bbc9b";
+  divlefth.style.width = "33%";
+  divlefth.style.marginTop = "30px";
+  divlefth.style.float = "left";
+  divlefth.style.height = "130px";
+
+  var divlefttexth = document.createElement('p');
+  divlefttexth.innerHTML = "Para navegar mova o cursor";
+  divlefttexth.style.fontFamily = "osr";
+  divlefttexth.style.fontSize = "13px";
+  divlefttexth.style.width = "90%";
+  divlefttexth.style.color = "#1bbc9b";
+  divlefttexth.style.margin = "auto";
+  divlefttexth.style.marginTop = "5px";
+
+  var divleftimgh = document.createElement('img');
+  divleftimgh.id = "divleftimgh";
+  divleftimgh.style.marginTop = "10px";
+  divleftimgh.style.width = "50px";
+
+  var divmidh = document.createElement('div');
+  divmidh.style.borderRight = "solid 1px #1bbc9b";
+  divmidh.style.width = "33%";
+  divmidh.style.marginTop = "30px";
+  divmidh.style.float = "left";
+  divmidh.style.height = "130px";
+
+  var divmidtexth = document.createElement('p');
+  divmidtexth.innerHTML = "Faça zoom com a roda";
+  divmidtexth.style.fontFamily = "osr";
+  divmidtexth.style.fontSize = "13px";
+  divmidtexth.style.width = "90%";
+  divmidtexth.style.color = "#1bbc9b";
+  divmidtexth.style.margin = "auto";
+  divmidtexth.style.marginTop = "5px";
+
+  var divmidimgh = document.createElement('img');
+  divmidimgh.id = "divmidimgh";
+  divmidimgh.style.marginTop = "20px";
+  divmidimgh.style.width = "28px";
+
+  var divrighth = document.createElement('div');
+  divrighth.style.width = "33%";
+  divrighth.style.marginTop = "30px";
+  divrighth.style.float = "left";
+  divrighth.style.height = "150px";
+
+  var divrighttexth = document.createElement('p');
+  divrighttexth.innerHTML = "Selecione os seus lugares";
+  divrighttexth.style.fontFamily = "osr";
+  divrighttexth.style.fontSize = "13px";
+  divrighttexth.style.width = "90%";
+  divrighttexth.style.color = "#1bbc9b";
+  divrighttexth.style.margin = "auto";
+  divrighttexth.style.marginTop = "5px";
+
+  var divrightimgh = document.createElement('img');
+  divrightimgh.id = "divrightimgh";
+  divrightimgh.style.marginTop = "20px";
+  divrightimgh.style.width = "28px";
+
+  var diveyeh = document.createElement('div');
+  diveyeh.style.width = "33.2%";
+  diveyeh.style.margin = "0 auto";
+  diveyeh.style.height = "120px";
+  diveyeh.style.paddingTop = "10px";
+  diveyeh.style.clear = "both";
+
+  var diveyetexth = document.createElement('p');
+  diveyetexth.innerHTML = "Ver perspectiva do lugar";
+  diveyetexth.style.fontFamily = "osr";
+  diveyetexth.style.fontSize = "13px";
+  diveyetexth.style.width = "90%";
+  diveyetexth.style.color = "#1bbc9b";
+  diveyetexth.style.margin = "auto";
+
+  var diveyeimgh = document.createElement('img');
+  diveyeimgh.id = "diveyeimgh";
+  diveyeimgh.style.marginTop = "20px";
+  diveyeimgh.style.width = "40px";
+
+
+  divtexto1.appendChild(textowelcome);
+  divtexto1.appendChild(textoespaco);
+  divMain.appendChild(divtexto1);
+  divMain.appendChild(textoapre);
+
+  divMain.appendChild(divleft);
+  divleft.appendChild(divlefttext);
+  divleft.appendChild(divleftimg);
+
+  divMain.appendChild(divmid);
+  divmid.appendChild(divmidtext);
+  divmid.appendChild(divmidimg);
+
+  divMain.appendChild(divright);
+  divright.appendChild(divrighttext);
+  divright.appendChild(divrightimg);
+
+  divMain.appendChild(diveye);
+  diveye.appendChild(diveyetext);
+  diveye.appendChild(diveyeimg);
+
+  splashMain.appendChild(splashelp);
+  splashMain.appendChild(splashelpbt);
+
+  splashelpbt.appendChild(splashelpbttext);
+
+  splashelp.appendChild(divlefth);
+  divlefth.appendChild(divlefttexth);
+  divlefth.appendChild(divleftimgh);
+
+  splashelp.appendChild(divmidh);
+  divmidh.appendChild(divmidtexth);
+  divmidh.appendChild(divmidimgh);
+
+  splashelp.appendChild(divrighth);
+  divrighth.appendChild(divrighttexth);
+  divrighth.appendChild(divrightimgh);
+
+  splashelp.appendChild(diveyeh);
+  diveyeh.appendChild(diveyetexth);
+  diveyeh.appendChild(diveyeimgh);
+
+  iDiv.appendChild(divMain);
   document.body.appendChild(iDiv);
-  iDiv1.appendChild(iDivhelp);
-  document.body.appendChild(iDiv1);
-  document.getElementById("helpScreenArrow").src="img/help.png";
+  document.body.appendChild(splashMain);
+  document.getElementById("divleftimg").src="img/move_mouse.png";
+  document.getElementById("divmidimg").src="img/mouse.png";
+  document.getElementById("divrightimg").src="img/mouse_click.png";
+  document.getElementById("diveyeimg").src="img/eye.png";
+
+  document.getElementById("divleftimgh").src="img/move_mouse.png";
+  document.getElementById("divmidimgh").src="img/mouse.png";
+  document.getElementById("divrightimgh").src="img/mouse_click.png";
+  document.getElementById("diveyeimgh").src="img/eye.png";
+
+  $("#loadedScreen").fadeIn("slow");
   $("#loadedScreen" ).click(function() {
-    mouse.x = 100;
-    mouse.y = 200;
-    isLoadingInfo = false;
-    $("#helpScreen").fadeIn("slow");
     $("#loadedScreen").fadeOut("slow");
     video.play();
     video.pause();
-    setInterval(function() {
-      $("#helpScreen").fadeOut("slow");
-      insideHelp = false;
-    }, 0);
+    insideHelp = false;
+    $("#splashelp").animate({"left": '+=50px'});
+    setTimeout(function(){
+      legEsq.style.animation = "coloranim 1.5s 2";
+  	  legEsq.style.webkitAnimation = "coloranim 1.5s 2";
+    }, 2000);
+    setTimeout(function(){
+      legDir.style.animation = "coloranim 1.5s 2";
+  	  legDir.style.webkitAnimation = "coloranim 1.5s 2";
+    }, 4500);
+    setTimeout(function(){
+      splashelpbt.style.animation = "coloranimbt 1.5s 2";
+  	  splashelpbt.style.webkitAnimation = "coloranimbt 1.5s 2";
+    }, 7000);
+
   });
   isLoading = false;
   firstTimeInit = false;
+  $('#splashelp').bind('mouseenter' ,"*", function(e){
+    mouseIsOnMenu = true;
+    controls.lookSpeed = 0;
+  },false);
+
+  $('#splashelp').bind('mouseleave', "*", function(e){
+    mouseIsOnMenu = false;
+  },false);
 }
 
 //
@@ -729,6 +992,7 @@ function showMenuSelect(){
   legEsq.style.background = '#1cbb9b';
   legEsq.style.borderRadius = "10px";
   legEsq.id = 'legEsq';
+  legEsq.className = 'legEsq';
   legEsq.onclick = function() {
     if (!clickfull){
       fullscreen();
@@ -2043,7 +2307,13 @@ function onMouseDown(e) {
         // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
         if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
         {
+
           if (primeiravez == true){
+            if (document.getElementById("splashelp").style.left == "0px"){
+              $("#splashelp").animate({"left": '-=350px'});
+              clickhelpbt = false;
+            }
+
             if (document.getElementById("menuSelect").style.right == "-300px")
               $("#menuSelect").animate({"right": '+=300px'});
             primeiravez = false;
@@ -2413,12 +2683,17 @@ function onMouseDown(e) {
   }
   else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
+    if (document.getElementById("splashelp").style.left == "0px"){
+      $("#splashelp").animate({"left": '-=350px'});
+      clickhelpbt = false;
+    }
     $("#menuSelect").animate({"right": '+=300px'});
 
     sittingDown = false;
     setupTweenOverview();
 
     video.pause();
+    video.currentTime = 0;
 
     for(var i=0; i<spriteEyeArray.length ; i++)
     {
@@ -2428,6 +2703,11 @@ function onMouseDown(e) {
   }
   else if (insideHelp == false)
   {
+    if (document.getElementById("splashelp").style.left == "0px"){
+      $("#splashelp").animate({"left": '-=350px'});
+      clickhelpbt = false;
+    }
+
     $("#menuSelect").animate({"right": '+=300px'});
 
     sittingDown = false;
@@ -2470,6 +2750,11 @@ function removeCadeira(obj) {
   if(selectedChairs.length < 1)
   {
     isSelected = false;
+    if (document.getElementById("splashelp").style.left == "0px"){
+      $("#splashelp").animate({"left": '-=350px'});
+      clickhelpbt = false;
+    }
+
     $("#menuSelect").animate({"right": '-=300px'});
     primeiravez = true;
     mouseIsOnMenu = false;
@@ -2550,7 +2835,7 @@ function animate() {
 
     statsFPS.begin();
 
-    if(controls != undefined && !isLoadOcup && !isLoadingInfo)
+    if(controls != undefined && !isLoadOcup)
       controls.update(clock.getDelta()); //for cameras
 
     octree.update();
@@ -2617,9 +2902,12 @@ animate();
 // if we click the view perspective button or EYE icon
 //
 function changePerspective(x, y, z,obj) {
-
+  if (document.getElementById("splashelp").style.left == "0px"){
+    $("#splashelp").animate({"left": '-=350px'});
+    clickhelpbt = false;
+  }
   $("#menuSelect").animate({"right": '-=300px'});
-  setTimeout(function(){ video.play(); }, 3000);
+  setTimeout(function(){ video.play(); }, 2000);
   sittingDown = true;
 
   lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
@@ -2837,6 +3125,7 @@ function setupTweenOverview() {
       controls.movementSpeed = 0;
       controls.autoForward = false;
       video.currentTime = 0;
+      video.pause();
     }).start();
     // tween camera rotation horizontally
     tweenCamRotationOver = new TWEEN.Tween(controls).to({
