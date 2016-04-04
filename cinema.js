@@ -1,20 +1,6 @@
 $.ajax({
   type: "GET",
-  url: "js/jquery-ui.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/three.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
-  url: "js/Stats.js",
   dataType: "script",
   async: false
 });
@@ -137,8 +123,6 @@ var camera, scene, renderer, renderVR, vr;
 
 var spriteEyeModel = new THREE.Mesh();
 
-// STATISTICS (FPS, MS, MB)
-var statsFPS = new Stats();
 
 var firstTimeRunning = true;
 var firstTimeLoading = true;
@@ -255,13 +239,12 @@ container.appendChild(element);
 
 // create the main selection menu
 var waterMarkDiv = document.createElement('div');
-waterMarkDiv.style.width = '200px';
-waterMarkDiv.style.height = '82px';
+waterMarkDiv.style.width = '100px';
 waterMarkDiv.style.position = "absolute";
 waterMarkDiv.id = 'watermarkDiv';
 waterMarkDiv.style.bottom = "5%";
-waterMarkDiv.style.left = "5%";
-waterMarkDiv.innerHTML = "<img src='img/Push_Logo_transparente.png'> </img>";
+waterMarkDiv.style.left = "3%";
+waterMarkDiv.innerHTML = "<img src='img/Push_Logo_transparente.png' style = 'width:120px;''></img>";
 document.body.appendChild(waterMarkDiv);
 
 // Load the initial scenes
@@ -359,14 +342,6 @@ function fullscreen() {
 
 
 function init() {
-  // 0: fps, 1: ms, 2: mb
-  statsFPS.setMode( 0 );
-
-  statsFPS.domElement.style.position = 'absolute';
-  statsFPS.domElement.style.left = '0px';
-  statsFPS.domElement.style.top = '0px';
-
-  document.body.appendChild( statsFPS.domElement );
 
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
@@ -433,14 +408,15 @@ function init() {
   divMain.style.borderRadius = "15px";
   divMain.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
   divMain.style.cursor = "pointer";
-  divMain.style.width = '40%';
+  divMain.style.width = '50%';
   divMain.style.textAlign = "center";
   divMain.style.fontFamily = "osb";
   divMain.style.height = '530px';
   divMain.style.position = "absolute";
   divMain.id = 'textScreen';
-  divMain.style.left = '30%';
-  divMain.style.top = '20%';
+  divMain.style.left = '25%';
+  divMain.style.top = '50%';
+	divMain.style.transform = "translateY(-50%)";
 
   var divtexto1 = document.createElement('div');
   divtexto1.style.borderBottom = "solid 1px #1bbc9b";
@@ -536,7 +512,6 @@ function init() {
   splashMain.style.width = '400px';
   splashMain.style.fontFamily = "osb";
   splashMain.style.height = '350px';
-  //splashMain.style.border = 'solid 2px green';
   splashMain.style.position = "absolute";
   splashMain.id = 'splashelp';
   splashMain.style.top = '10%';
@@ -565,11 +540,9 @@ function init() {
   splashelpbt.id = 'splashelpbt';
   splashelpbt.onclick = function() {
     if (!clickhelpbt){
-      console.log("entrei+");
       $("#splashelp").animate({"left": '+=350px'});
       clickhelpbt = true;
     }else{
-      console.log("entrei-");
       $("#splashelp").animate({"left": '-=350px'});
       clickhelpbt = false;
     }
@@ -726,6 +699,7 @@ function init() {
     video.play();
     video.pause();
     insideHelp = false;
+    $("#legenda").animate({"marginTop": '-=100px'});
     $("#splashelp").animate({"left": '+=50px'});
     setTimeout(function(){
       legEsq.style.animation = "coloranim 1.5s 2";
@@ -970,25 +944,26 @@ function showMenuSelect(){
   // create main legenda for cinema
   var legDiv = document.createElement('div');
   legDiv.style.width = '100%';
-  legDiv.style.top = "100%";
-  legDiv.style.marginTop = "-80px";
-  legDiv.style.height = '160px';
+  legDiv.style.height = '80px';
   legDiv.style.position = "absolute";
   legDiv.id = 'LegDiv';
+  legDiv.style.bottom = "0px";
+
+
   // create sub main legenda for cinema
   var legenda = document.createElement('div');
   legenda.style.width = '900px';
   legenda.style.margin = "auto";
   legenda.style.textAlign = "center";
-  legenda.style.height = '200px';
   legenda.style.borderRadius = "10px";
   legenda.id = 'legenda';
+  legenda.style.marginTop = "100px";
 
   var legEsq = document.createElement('div');
   legEsq.style.width = '90px';
   legEsq.style.float = "left";
   legEsq.style.textAlign = "center";
-  legEsq.style.height = '200px';
+  legEsq.style.height = '100px';
   legEsq.style.background = '#1cbb9b';
   legEsq.style.borderRadius = "10px";
   legEsq.id = 'legEsq';
@@ -1270,10 +1245,10 @@ function showMenuSelect(){
   legDir.appendChild(ptrocapresp);
   legDir.appendChild(ptrocaprespImg);
 
-  legDiv.appendChild(legenda);
   legenda.appendChild(legEsq);
   legenda.appendChild(legMid);
   legenda.appendChild(legDir);
+  legDiv.appendChild(legenda);
   document.body.appendChild(legDiv);
   document.getElementById("pverPrespImg").src="img/ver.png";
   document.getElementById("pavailableImg").src="img/Bola_0001_vermelho.png";
@@ -1645,7 +1620,6 @@ function showMenuSelect(){
       dataType:'json', // add json datatype to get json
       data: ({dados: jsonChairs}),
       success: function(data){
-        console.log(jsonChairs);
       },
       error:    function(textStatus,errorThrown){
         console.log(textStatus);
@@ -1979,7 +1953,6 @@ function carregarJSONBDInitial(num_sessao) {
     data: ({sessao: "cadeiras"+num_sessao}),
     success: function(data){
       cadeirasJSON = data;
-      console.log("JSON Loaded Correctly from DB Initial cadeiras " + num_sessao);
       loadScene();
     },
     error:    function(textStatus,errorThrown){
@@ -2833,15 +2806,12 @@ function animate() {
 
     renderer.render( mainScene, camera );
 
-    statsFPS.begin();
-
     if(controls != undefined && !isLoadOcup)
       controls.update(clock.getDelta()); //for cameras
 
     octree.update();
     TWEEN.update();
 
-    statsFPS.end();
 
     // clean all the sprites
     if(isPerspectiveOrtho || sittingDown)
