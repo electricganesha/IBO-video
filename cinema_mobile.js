@@ -1,12 +1,5 @@
 $.ajax({
   type: "GET",
-  url: "js/jquery-ui.js",
-  dataType: "script",
-  async: false
-});
-
-$.ajax({
-  type: "GET",
   url: "js/three.js",
   dataType: "script",
   async: false
@@ -249,15 +242,15 @@ THREE.DefaultLoadingManager.onError = function () {
   ('there has been an error');
 };
 
-    var rtParameters = {
-			minFilter: THREE.LinearFilter,
-			magFilter: THREE.LinearFilter,
-			format: THREE.RGBFormat,
-			stencilBuffer: true
-		};
+var rtParameters = {
+	minFilter: THREE.LinearFilter,
+	magFilter: THREE.LinearFilter,
+	format: THREE.RGBFormat,
+	stencilBuffer: true
+};
 
-		var rtWidth  = window.innerWidth / 2;
-		var rtHeight = window.innerHeight / 2;
+var rtWidth  = window.innerWidth / 2;
+var rtHeight = window.innerHeight / 2;
 
 //
 // This method shows the loading scene, while the items are not loaded
@@ -551,7 +544,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	// "target" sets the location of focus, where the control orbits around
 	// and where it pans with respect to.
-	this.target = new THREE.Vector3(-5,1.55,0.009249939938009306);
+	this.target = new THREE.Vector3();
 
 	// center is old, deprecated; use "target" instead
 	this.center = this.target;
@@ -566,7 +559,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	// Set to true to disable this control
 	this.noRotate = false;
-	this.rotateSpeed = 0.2;
+	this.rotateSpeed = 0.1;
 
 	// Set to true to disable this control
 	this.noPan = true;
@@ -591,7 +584,8 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	// internals
 
 	var scope = this;
-
+  var zoomIn = false;
+  var zoomOut = false;
 	var EPS = 0.000001;
 
 	var rotateStart = new THREE.Vector2();
@@ -629,7 +623,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 		}
 
-		thetaDelta -= angle;
+		thetaDelta += angle;
 
 	};
 
@@ -641,7 +635,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 		}
 
-		phiDelta -= angle;
+		phiDelta += angle;
 
 	};
 
@@ -705,25 +699,43 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	};
 
 	this.dollyIn = function ( dollyScale ) {
-
-    tweenFov = new TWEEN.Tween(camera).to({
-      fov:60
-    },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
-      camera.updateProjectionMatrix();
-    }).onComplete(function () {
-    }).start();
-
+    if (zoomOut == false){
+      tweenFov = new TWEEN.Tween(camera).to({
+        fov:30
+      },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
+        camera.updateProjectionMatrix();
+      }).onComplete(function () {
+        zoomOut = true;
+      }).start();
+    }else{
+      tweenFov = new TWEEN.Tween(camera).to({
+        fov:60
+      },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
+        camera.updateProjectionMatrix();
+      }).onComplete(function () {
+        zoomIn = false;
+      }).start();
+    }
 	};
 
 	this.dollyOut = function ( dollyScale ) {
-
-    tweenFov = new TWEEN.Tween(camera).to({
-      fov:15
-    },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
-      camera.updateProjectionMatrix();
-    }).onComplete(function () {
-    }).start();
-
+    if (zoomIn == false){
+      tweenFov = new TWEEN.Tween(camera).to({
+        fov:30
+      },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
+        camera.updateProjectionMatrix();
+      }).onComplete(function () {
+        zoomIn = true;
+      }).start();
+    }else{
+      tweenFov = new TWEEN.Tween(camera).to({
+        fov:15
+      },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
+        camera.updateProjectionMatrix();
+      }).onComplete(function () {
+        zoomOut = false;
+      }).start();
+    }
 	};
 
 	this.update = function () {
@@ -855,20 +867,16 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			rotateStart.copy( rotateEnd );
 
 		} else if ( state === STATE.DOLLY ) {
-
 			if ( scope.noZoom === true ) return;
 
 			dollyEnd.set( event.clientX, event.clientY );
 			dollyDelta.subVectors( dollyEnd, dollyStart );
 
 			if ( dollyDelta.y > 0 ) {
-
 				scope.dollyIn();
-
 			} else {
 
 				scope.dollyOut();
-
 			}
 
 			dollyStart.copy( dollyEnd );
@@ -1010,7 +1018,12 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	}
 
 	function touchmove( event ) {
-
+    console.log(scope.rotateSpeed);
+    if (zoomIn == true){
+      scope.rotateSpeed = 0.07;
+    }else{
+      scope.rotateSpeed = 0.2;
+    }
 		if ( scope.enabled === false ) { return; }
 
 		event.preventDefault();
@@ -1047,11 +1060,13 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 				dollyDelta.subVectors( dollyEnd, dollyStart );
 
 				if ( dollyDelta.y > 0 ) {
-
+          console.log("IN");
+          console.log(dollyDelta.y);
 					scope.dollyOut();
 
 				} else {
-
+          console.log("OUT");
+          console.log(dollyDelta.y);
 					scope.dollyIn();
 
 				}
@@ -1108,13 +1123,15 @@ function init() {
   statsFPS.domElement.style.left = '0px';
   statsFPS.domElement.style.top = '0px';
 
-  document.body.appendChild( statsFPS.domElement );
+  //document.body.appendChild( statsFPS.domElement );
 
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
   camera.position.x = -6.160114995658247;
   camera.position.y = 1.5;
   camera.position.z = 0.009249939938009306;
+  var centro = new THREE.Vector3(0,2,0);
+  camera.lookAt(centro);
 
   var check = {
     gyroscope: function (callback) {
@@ -1132,9 +1149,11 @@ function init() {
   check.gyroscope(function (hasGyroscope) {
     if(hasGyroscope) {
       document.getElementById('legEsq').style.display = "block";
+      controls = new THREE.OrbitControls(camera);
+      controls.target = new THREE.Vector3(-5,1.55,0.009249939938009306);
+      controls.center = controls.target;
     }
-    document.getElementById('legEsq').style.display = "block";
-    controls = new THREE.OrbitControls(camera);
+
   });
 
 
@@ -1150,7 +1169,6 @@ function init() {
 
   window.addEventListener( 'resize', onWindowResize, false );
 
-
   showMenuSelect(); // this method initialises the side div container
 
   // create the main selection menu
@@ -1160,37 +1178,152 @@ function init() {
   iDiv.style.textAlign = "center";
   iDiv.style.height = '100%';
   iDiv.style.position = "absolute";
-  iDiv.style.background = 'rgba(0,0,0,1)';
   iDiv.id = 'loadedScreen';
   iDiv.style.top = '0';
   iDiv.style.display = "block";
 
-  var textDiv = document.createElement('div');
-  textDiv.style.color = "white";
-  textDiv.style.cursor = "pointer";
-  textDiv.innerHTML = " Welcome to 'BOI (Box Office Immersion)', a PUSH Interactive experiment. <br> <br> <br> BOI is a novel product by PUSH Interactive, that brings the best out of interactive three-dimensional environments to the ticket sale experience. We propose a visually appealing, easy-to-use and intuitive, improvement on the online ticket offices. By using WebGL (the 3D web standard) we are able to have a seamless experience across the most popular web-browsers, providing a solid product that is non-platform specific, so that clients are able to access it through desktops, laptops, mobile devices, and other platforms."
-  +"<br><br>Our system is flexible enough to be applied to almost every single ticket selling experience, be it movie theatres, concert halls, sports stadiums, or even public transports. <br>"
-  +"<br>We offer tailor-made integration into your own ticket sales system, as our product is sold as a module that can be inserted in a traditional ticket sales pipeline, receiving input in all the popular web data interchange formats like XML or JSON, and outputting the selected information in your favourite format as well. <br>"
-  +"<br><br><br><br> Click on the text to continue";
-  textDiv.style.width = '50%';
-  textDiv.style.textAlign = "center";
-  textDiv.style.fontFamily = "osb";
-  textDiv.style.height = '100%';
-  textDiv.style.position = "absolute";
-  textDiv.id = 'textScreen';
-  textDiv.style.left = '24%';
-  textDiv.style.top = '30%';
+  var divMain = document.createElement('div');
+  divMain.style.color = "white";
+  divMain.style.backgroundColor= "rgba(0, 0, 0, 0.8)";
+  divMain.style.cursor = "pointer";
+  divMain.style.width = '100%';
+  divMain.style.textAlign = "center";
+  divMain.style.fontFamily = "osb";
+  divMain.style.height = '100%';
+  divMain.style.position = "absolute";
+  divMain.id = 'textScreen';
+  divMain.style.top = '50%';
+	divMain.style.transform = "translateY(-50%)";
+
+  var divtexto1 = document.createElement('div');
+  divtexto1.style.borderBottom = "solid 1px #1bbc9b";
+  divtexto1.style.width = "40%";
+  divtexto1.style.height = "30px";
+  divtexto1.style.margin = "auto";
+
+  var textowelcome = document.createElement('p');
+  textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
+  textowelcome.style.fontFamily = "osr";
+  textowelcome.style.fontSize = "18px";
+
+  var textoespaco = document.createElement('p');
+  textoespaco.innerHTML = "<br>";
+  textoespaco.style.fontFamily = "osr";
+
+  var textoapre = document.createElement('p');
+  textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
+  textoapre.style.fontFamily = "osr";
+  textoapre.style.fontSize = "11px";
+
+  var divleft = document.createElement('div');
+  divleft.style.borderRight = "solid 1px #1bbc9b";
+  divleft.style.width = "24%";
+  divleft.style.float = "left";
+  divleft.style.height = "130px";
+  divleft.style.marginTop = "3%";
+
+  var divlefttext = document.createElement('p');
+  divlefttext.innerHTML = "Navegar";
+  divlefttext.style.fontFamily = "osr";
+  divlefttext.style.fontSize = "11px";
+  divlefttext.style.color = "#1bbc9b";
+
+  var divleftimg = document.createElement('img');
+  divleftimg.id = "divleftimg";
+  divleftimg.style.width = "60px";
+  divleftimg.style.marginTop = "5px";
 
 
-  iDiv.appendChild(textDiv);
+  var divmid = document.createElement('div');
+  divmid.style.borderRight = "solid 1px #1bbc9b";
+  divmid.style.width = "25%";
+  divmid.style.float = "left";
+  divmid.style.height = "130px";
+  divmid.style.marginTop = "3%";
+
+  var divmidtext = document.createElement('p');
+  divmidtext.innerHTML = "Zoom";
+  divmidtext.style.fontFamily = "osr";
+  divmidtext.style.fontSize = "11px";
+  divmidtext.style.color = "#1bbc9b";
+
+  var divmidimg = document.createElement('img');
+  divmidimg.id = "divmidimg";
+  divmidimg.style.width = "60px";
+  divmidimg.style.marginTop = "10px";
+
+  var divright = document.createElement('div');
+  divright.style.borderRight = "solid 1px #1bbc9b";
+  divright.style.width = "24%";
+  divright.style.float = "left";
+  divright.style.height = "130px";
+  divright.style.marginTop = "3%";
+
+  var divrighttext = document.createElement('p');
+  divrighttext.innerHTML = "Selecione os seus lugares";
+  divrighttext.style.fontFamily = "osr";
+  divrighttext.style.fontSize = "11px";
+  divrighttext.style.color = "#1bbc9b";
+
+  var divrightimg = document.createElement('img');
+  divrightimg.id = "divrightimg";
+  divrightimg.style.width = "60px";
+  divrightimg.style.marginTop = "10px";
+
+  var diveye = document.createElement('div');
+  diveye.style.width = "24%";
+  diveye.style.float = "left";
+  diveye.style.height = "130px";
+  diveye.style.marginTop = "3%";
+
+  var diveyetext = document.createElement('p');
+  diveyetext.innerHTML = "Ver perspectiva do lugar";
+  diveyetext.style.fontFamily = "osr";
+  diveyetext.style.fontSize = "11px";
+  diveyetext.style.color = "#1bbc9b";
+
+  var diveyeimg = document.createElement('img');
+  diveyeimg.id = "diveyeimg";
+  diveyeimg.style.width = "60px";
+  diveyeimg.style.marginTop = "10px";
+
+
+  divtexto1.appendChild(textowelcome);
+  divtexto1.appendChild(textoespaco);
+  divMain.appendChild(divtexto1);
+  divMain.appendChild(textoapre);
+
+  divMain.appendChild(divleft);
+  divleft.appendChild(divlefttext);
+  divleft.appendChild(divleftimg);
+
+  divMain.appendChild(divmid);
+  divmid.appendChild(divmidtext);
+  divmid.appendChild(divmidimg);
+
+  divMain.appendChild(divright);
+  divright.appendChild(divrighttext);
+  divright.appendChild(divrightimg);
+
+  divMain.appendChild(diveye);
+  diveye.appendChild(diveyetext);
+  diveye.appendChild(diveyeimg);
+  iDiv.appendChild(divMain);
   document.body.appendChild(iDiv);
+
+  document.getElementById("divleftimg").src="img/mobile_navigate.png";
+  document.getElementById("divmidimg").src="img/mobile_zoom.png";
+  document.getElementById("divrightimg").src="img/mobile_click.png";
+  document.getElementById("diveyeimg").src="img/mobile_eye.png";
+
   $("#loadedScreen" ).click(function() {
     isLoadingInfo = false;
-    $("#loadedScreen").fadeOut("slow");
+    $("#loadedScreen").animate({left: "-=" + window.innerWidth + "px"});
     video.play();
     video.pause();
     fullscreen();
     insideHelp = false;
+    $("#LegDiv").animate({bottom: "+=80px"});
   });
   isLoading = false;
   firstTimeInit = false;
@@ -1204,11 +1337,10 @@ function showMenuSelect(){
   // create main legenda for cinema
   var legDiv = document.createElement('div');
   legDiv.style.width = '100%';
-  legDiv.style.top = "100%";
-  legDiv.style.marginTop = "-80px";
-  legDiv.style.height = '160px';
+  legDiv.style.height = '80px';
   legDiv.style.position = "absolute";
   legDiv.id = 'LegDiv';
+  legDiv.style.bottom = '-80px';
   // create sub main legenda for cinema
 
   var legEsq = document.createElement('div');
@@ -1220,8 +1352,7 @@ function showMenuSelect(){
   legEsq.style.background = '#1cbb9b';
   legEsq.style.borderRadius = "5px";
   legEsq.id = 'legEsq';
-  legEsq.style.display = 'none';
-
+  legEsq.style.display = 'block';
   legEsq.onclick = function() {
     switchToVr();
   }
@@ -1246,8 +1377,44 @@ function showMenuSelect(){
   legEsq.appendChild(ptrocavr);
   legEsq.appendChild(ptrocavrImg);
   legDiv.appendChild(legEsq);
+
+  var legDir = document.createElement('div');
+  legDir.style.width = '40px';
+  legDir.style.float = "right";
+  legDir.style.textAlign = "center";
+  legDir.style.height = '40px';
+  legDir.style.marginTop = '40px';
+  legDir.style.background = '#1cbb9b';
+  legDir.style.borderRadius = "5px";
+  legDir.id = 'legDir';
+  legDir.style.display = "block";
+  legDir.onclick = function() {
+    switchToOrtho();
+  }
+  legDir.onmouseover = function() {
+    legDir.style.cursor = 'pointer';
+  }
+
+  var ptrocapresp = document.createElement('p');
+  ptrocapresp.innerHTML = "Planta";
+  ptrocapresp.style.color = "#FFF";
+  ptrocapresp.style.fontSize = "12px";
+  ptrocapresp.style.fontFamily = "osr";
+  ptrocapresp.style.height = '4px';
+  ptrocapresp.style.marginTop = "3px";
+  ptrocapresp.id = "ptrocapresp";
+
+  var ptrocaprespImg = document.createElement('img');
+  ptrocaprespImg.id = "ptrocaprespImg";
+  ptrocaprespImg.style.marginTop = "-45px";
+  ptrocaprespImg.style.width = "37px";
+
+  legDir.appendChild(ptrocapresp);
+  legDir.appendChild(ptrocaprespImg);
+  legDiv.appendChild(legDir);
   document.body.appendChild(legDiv);
   document.getElementById("ptrocavrImg").src="img/VR-icon.png";
+  document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
 
 }
 
@@ -1820,6 +1987,8 @@ function onMouseDown(e) {
   {
     sittingDown = false;
 
+    switchToOrtho();
+
     for(var i=0; i<spriteEyeArray.length ; i++)
     {
       spriteEyeArray[i].visible = true;
@@ -1925,7 +2094,6 @@ animate();
 //
 function changePerspective(x, y, z,obj) {
 
-  $("#menuSelect").animate({"right": '-=300px'});
   setTimeout(function(){ video.play(); }, 3000);
   sittingDown = true;
 
@@ -1950,9 +2118,6 @@ function changePerspectiveOrtographic(x, y, z,obj) {
   isPerspectiveOrtho = false;
   sittingDownOrtho = true;
 
-  $("#menuSelect").animate({"right": '-=300px'});
-
-  $("#ecraDiv").hide();
 
   // calculate centroid
   obj.geometry.computeBoundingBox();
@@ -2032,24 +2197,6 @@ function setupTweenFP(obj) {
 
   centroid.applyMatrix4( obj.matrixWorld );
 
-  // tween the fov fowards
-  tweenFov = new TWEEN.Tween(camera).to({
-    fov:70
-  },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
-    camera.updateProjectionMatrix();
-  }).onComplete(function () {
-  }).start();
-
-  // tween camera movement
-  tweenFP = new TWEEN.Tween(camera.position).to({
-    x: centroid.x-0.05,
-    y: centroid.y+0.25, // head height
-    z: centroid.z
-  },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
-
-  }).onComplete(function () {
-  }).start();
-
   // calculate rotation based on two vectors
   var matrix = new THREE.Matrix4();
   matrix.extractRotation( obj.matrix );
@@ -2067,14 +2214,41 @@ function setupTweenFP(obj) {
 
   vector.normalize ();
 
+  vectorTemp = vector.divideScalar(5);
+  vectorTeste = new THREE.Vector3(centroid.x + vectorTemp.x, centroid.y + vectorTemp.y, centroid.z + vectorTemp.z);
+
   // calculate angle between two vectors
   var angle = direction.angleTo( vector );
 
-  // tween the camera rotation vertically
-  tweenLatFP = new TWEEN.Tween(controls).to({
-    lat:THREE.Math.radToDeg(angle) + 40,
-  },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
+  // tween the fov fowards
+  tweenFov = new TWEEN.Tween(camera).to({
+    fov:70
+  },1000).easing(TWEEN.Easing.Exponential.Out).onUpdate(function () {
+    camera.updateProjectionMatrix();
   }).onComplete(function () {
+  }).start();
+
+  // tween camera movement
+  tweenFP = new TWEEN.Tween(camera.position).to({
+    x: centroid.x-0.05,
+    y: centroid.y+0.25, // head height
+    z: centroid.z
+  },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
+
+  }).onComplete(function () {
+    controls.target = new THREE.Vector3(vectorTeste.x, vectorTeste.y + 0.22, vectorTeste.z);
+    controls.center = controls.target;
+  }).start();
+
+  // tween camera movement
+  tweenFPTarget = new TWEEN.Tween(controls.target).to({
+    x: vectorTeste.x,
+    y: vectorTeste.y + 0.22, // head height
+    z: vectorTeste.z
+  },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
+
+  }).onComplete(function () {
+    controls.center = controls.target;
   }).start();
 
   // calculate longitude angle - sideways rotation
@@ -2131,6 +2305,9 @@ function setupTweenOverview() {
       controls.movementSpeed = 0;
       controls.autoForward = false;
       video.currentTime = 0;
+
+      controls.target = new THREE.Vector3(-5,1.55,0.009249939938009306);
+      controls.center = controls.target;
     }).start();
     // tween camera rotation horizontally
     tweenCamRotationOver = new TWEEN.Tween(controls).to({
@@ -2158,15 +2335,61 @@ function switchToVr() {
     animateVr();
     var reticle = vreticle.Reticle(camera);
     mainScene.add(camera);
+    document.getElementById("legDir").style.display = "none";
   }
   else // change back to 3D view
   {
-    controls = new THREE.OrbitControls(camera);
     document.getElementById ('ptrocavr').innerHTML = "VR";
     document.getElementById("ptrocavrImg").src="img/VR-icon.png";
     isVR = false;
     cancelAnimationFrame(vr);
     renderer.setSize( window.innerWidth, window.innerHeight );
     mainScene.remove(camera);
+    document.getElementById("legDir").style.display = "block";
+    controls = new THREE.OrbitControls(camera);
+    controls.target = new THREE.Vector3(-5,1.55,0.009249939938009306);
+    controls.center = controls.target;
+  }
+}
+
+function switchToOrtho() {
+  sittingDownOrtho = false;
+  if (isPerspectiveOrtho==false) // if we're in cinema overview 3D change to 2D view
+  {
+    document.getElementById ('ptrocapresp').innerHTML = "3D";
+    document.getElementById("ptrocaprespImg").src="img/icon - cadeiras 3D.png";
+    document.getElementById("legEsq").style.display = "none";
+    if(!sittingDown)
+    {
+      isPerspectiveOrtho = true;
+
+      camera = new THREE.OrthographicCamera( window.innerWidth / - 2, window.innerWidth / 2, window.innerHeight / 2, window.innerHeight / - 2, 0.001, 1000);
+      camera.position.x = 0;
+      camera.position.y = 2;
+      camera.position.z = 0;
+      camera.lookAt(mainScene.position);
+      if(window.innerWidth > window.innerHeight)
+      camera.zoom = window.innerWidth*0.037;
+      else
+      camera.zoom = window.innerHeight*0.063;
+      camera.updateProjectionMatrix();
+    }
+  }
+  else // change back to 3D view
+  {
+    document.getElementById ('ptrocapresp').innerHTML = "Planta";
+    document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
+    document.getElementById("legEsq").style.display = "block";
+    isPerspectiveOrtho = false;
+
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
+
+    camera.position.x = -6.160114995658247;
+    camera.position.y = 1.5;
+    camera.position.z = 0.009249939938009306;
+
+    controls = new THREE.OrbitControls(camera);
+    controls.target = new THREE.Vector3(-5,1.55,0.009249939938009306);
+    controls.center = controls.target;
   }
 }
