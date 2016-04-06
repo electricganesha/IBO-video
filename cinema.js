@@ -738,12 +738,17 @@ function showMenuSelect(){
   loading_seats.style.textAlign = "center";
   loading_seats.style.height = '100%';
   loading_seats.style.position = "absolute";
-  loading_seats.style.background = 'rgba(0,0,0,1)';
   loading_seats.id = 'loading_seats';
   loading_seats.style.top = '0';
+  loading_seats.style.backgroundImage = "url('img/print.png')";
   loading_seats.style.display = "none";
+  loading_seats.style.filter = "blur(30px)";
+  loading_seats.style.webkitFilter = "blur(15px)";
+  loading_seats.style.mozFilter = "blur(15px)";
+  loading_seats.style.oFilter = "blur(15px)";
+  loading_seats.style.msFilter = "blur(15px)";
 
-  var textDivLoading = document.createElement('div');
+  /*var textDivLoading = document.createElement('div');
   textDivLoading.style.color = "white";
   textDivLoading.style.cursor = "pointer";
   textDivLoading.innerHTML = "Loading Occupation";
@@ -755,7 +760,7 @@ function showMenuSelect(){
   textDivLoading.id = 'textDivLoading';
   textDivLoading.style.left = '24%';
   textDivLoading.style.top = '40%';
-  loading_seats.appendChild(textDivLoading);
+  loading_seats.appendChild(textDivLoading);*/
   document.body.appendChild(loading_seats);
   function carregarCinemas() {
     $.ajax({
@@ -879,63 +884,68 @@ function showMenuSelect(){
       }
       n_sessao.onclick = function() {
           $("#menuSelect").animate({"right": '-=300px'});
-          document.getElementById("loading_seats").style.display = "block";
+          $("#loading_seats").fadeIn("slow");
+          //document.getElementById("loading_seats").style.display = "block";
           isLoadOcup = true;
           btnComprar.style.display = "inline-block";
           showSessao.text = this.text;
           showSessao.className = this.text;
           showSessao.appendChild(iconSessao);
           n_sessao_select = this.id;
-          carregarJSONBDInitial(this.id);
           $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
           $('#showSessaoDiv').slideUp();
           slidedownsessao = false;
-          for(var j= 0; j< selectedChairs.length ; j++)
-          {
-            var selectedObject = mainScene.getObjectByName("selectChair_"+selectedChairs[j].name);
-            mainScene.remove( selectedObject );
-            var removalThing = "#"+selectedChairs[j].name;
-            $(removalThing).remove();
-          }
           isSelected = false;
           primeiravez = true;
           mouseIsOnMenu = true;
           mudousessao = true
-          selectedChairs = [];
+          setTimeout(function(){
 
-          for(var j= 0; j< spriteEyeArray.length ; j++)
-          {
-            var selectedObject = mainScene.getObjectByName(spriteEyeArray[j].name);
-            mainScene.remove( selectedObject );
-          }
+              carregarJSONBDInitial(n_sessao_select);
 
-          spriteEyeArray = [];
+              for(var j= 0; j< selectedChairs.length ; j++)
+              {
+                var selectedObject = mainScene.getObjectByName("selectChair_"+selectedChairs[j].name);
+                mainScene.remove( selectedObject );
+                var removalThing = "#"+selectedChairs[j].name;
+                $(removalThing).remove();
+              }
 
-          var selectedObject = mainScene.getObjectByName("singleGeometryNormal");
-          mainScene.remove( selectedObject );
+              selectedChairs = [];
 
-          var selectedObject = mainScene.getObjectByName("singleGeometryOcupadas");
-          mainScene.remove( selectedObject );
+              for(var j= 0; j< spriteEyeArray.length ; j++)
+              {
+                var selectedObject = mainScene.getObjectByName(spriteEyeArray[j].name);
+                mainScene.remove( selectedObject );
+              }
 
-          var selectedObject = mainScene.getObjectByName("singleGeometryDeficiente");
-          mainScene.remove( selectedObject );
+              spriteEyeArray = [];
 
-          // we are using an octree for increasing the performance on raycasting
-          octree = new THREE.Octree( {
-            undeferred: true,
-            depthMax: Infinity,
-            objectsThreshold: 8,
-            overlapPct: 0.15
-          } );
+              var selectedObject = mainScene.getObjectByName("singleGeometryNormal");
+              mainScene.remove( selectedObject );
 
-          lugaresLivres = 0;
-          capacidade = 0;
+              var selectedObject = mainScene.getObjectByName("singleGeometryOcupadas");
+              mainScene.remove( selectedObject );
 
-        intervalo_ecra = setInterval(function() {
-          $("#loading_seats").fadeOut("fast");
-          isLoadOcup = false;
-          clearInterval(intervalo_ecra);
-        }, 1500);
+              var selectedObject = mainScene.getObjectByName("singleGeometryDeficiente");
+              mainScene.remove( selectedObject );
+
+              // we are using an octree for increasing the performance on raycasting
+              octree = new THREE.Octree( {
+                undeferred: true,
+                depthMax: Infinity,
+                objectsThreshold: 8,
+                overlapPct: 0.15
+              } );
+
+              lugaresLivres = 0;
+              capacidade = 0;
+              intervalo_ecra = setInterval(function() {
+                $("#loading_seats").fadeOut("slow");
+                isLoadOcup = false;
+                clearInterval(intervalo_ecra);
+              }, 1500);
+          }, 1000);
       }
       showSessaoDiv.appendChild(n_sessao);
     }
