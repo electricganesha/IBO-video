@@ -464,7 +464,7 @@ THREE.DeviceOrientationControls = function ( object ) {
   };
 
   var onScreenOrientationChangeEvent = function () {
-    if(window.orientation == 0){
+    if(window.orientation == 0 && isVR){
       $("#loadedScreenOri").fadeIn("fast");
     }else{
       $("#loadedScreenOri").fadeOut("fast");
@@ -1318,7 +1318,10 @@ function init() {
 
   $("#loadedScreen" ).click(function() {
     isLoadingInfo = false;
-    $("#loadedScreen").animate({left: "-=" + window.innerWidth + "px"});
+
+    var screenSize = screen.width+(screen.width-document.body.clientWidth);
+
+    $("#loadedScreen").animate({left: "-=" + screenSize + "px"});
     video.play();
     video.pause();
     fullscreen();
@@ -1822,7 +1825,7 @@ function onMouseDown(e) {
       for(var i=0; i<intersectsSprite.length; i++)
       {
         // if intersected object is a sprite then call the change perspective function (which seats you down)
-        if(intersectsSprite[i].object.name == "spriteEye")
+        if(intersectsSprite[i].object.name == "spriteEye" && !isVR)
         {
           spriteFound = true;
           var index = spriteEyeArray.indexOf(intersectsSprite[i].object);
@@ -1842,13 +1845,15 @@ function onMouseDown(e) {
         // Check if the objects are in front of each other
         var intersectionIndex = 0;
 
-        for(var i = 0 ; i < intersects.length ; i++)
-        {
-          var lowerX = intersects[0].object.position.x;
+        if(!isVR){
+          for(var i = 0 ; i < intersects.length ; i++)
+          {
+            var lowerX = intersects[0].object.position.x;
 
-          if( intersects[i].object.position.x < lowerX){
-            lowerX = intersects[i].object.position.x;
-            intersectionIndex = i;
+            if( intersects[i].object.position.x < lowerX){
+              lowerX = intersects[i].object.position.x;
+              intersectionIndex = i;
+            }
           }
         }
 
@@ -1863,6 +1868,14 @@ function onMouseDown(e) {
         var estado = "";
         var spriteFound = false;
 
+
+        if(isVR)
+        {
+          changePerspective(point.x,point.y,point.z,obj);
+        }
+        else
+        {
+
         // retrieve information of chair occupation from array retrieved from DB
         for(var i=0; i<cadeirasJSON.length; i++)
         {
@@ -1874,8 +1887,6 @@ function onMouseDown(e) {
           }
 
         }
-
-      }
 
       if(obj != undefined)
       {
@@ -1969,19 +1980,23 @@ function onMouseDown(e) {
 
       }
     }
+    }
+          }
   }
   else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
+    console.log("sair");
     sittingDown = false;
     setupTweenOverview();
 
     video.pause();
 
-    for(var i=0; i<spriteEyeArray.length ; i++)
-    {
-      spriteEyeArray[i].visible = true;
+    if(!isVR){
+      for(var i=0; i<spriteEyeArray.length ; i++)
+      {
+        spriteEyeArray[i].visible = true;
+      }
     }
-
   }
   else if (insideHelp == false)
   {
@@ -2094,12 +2109,16 @@ animate();
 //
 function changePerspective(x, y, z,obj) {
 
+  console.log("change perspective");
+
   setTimeout(function(){ video.play(); }, 3000);
   sittingDown = true;
 
   lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
   lastControlsLat = controls.lat;
   lastControlsLon = controls.lon;
+
+  console.log("entrou tween 1");
   setupTweenFP(obj);
 
   for(var i=0; i<spriteEyeArray.length ; i++)
@@ -2214,8 +2233,8 @@ function setupTweenFP(obj) {
 
   vector.normalize ();
 
-  vectorTemp = vector.divideScalar(5);
-  vectorTeste = new THREE.Vector3(centroid.x + vectorTemp.x, centroid.y + vectorTemp.y, centroid.z + vectorTemp.z);
+  var vectorTemp = vector.divideScalar(5);
+  var vectorTeste = new THREE.Vector3(centroid.x + vectorTemp.x, centroid.y + vectorTemp.y, centroid.z + vectorTemp.z);
 
   // calculate angle between two vectors
   var angle = direction.angleTo( vector );
@@ -2240,17 +2259,19 @@ function setupTweenFP(obj) {
     controls.center = controls.target;
   }).start();
 
-  // tween camera movement
-  tweenFPTarget = new TWEEN.Tween(controls.target).to({
-    x: vectorTeste.x,
-    y: vectorTeste.y + 0.22, // head height
-    z: vectorTeste.z
-  },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
+  if(!isVR)
+  {
+    // tween camera movement
+    tweenFPTarget = new TWEEN.Tween(controls.target).to({
+      x: vectorTeste.x,
+      y: vectorTeste.y + 0.22, // head height
+      z: vectorTeste.z
+    },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
 
-  }).onComplete(function () {
-    controls.center = controls.target;
-  }).start();
-
+    }).onComplete(function () {
+      controls.center = controls.target;
+    }).start();
+  }
   // calculate longitude angle - sideways rotation
   var longAngle;
 
@@ -2265,11 +2286,15 @@ function setupTweenFP(obj) {
   },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
   }).onComplete(function () {
   }).start();
+
+
 }
 //
 // launch the Tween for changing perspective to overview perspective
 //
 function setupTweenOverview() {
+
+  console.log("comecei tween");
 
   // tween the fov fowards
   tweenFov = new TWEEN.Tween(camera).to({
@@ -2314,6 +2339,9 @@ function setupTweenOverview() {
       lon:lastControlsLon
     },2000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
   }).start();
+
+  console.log("acabei tween");
+
 }
 
 function animateVr() {
