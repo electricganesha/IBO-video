@@ -242,15 +242,15 @@ THREE.DefaultLoadingManager.onError = function () {
   ('there has been an error');
 };
 
-    var rtParameters = {
-			minFilter: THREE.LinearFilter,
-			magFilter: THREE.LinearFilter,
-			format: THREE.RGBFormat,
-			stencilBuffer: true
-		};
+var rtParameters = {
+	minFilter: THREE.LinearFilter,
+	magFilter: THREE.LinearFilter,
+	format: THREE.RGBFormat,
+	stencilBuffer: true
+};
 
-		var rtWidth  = window.innerWidth / 2;
-		var rtHeight = window.innerHeight / 2;
+var rtWidth  = window.innerWidth / 2;
+var rtHeight = window.innerHeight / 2;
 
 //
 // This method shows the loading scene, while the items are not loaded
@@ -1123,7 +1123,7 @@ function init() {
   statsFPS.domElement.style.left = '0px';
   statsFPS.domElement.style.top = '0px';
 
-  document.body.appendChild( statsFPS.domElement );
+  //document.body.appendChild( statsFPS.domElement );
 
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
 
@@ -1149,11 +1149,11 @@ function init() {
   check.gyroscope(function (hasGyroscope) {
     if(hasGyroscope) {
       document.getElementById('legEsq').style.display = "block";
+      controls = new THREE.OrbitControls(camera);
+      controls.target = new THREE.Vector3(-5,1.55,0.009249939938009306);
+      controls.center = controls.target;
     }
-    document.getElementById('legEsq').style.display = "block";
-    controls = new THREE.OrbitControls(camera);
-    controls.target = new THREE.Vector3(-5,1.55,0.009249939938009306);
-    controls.center = controls.target;
+
   });
 
 
@@ -1168,7 +1168,6 @@ function init() {
   document.addEventListener('mousedown', onMouseDown, false);
 
   window.addEventListener( 'resize', onWindowResize, false );
-
 
   showMenuSelect(); // this method initialises the side div container
 
@@ -1185,29 +1184,27 @@ function init() {
 
   var divMain = document.createElement('div');
   divMain.style.color = "white";
-  divMain.style.borderRadius = "10px";
-  divMain.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
+  divMain.style.backgroundColor= "rgba(0, 0, 0, 0.8)";
   divMain.style.cursor = "pointer";
-  divMain.style.width = '65%';
+  divMain.style.width = '100%';
   divMain.style.textAlign = "center";
   divMain.style.fontFamily = "osb";
-  divMain.style.height = '75%';
+  divMain.style.height = '100%';
   divMain.style.position = "absolute";
   divMain.id = 'textScreen';
-  divMain.style.left = '20%';
   divMain.style.top = '50%';
 	divMain.style.transform = "translateY(-50%)";
 
   var divtexto1 = document.createElement('div');
   divtexto1.style.borderBottom = "solid 1px #1bbc9b";
-  divtexto1.style.width = "60%";
-  divtexto1.style.height = "35px";
+  divtexto1.style.width = "40%";
+  divtexto1.style.height = "30px";
   divtexto1.style.margin = "auto";
 
   var textowelcome = document.createElement('p');
   textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
   textowelcome.style.fontFamily = "osr";
-  textowelcome.style.fontSize = "17px";
+  textowelcome.style.fontSize = "18px";
 
   var textoespaco = document.createElement('p');
   textoespaco.innerHTML = "<br>";
@@ -1222,17 +1219,18 @@ function init() {
   divleft.style.borderRight = "solid 1px #1bbc9b";
   divleft.style.width = "24%";
   divleft.style.float = "left";
-  divleft.style.height = "100px";
+  divleft.style.height = "130px";
+  divleft.style.marginTop = "3%";
 
   var divlefttext = document.createElement('p');
-  divlefttext.innerHTML = "Para navegar mova o cursor";
+  divlefttext.innerHTML = "Navegar";
   divlefttext.style.fontFamily = "osr";
   divlefttext.style.fontSize = "11px";
   divlefttext.style.color = "#1bbc9b";
 
   var divleftimg = document.createElement('img');
   divleftimg.id = "divleftimg";
-  divleftimg.style.width = "40px";
+  divleftimg.style.width = "60px";
   divleftimg.style.marginTop = "5px";
 
 
@@ -1240,24 +1238,26 @@ function init() {
   divmid.style.borderRight = "solid 1px #1bbc9b";
   divmid.style.width = "25%";
   divmid.style.float = "left";
-  divmid.style.height = "100px";
+  divmid.style.height = "130px";
+  divmid.style.marginTop = "3%";
 
   var divmidtext = document.createElement('p');
-  divmidtext.innerHTML = "Faça zoom com a roda";
+  divmidtext.innerHTML = "Zoom";
   divmidtext.style.fontFamily = "osr";
   divmidtext.style.fontSize = "11px";
   divmidtext.style.color = "#1bbc9b";
 
   var divmidimg = document.createElement('img');
   divmidimg.id = "divmidimg";
-  divmidimg.style.width = "22px";
+  divmidimg.style.width = "60px";
   divmidimg.style.marginTop = "10px";
 
   var divright = document.createElement('div');
   divright.style.borderRight = "solid 1px #1bbc9b";
   divright.style.width = "24%";
   divright.style.float = "left";
-  divright.style.height = "100px";
+  divright.style.height = "130px";
+  divright.style.marginTop = "3%";
 
   var divrighttext = document.createElement('p');
   divrighttext.innerHTML = "Selecione os seus lugares";
@@ -1267,13 +1267,14 @@ function init() {
 
   var divrightimg = document.createElement('img');
   divrightimg.id = "divrightimg";
-  divrightimg.style.width = "22px";
+  divrightimg.style.width = "60px";
   divrightimg.style.marginTop = "10px";
 
   var diveye = document.createElement('div');
   diveye.style.width = "24%";
   diveye.style.float = "left";
-  diveye.style.height = "100px";
+  diveye.style.height = "130px";
+  diveye.style.marginTop = "3%";
 
   var diveyetext = document.createElement('p');
   diveyetext.innerHTML = "Ver perspectiva do lugar";
@@ -1283,7 +1284,7 @@ function init() {
 
   var diveyeimg = document.createElement('img');
   diveyeimg.id = "diveyeimg";
-  diveyeimg.style.width = "22px";
+  diveyeimg.style.width = "60px";
   diveyeimg.style.marginTop = "10px";
 
 
@@ -1307,21 +1308,22 @@ function init() {
   divMain.appendChild(diveye);
   diveye.appendChild(diveyetext);
   diveye.appendChild(diveyeimg);
-
   iDiv.appendChild(divMain);
   document.body.appendChild(iDiv);
-  document.getElementById("divleftimg").src="img/move_mouse.png";
-  document.getElementById("divmidimg").src="img/mouse.png";
-  document.getElementById("divrightimg").src="img/mouse_click.png";
-  document.getElementById("diveyeimg").src="img/eye.png";
+
+  document.getElementById("divleftimg").src="img/mobile_navigate.png";
+  document.getElementById("divmidimg").src="img/mobile_zoom.png";
+  document.getElementById("divrightimg").src="img/mobile_click.png";
+  document.getElementById("diveyeimg").src="img/mobile_eye.png";
 
   $("#loadedScreen" ).click(function() {
     isLoadingInfo = false;
-    $("#loadedScreen").fadeOut("slow");
+    $("#loadedScreen").animate({left: "-=" + window.innerWidth + "px"});
     video.play();
     video.pause();
     fullscreen();
     insideHelp = false;
+    $("#LegDiv").animate({bottom: "+=80px"});
   });
   isLoading = false;
   firstTimeInit = false;
@@ -1335,11 +1337,10 @@ function showMenuSelect(){
   // create main legenda for cinema
   var legDiv = document.createElement('div');
   legDiv.style.width = '100%';
-  legDiv.style.top = "100%";
-  legDiv.style.marginTop = "-80px";
-  legDiv.style.height = '160px';
+  legDiv.style.height = '80px';
   legDiv.style.position = "absolute";
   legDiv.id = 'LegDiv';
+  legDiv.style.bottom = '-80px';
   // create sub main legenda for cinema
 
   var legEsq = document.createElement('div');
@@ -1352,7 +1353,6 @@ function showMenuSelect(){
   legEsq.style.borderRadius = "5px";
   legEsq.id = 'legEsq';
   legEsq.style.display = 'block';
-
   legEsq.onclick = function() {
     switchToVr();
   }
