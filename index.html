@@ -92,6 +92,11 @@
 		</video>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/jquery-ui.js"></script>
+    <script src="cinema.js"></script>
+
+
+    <button style="margin-left:80%; position:absolute; z-index:1;" type="button" onClick="bla()">Click Me!</button>
+    <div id="teste" style="width:1024px; height:768px;"> </div>
 
     <script>
     function detectmob() {
@@ -110,11 +115,20 @@
       }
     }
 
-    if (detectmob()){
+    /*if (detectmob()){
       document.write("<script src='cinema_mobile.js'><\/script>");
     }else{
       document.write("<script src='cinema.js'><\/script>");
+    }*/
+
+    var cinema = new ImmersiveBoxOffice(document.getElementById("teste"));
+
+    function bla()
+    {
+      alert(cinema.getOcupation('json'));
     }
+
+
     </script>
   </body>
 
