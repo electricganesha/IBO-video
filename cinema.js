@@ -90,8 +90,6 @@ textureVideo.format = THREE.RGBFormat;
 
 var sittingDown = false; //if the user has clicked on a chair (e.g. is sitting down)
 
-var insideHelp = true;
-
 var isLoading = true; // if the scene is loading
 
 var isSelected = false; // if at least one chair is selected
@@ -101,8 +99,6 @@ var mouseIsOnMenu = false; // if the mouse is over the menu
 var mouseIsOutOfDocument = false; // if the mouse is over the menu
 
 var isPerspectiveOrtho = false; // if we are in 2D perspective
-
-var isVR = false; // if we are in VR view
 
 var sittingDownOrtho = false; //if the user has clicked on a chair and before was orthographic (e.g. is sitting down)
 
@@ -155,29 +151,14 @@ var cadeirasJSON; // an array that keeps the info about the chairs that we retri
 
 // MENU VARIABLES
 
-var cinemaSelecionado = "";
-var nCinemaSelecionado;
-var slidedown = false;
-var slidedownpreco = false;
-var slidedowndata = false;
-var slidedownsessao = false;
-var mudousessao = false;
 var clickfull = false;
-var isLoadOcup = false;
-var anterior = "";
-var icon_anterior = "";
 var capacidade = 0;
 var lugaresLivres = 0;
-var cinemasJSON;
-var dias;
-var sessoesJSON;
+var cinemasJSON;;
 var num_sessao = "0";
 var n_sessao_select;
 var carregouFreeSeats = false;
-var clickhelpbt = false;
 
-var deviceOrientationSelectedObject;
-var deviceOrientationSelectedPoint;
 
 // RANDOM
 
@@ -239,16 +220,6 @@ console.log(container.clientHeight);
 renderer.setSize( container.clientWidth, container.clientHeight );
 element = renderer.domElement;
 container.appendChild(element);
-
-// create the main selection menu
-var waterMarkDiv = document.createElement('div');
-waterMarkDiv.style.width = '100px';
-waterMarkDiv.style.position = "absolute";
-waterMarkDiv.id = 'watermarkDiv';
-waterMarkDiv.style.bottom = "5%";
-waterMarkDiv.style.left = "3%";
-waterMarkDiv.innerHTML = "<img src='img/Push_Logo_transparente.png' style = 'width:120px;''></img>";
-document.body.appendChild(waterMarkDiv);
 
 // Load the initial scenes
 
@@ -342,7 +313,7 @@ function init() {
   camera.position.y = 1.5;
   camera.position.z = 0.009249939938009306;
 
-  controls = new THREE.FirstPersonControls(camera);
+  controls = new THREE.FirstPersonControls(camera, container);
   controls.lon = 0;
   controls.lat = -15;
 
@@ -366,16 +337,16 @@ function init() {
   group = new THREE.Object3D();
 
   //event listeners
-  document.addEventListener('mousemove', onMouseMove, false);
-  document.addEventListener('mousedown', onMouseDown, false);
-  document.addEventListener('mousewheel', onMouseWheel, false);
+  container.addEventListener('mousemove', onMouseMove, false);
+  container.addEventListener('mousedown', onMouseDown, false);
+  container.addEventListener('mousewheel', onMouseWheel, false);
 
-  $(window).mouseleave(function() {
+  container.addEventListener('mouseleave', function() {
     // cursor has left the building
     mouseIsOutOfDocument = true;
     controls.lookSpeed = 0;
-  })
-  $(window).mouseenter(function() {
+  });
+  container.addEventListener('mouseenter', function() {
     // cursor has entered the building
     mouseIsOutOfDocument = false;
   })
@@ -385,339 +356,19 @@ function init() {
 
   showMenuSelect(); // this method initialises the side div container
 
-  // create the main selection menu
-  var iDiv = document.createElement('div');
-  iDiv.style.width = '100%';
-  iDiv.style.cursor = "pointer";
-  iDiv.style.textAlign = "center";
-  iDiv.style.height = '100%';
-  iDiv.style.position = "absolute";
-  iDiv.id = 'loadedScreen';
-  iDiv.style.top = '0';
-  iDiv.style.display = "block";
+  video.play();
+  video.pause();
+  setTimeout(function(){
+    legEsq.style.animation = "coloranim 1.5s 2";
+	  legEsq.style.webkitAnimation = "coloranim 1.5s 2";
+  }, 2000);
+  setTimeout(function(){
+    legDir.style.animation = "coloranim 1.5s 2";
+	  legDir.style.webkitAnimation = "coloranim 1.5s 2";
+  }, 4500);
 
-  var divMain = document.createElement('div');
-  divMain.style.color = "white";
-  divMain.style.borderRadius = "15px";
-  divMain.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
-  divMain.style.cursor = "pointer";
-  divMain.style.width = '50%';
-  divMain.style.textAlign = "center";
-  divMain.style.fontFamily = "osb";
-  divMain.style.height = '530px';
-  divMain.style.position = "absolute";
-  divMain.id = 'textScreen';
-  divMain.style.left = '25%';
-  divMain.style.top = '50%';
-	divMain.style.transform = "translateY(-50%)";
-
-  var divtexto1 = document.createElement('div');
-  divtexto1.style.borderBottom = "solid 1px #1bbc9b";
-  divtexto1.style.width = "35%";
-  divtexto1.style.paddingTop = "15px";
-  divtexto1.style.height = "65px";
-  divtexto1.style.margin = "auto";
-
-  var textowelcome = document.createElement('p');
-  textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
-  textowelcome.style.fontFamily = "osr";
-  textowelcome.style.fontSize = "23px";
-
-  var textoespaco = document.createElement('p');
-  textoespaco.innerHTML = "<br>";
-  textoespaco.style.fontFamily = "osr";
-
-  var textoapre = document.createElement('p');
-  textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
-  textoapre.style.fontFamily = "osr";
-  textoapre.style.fontSize = "14px";
-
-  var divleft = document.createElement('div');
-  divleft.style.borderRight = "solid 1px #1bbc9b";
-  divleft.style.width = "33.2%";
-  divleft.style.marginTop = "50px";
-  divleft.style.float = "left";
-  divleft.style.height = "150px";
-
-  var divlefttext = document.createElement('p');
-  divlefttext.innerHTML = "Para navegar mova o cursor";
-  divlefttext.style.fontFamily = "osr";
-  divlefttext.style.fontSize = "14px";
-  divlefttext.style.color = "#1bbc9b";
-
-  var divleftimg = document.createElement('img');
-  divleftimg.id = "divleftimg";
-  divleftimg.style.marginTop = "5px";
-
-
-  var divmid = document.createElement('div');
-  divmid.style.borderRight = "solid 1px #1bbc9b";
-  divmid.style.width = "33.2%";
-  divmid.style.marginTop = "50px";
-  divmid.style.float = "left";
-  divmid.style.height = "150px";
-
-  var divmidtext = document.createElement('p');
-  divmidtext.innerHTML = "Faça zoom com a roda";
-  divmidtext.style.fontFamily = "osr";
-  divmidtext.style.fontSize = "14px";
-  divmidtext.style.color = "#1bbc9b";
-
-  var divmidimg = document.createElement('img');
-  divmidimg.id = "divmidimg";
-  divmidimg.style.marginTop = "20px";
-
-  var divright = document.createElement('div');
-  divright.style.width = "33.2%";
-  divright.style.marginTop = "50px";
-  divright.style.float = "left";
-  divright.style.height = "150px";
-
-  var divrighttext = document.createElement('p');
-  divrighttext.innerHTML = "Selecione os seus lugares";
-  divrighttext.style.fontFamily = "osr";
-  divrighttext.style.fontSize = "14px";
-  divrighttext.style.color = "#1bbc9b";
-
-  var divrightimg = document.createElement('img');
-  divrightimg.id = "divrightimg";
-  divrightimg.style.marginTop = "20px";
-
-  var diveye = document.createElement('div');
-  diveye.style.width = "33.2%";
-  diveye.style.margin = "0 auto";
-  diveye.style.height = "150px";
-  diveye.style.paddingTop = "30px";
-  diveye.style.clear = "both";
-
-  var diveyetext = document.createElement('p');
-  diveyetext.innerHTML = "Ver perspectiva do lugar";
-  diveyetext.style.fontFamily = "osr";
-  diveyetext.style.fontSize = "14px";
-  diveyetext.style.color = "#1bbc9b";
-
-  var diveyeimg = document.createElement('img');
-  diveyeimg.id = "diveyeimg";
-  diveyeimg.style.marginTop = "20px";
-
-
-  var splashMain = document.createElement('div');
-  splashMain.style.width = '400px';
-  splashMain.style.fontFamily = "osb";
-  splashMain.style.height = '350px';
-  splashMain.style.position = "absolute";
-  splashMain.id = 'splashelp';
-  splashMain.style.top = '10%';
-  splashMain.style.left = '-400px';
-
-
-  var splashelp = document.createElement('div');
-  splashelp.style.color = "white";
-  splashelp.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
-  splashelp.style.width = '350px';
-  splashelp.style.textAlign = "center";
-  splashelp.style.fontFamily = "osb";
-  splashelp.style.height = '100%';
-  splashelp.id = 'splashelp';
-  splashelp.style.float = "left";
-
-  var splashelpbt = document.createElement('div');
-  splashelpbt.style.color = "white";
-  splashelpbt.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
-  splashelpbt.style.cursor = "pointer";
-  splashelpbt.style.width = '50px';
-  splashelpbt.style.textAlign = "center";
-  splashelpbt.style.fontFamily = "osb";
-  splashelpbt.style.height = '50px';
-  splashelpbt.style.float = "right";
-  splashelpbt.id = 'splashelpbt';
-  splashelpbt.onclick = function() {
-    if (!clickhelpbt){
-      $("#splashelp").animate({"left": '+=350px'});
-      clickhelpbt = true;
-    }else{
-      $("#splashelp").animate({"left": '-=350px'});
-      clickhelpbt = false;
-    }
-  }
-
-  var splashelpbttext = document.createElement('p');
-  splashelpbttext.innerHTML = "?";
-  splashelpbttext.style.fontFamily = "osb";
-  splashelpbttext.style.fontSize = "32px";
-  splashelpbttext.style.color = "#1bbc9b";
-  splashelpbttext.style.marginTop = "0px";
-
-  var divlefth = document.createElement('div');
-  divlefth.style.borderRight = "solid 1px #1bbc9b";
-  divlefth.style.width = "33%";
-  divlefth.style.marginTop = "30px";
-  divlefth.style.float = "left";
-  divlefth.style.height = "130px";
-
-  var divlefttexth = document.createElement('p');
-  divlefttexth.innerHTML = "Para navegar mova o cursor";
-  divlefttexth.style.fontFamily = "osr";
-  divlefttexth.style.fontSize = "13px";
-  divlefttexth.style.width = "90%";
-  divlefttexth.style.color = "#1bbc9b";
-  divlefttexth.style.margin = "auto";
-  divlefttexth.style.marginTop = "5px";
-
-  var divleftimgh = document.createElement('img');
-  divleftimgh.id = "divleftimgh";
-  divleftimgh.style.marginTop = "10px";
-  divleftimgh.style.width = "50px";
-
-  var divmidh = document.createElement('div');
-  divmidh.style.borderRight = "solid 1px #1bbc9b";
-  divmidh.style.width = "33%";
-  divmidh.style.marginTop = "30px";
-  divmidh.style.float = "left";
-  divmidh.style.height = "130px";
-
-  var divmidtexth = document.createElement('p');
-  divmidtexth.innerHTML = "Faça zoom com a roda";
-  divmidtexth.style.fontFamily = "osr";
-  divmidtexth.style.fontSize = "13px";
-  divmidtexth.style.width = "90%";
-  divmidtexth.style.color = "#1bbc9b";
-  divmidtexth.style.margin = "auto";
-  divmidtexth.style.marginTop = "5px";
-
-  var divmidimgh = document.createElement('img');
-  divmidimgh.id = "divmidimgh";
-  divmidimgh.style.marginTop = "20px";
-  divmidimgh.style.width = "28px";
-
-  var divrighth = document.createElement('div');
-  divrighth.style.width = "33%";
-  divrighth.style.marginTop = "30px";
-  divrighth.style.float = "left";
-  divrighth.style.height = "150px";
-
-  var divrighttexth = document.createElement('p');
-  divrighttexth.innerHTML = "Selecione os seus lugares";
-  divrighttexth.style.fontFamily = "osr";
-  divrighttexth.style.fontSize = "13px";
-  divrighttexth.style.width = "90%";
-  divrighttexth.style.color = "#1bbc9b";
-  divrighttexth.style.margin = "auto";
-  divrighttexth.style.marginTop = "5px";
-
-  var divrightimgh = document.createElement('img');
-  divrightimgh.id = "divrightimgh";
-  divrightimgh.style.marginTop = "20px";
-  divrightimgh.style.width = "28px";
-
-  var diveyeh = document.createElement('div');
-  diveyeh.style.width = "33.2%";
-  diveyeh.style.margin = "0 auto";
-  diveyeh.style.height = "120px";
-  diveyeh.style.paddingTop = "10px";
-  diveyeh.style.clear = "both";
-
-  var diveyetexth = document.createElement('p');
-  diveyetexth.innerHTML = "Ver perspectiva do lugar";
-  diveyetexth.style.fontFamily = "osr";
-  diveyetexth.style.fontSize = "13px";
-  diveyetexth.style.width = "90%";
-  diveyetexth.style.color = "#1bbc9b";
-  diveyetexth.style.margin = "auto";
-
-  var diveyeimgh = document.createElement('img');
-  diveyeimgh.id = "diveyeimgh";
-  diveyeimgh.style.marginTop = "20px";
-  diveyeimgh.style.width = "40px";
-
-
-  divtexto1.appendChild(textowelcome);
-  divtexto1.appendChild(textoespaco);
-  divMain.appendChild(divtexto1);
-  divMain.appendChild(textoapre);
-
-  divMain.appendChild(divleft);
-  divleft.appendChild(divlefttext);
-  divleft.appendChild(divleftimg);
-
-  divMain.appendChild(divmid);
-  divmid.appendChild(divmidtext);
-  divmid.appendChild(divmidimg);
-
-  divMain.appendChild(divright);
-  divright.appendChild(divrighttext);
-  divright.appendChild(divrightimg);
-
-  divMain.appendChild(diveye);
-  diveye.appendChild(diveyetext);
-  diveye.appendChild(diveyeimg);
-
-  splashMain.appendChild(splashelp);
-  splashMain.appendChild(splashelpbt);
-
-  splashelpbt.appendChild(splashelpbttext);
-
-  splashelp.appendChild(divlefth);
-  divlefth.appendChild(divlefttexth);
-  divlefth.appendChild(divleftimgh);
-
-  splashelp.appendChild(divmidh);
-  divmidh.appendChild(divmidtexth);
-  divmidh.appendChild(divmidimgh);
-
-  splashelp.appendChild(divrighth);
-  divrighth.appendChild(divrighttexth);
-  divrighth.appendChild(divrightimgh);
-
-  splashelp.appendChild(diveyeh);
-  diveyeh.appendChild(diveyetexth);
-  diveyeh.appendChild(diveyeimgh);
-
-  iDiv.appendChild(divMain);
-  document.body.appendChild(iDiv);
-  document.body.appendChild(splashMain);
-  document.getElementById("divleftimg").src="img/move_mouse.png";
-  document.getElementById("divmidimg").src="img/mouse.png";
-  document.getElementById("divrightimg").src="img/mouse_click.png";
-  document.getElementById("diveyeimg").src="img/eye.png";
-
-  document.getElementById("divleftimgh").src="img/move_mouse.png";
-  document.getElementById("divmidimgh").src="img/mouse.png";
-  document.getElementById("divrightimgh").src="img/mouse_click.png";
-  document.getElementById("diveyeimgh").src="img/eye.png";
-
-  $("#loadedScreen").fadeIn("slow");
-  $("#loadedScreen" ).click(function() {
-    $("#loadedScreen").fadeOut("slow");
-    video.play();
-    video.pause();
-    insideHelp = false;
-    $("#legenda").animate({"marginTop": '-=100px'});
-    $("#splashelp").animate({"left": '+=50px'});
-    setTimeout(function(){
-      legEsq.style.animation = "coloranim 1.5s 2";
-  	  legEsq.style.webkitAnimation = "coloranim 1.5s 2";
-    }, 2000);
-    setTimeout(function(){
-      legDir.style.animation = "coloranim 1.5s 2";
-  	  legDir.style.webkitAnimation = "coloranim 1.5s 2";
-    }, 4500);
-    setTimeout(function(){
-      splashelpbt.style.animation = "coloranimbt 1.5s 2";
-  	  splashelpbt.style.webkitAnimation = "coloranimbt 1.5s 2";
-    }, 7000);
-
-  });
   isLoading = false;
   firstTimeInit = false;
-  $('#splashelp').bind('mouseenter' ,"*", function(e){
-    mouseIsOnMenu = true;
-    controls.lookSpeed = 0;
-  },false);
-
-  $('#splashelp').bind('mouseleave', "*", function(e){
-    mouseIsOnMenu = false;
-  },false);
 }
 
 //
@@ -749,7 +400,7 @@ function showMenuSelect(){
   legDiv.style.height = '80px';
   legDiv.style.position = "absolute";
   legDiv.id = 'LegDiv';
-  legDiv.style.bottom = "0px";
+  legDiv.style.bottom = "80px";
 
 
   // create sub main legenda for cinema
@@ -1449,7 +1100,6 @@ function onMouseMove(e) {
 
   mouse.x = 2 * (e.clientX / container.clientWidth) - 1;
   mouse.y = 1 - 2 * (e.clientY / container.clientHeight);
-
   // define the look speed through the mouse position
   // if mouse is moving to the edges of the screen, speed increases
   if(!isSelected && !sittingDown && !mouseIsOnMenu && !mouseIsOutOfDocument)
@@ -1576,7 +1226,7 @@ var primeiravez = true;
 //
 function onMouseDown(e) {
   // if we are in the cinema overview
-  if(!sittingDown && insideHelp == false) {
+  if(!sittingDown) {
     // normal raycaster variables
     var intersectedOne = false;
 
@@ -1652,20 +1302,12 @@ function onMouseDown(e) {
         }
 
       }
-
       if(obj != undefined)
       {
-        // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
-        if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
-        {
 
-          if (primeiravez == true){
-            if (document.getElementById("splashelp").style.left == "0px"){
-              $("#splashelp").animate({"left": '-=350px'});
-              clickhelpbt = false;
-            }
-            primeiravez = false;
-          }
+        // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
+        if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument)
+        {
           // calculate intersected object centroid
           obj.geometry.computeBoundingBox();
 
@@ -1754,12 +1396,8 @@ function onMouseDown(e) {
     }
     calculaTotal(0); // considers with the initial value
   }
-  else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
+  else if(!sittingDownOrtho) // if clicked when sitting down
   {
-    if (document.getElementById("splashelp").style.left == "0px"){
-      $("#splashelp").animate({"left": '-=350px'});
-      clickhelpbt = false;
-    }
 
     sittingDown = false;
     setupTweenOverview();
@@ -1772,22 +1410,6 @@ function onMouseDown(e) {
       spriteEyeArray[i].visible = true;
     }
 
-  }
-  else if (insideHelp == false)
-  {
-    if (document.getElementById("splashelp").style.left == "0px"){
-      $("#splashelp").animate({"left": '-=350px'});
-      clickhelpbt = false;
-    }
-
-    sittingDown = false;
-
-    switchToOrtho();
-
-    for(var i=0; i<spriteEyeArray.length ; i++)
-    {
-      spriteEyeArray[i].visible = true;
-    }
   }
 }
 
@@ -1820,11 +1442,6 @@ function removeCadeira(obj) {
   if(selectedChairs.length < 1)
   {
     isSelected = false;
-    if (document.getElementById("splashelp").style.left == "0px"){
-      $("#splashelp").animate({"left": '-=350px'});
-      clickhelpbt = false;
-    }
-
     primeiravez = true;
     mouseIsOnMenu = false;
   }
@@ -1902,7 +1519,7 @@ function animate() {
 
     renderer.render( mainScene, camera );
 
-    if(controls != undefined && !isLoadOcup)
+    if(controls != undefined)
       controls.update(clock.getDelta()); //for cameras
 
     octree.update();
@@ -1968,10 +1585,6 @@ animate();
 // if we click the view perspective button or EYE icon
 //
 function changePerspective(x, y, z,obj) {
-  if (document.getElementById("splashelp").style.left == "0px"){
-    $("#splashelp").animate({"left": '-=350px'});
-    clickhelpbt = false;
-  }
   setTimeout(function(){ video.play(); }, 2000);
   sittingDown = true;
 
@@ -2043,7 +1656,7 @@ function changePerspectiveOrtographic(x, y, z,obj) {
 
 
 
-  controls = new THREE.FirstPersonControls(camera);
+  controls = new THREE.FirstPersonControls(camera, container);
 
   controls.lookVertical = true;
   controls.constrainVertical = true;
@@ -2267,7 +1880,7 @@ function switchToOrtho() {
     camera.position.y = 1.5;
     camera.position.z = 0.009249939938009306;
 
-    controls = new THREE.FirstPersonControls(camera);
+    controls = new THREE.FirstPersonControls(camera, container);
 
     controls.lookVertical = true;
     controls.constrainVertical = true;
