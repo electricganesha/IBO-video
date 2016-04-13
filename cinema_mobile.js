@@ -68,6 +68,8 @@ $.ajax({
   async: false
 });
 
+var isDrag = false;
+
 // TEXTURES
 var loader = new THREE.TextureLoader();
 
@@ -978,7 +980,12 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	}
 
+  var lastTouchedMouseX = 0;
+  var lastTouchedMouseY = 0;
+
 	function touchstart( event ) {
+
+    isDrag = false;
 
 		if ( scope.enabled === false ) { return; }
 
@@ -987,9 +994,14 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			case 1:	// one-fingered touch: rotate
 				if ( scope.noRotate === true ) { return; }
 
-				state = STATE.TOUCH_ROTATE;
+        console.log(rotateStart);
 
-				rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+        lastTouchedMouseX = event.touches[0].clientX;
+        lastTouchedMouseY = event.touches[0].clientY;
+
+				state = STATE.TOUCH_ROTATE;
+        rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
+
 				break;
 
 			case 2:	// two-fingered touch: dolly
@@ -1018,7 +1030,9 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	}
 
 	function touchmove( event ) {
-    console.log(scope.rotateSpeed);
+
+    isDrag = true;
+
     if (zoomIn == true){
       scope.rotateSpeed = 0.07;
     }else{
@@ -1060,13 +1074,9 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 				dollyDelta.subVectors( dollyEnd, dollyStart );
 
 				if ( dollyDelta.y > 0 ) {
-          console.log("IN");
-          console.log(dollyDelta.y);
 					scope.dollyOut();
 
 				} else {
-          console.log("OUT");
-          console.log(dollyDelta.y);
 					scope.dollyIn();
 
 				}
@@ -1087,13 +1097,231 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 				break;
 
 			default:
+        isDrag = true;
 				state = STATE.NONE;
 
 		}
 
 	}
 
-	function touchend( /* event */ ) {
+	function touchend( event ) {
+
+    if(!isDrag)
+    {
+      // if we are in the cinema overview
+      if(!sittingDown) {
+
+        // normal raycaster variables
+        var intersectedOne = false;
+
+        var mouse = new THREE.Vector2();
+        var raycaster = new THREE.Raycaster();
+        var raycasterSprite = new THREE.Raycaster();
+
+        if (isVR == true){
+          mouse.x = 2 * ((window.innerWidth/2) / window.innerWidth) - 1;
+          mouse.y = 1 - 2 * ((window.innerHeight/2) / window.innerHeight);
+          raycaster.setFromCamera( mouse, camera );
+        }else{
+          mouse.x = 2 * (lastTouchedMouseX / window.innerWidth) - 1;
+          mouse.y = 1 - 2 * (lastTouchedMouseY / window.innerHeight);
+          raycaster.setFromCamera( mouse, camera );
+        }
+
+        var intersectsSprite = raycaster.intersectObjects( spriteEyeArray );
+
+        if(intersectsSprite.length > 0)
+        {
+          var pointSprite = intersectsSprite[0].point;
+          // for each intersected object
+          for(var i=0; i<intersectsSprite.length; i++)
+          {
+            // if intersected object is a sprite then call the change perspective function (which seats you down)
+            if(intersectsSprite[i].object.name == "spriteEye" && !isVR)
+            {
+              spriteFound = true;
+              var index = spriteEyeArray.indexOf(intersectsSprite[i].object);
+              changePerspective(pointSprite.x,pointSprite.y,pointSprite.z,selectedChairs[index]);
+            }
+          }
+        } else {
+
+          octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
+
+          var intersects = raycaster.intersectOctreeObjects( octreeObjects );
+
+          var textSelChairs = "";
+
+          // for each intersected object
+          for (var i = 0; i < intersects.length; i++) {
+
+            // Check if the objects are in front of each other
+            var intersectionIndex = 0;
+
+            if(!isVR){
+              for(var i = 0 ; i < intersects.length ; i++)
+              {
+                var lowerX = intersects[0].object.position.x;
+
+                if( intersects[i].object.position.x < lowerX){
+                  lowerX = intersects[i].object.position.x;
+                  intersectionIndex = i;
+                }
+              }
+            }
+
+            var intersection = intersects[intersectionIndex];
+
+            //var intersection = intersects[i];
+            var obj = intersection.object;
+            var point = intersection.point;
+
+            var fila = "";
+            var lugar = "";
+            var estado = "";
+            var spriteFound = false;
+
+
+            if(isVR)
+            {
+              changePerspective(point.x,point.y,point.z,obj);
+            }
+            else
+            {
+
+            // retrieve information of chair occupation from array retrieved from DB
+            for(var i=0; i<cadeirasJSON.length; i++)
+            {
+              if(cadeirasJSON[i].nome_procedural == obj.name)
+              {
+                fila = cadeirasJSON[i].fila;
+                lugar = cadeirasJSON[i].lugar;
+                estado = cadeirasJSON[i].estado;
+              }
+
+            }
+
+          if(obj != undefined)
+          {
+            // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
+            if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
+            {
+              // calculate intersected object centroid
+              obj.geometry.computeBoundingBox();
+
+              var centroid = new THREE.Vector3();
+              centroid.addVectors( obj.geometry.boundingBox.min, obj.geometry.boundingBox.max );
+              centroid.multiplyScalar( - 0.5 );
+
+              centroid.applyMatrix4( obj.matrixWorld );
+
+              // Add the EYE icon
+
+              var eyeGeometry = new THREE.BoxGeometry( 0.1, 1, 1 );
+
+              var spriteEyeMaterial = new THREE.MeshBasicMaterial( { map: eyeTexture, opacity:0.0, transparent:false} );
+
+              var spriteEyeInstance = new THREE.Mesh(spriteEyeModel.geometry,spriteEyeMaterial);
+              spriteEyeInstance.name = "spriteEye";
+              spriteEyeInstance.position.set(centroid.x , centroid.y+0.2, centroid.z );
+              mainScene.add( spriteEyeInstance );
+
+              //octreeSprites.add(spriteEyeInstance);
+
+              spriteEyeArray.push(spriteEyeInstance);
+
+              // calculate rotation based on two vectors
+              var matrix = new THREE.Matrix4();
+              matrix.extractRotation( obj.matrix );
+
+              // front vector
+              var direction = new THREE.Vector3( -1, 0, 0 );
+              matrix.multiplyVector3( direction );
+
+              // vector pointing at the reference sphere
+              dis1 = screenReferenceSphere.position.x - obj.position.x ;
+              dis2 = screenReferenceSphere.position.y - obj.position.y ;
+              dis3 = screenReferenceSphere.position.z - obj.position.z;
+
+              var vector = new THREE.Vector3(dis1,dis2,dis3);
+
+              vector.normalize ();
+
+              // calculate angle between two vectors
+              var angle = direction.angleTo( vector );
+
+              if(obj.position.z == 0)
+              spriteEyeInstance.rotation.y = 0;
+              else if(obj.position.z > 0)
+              spriteEyeInstance.rotation.y = -angle;
+              else if(obj.position.z < 0)
+              spriteEyeInstance.rotation.y = angle;
+
+              // paint all the selected chairs (check the array) with the selected color
+              if(detectmob())
+              selectChair = new THREE.Mesh(obj.geometry,materialcadeiraMobileHighlight);
+              else
+              selectChair = new THREE.Mesh(obj.geometry,materialcadeiraHighLight);
+
+              selectChair.geometry.computeBoundingBox();
+
+              var centroid = new THREE.Vector3();
+              centroid.addVectors( obj.geometry.boundingBox.min, obj.geometry.boundingBox.max );
+
+              centroid.applyMatrix4( obj.matrixWorld );
+
+              selectChair.scale.set(1.15,1.00,1.05);
+
+              selectChair.rotation.set(obj.rotation.x,obj.rotation.y,obj.rotation.z+0.035);
+
+              selectChair.position.set(centroid.x-0.005,centroid.y-0.006,centroid.z);
+
+              selectChair.name = "selectChair_"+obj.name;
+              selectChair.material.map = texturaCadeiraHighlight;
+
+              mainScene.add(selectChair);
+
+              // Add the Chair
+              selectedChairs.push(obj);
+
+              obj.material.map = texturaCadeiraSelect;
+            } else {
+              if(!mouseIsOnMenu && !mouseIsOutOfDocument && !spriteFound)
+              removeCadeira(obj); // if chair was already selected, de-select it
+
+            }
+
+          }
+        }
+        }
+              }
+      }
+      else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
+      {
+        sittingDown = false;
+        setupTweenOverview();
+
+        video.pause();
+
+        if(!isVR){
+          for(var i=0; i<spriteEyeArray.length ; i++)
+          {
+            spriteEyeArray[i].visible = true;
+          }
+        }
+      }
+      else if (insideHelp == false)
+      {
+        sittingDown = false;
+
+        switchToOrtho();
+
+        for(var i=0; i<spriteEyeArray.length ; i++)
+        {
+          spriteEyeArray[i].visible = true;
+        }
+      }
+    }
 
 		if ( scope.enabled === false ) { return; }
 
@@ -1321,7 +1549,7 @@ function init() {
 
     var screenSize = screen.width+(screen.width-document.body.clientWidth);
 
-    $("#loadedScreen").animate({left: "-=" + screenSize + "px"});
+    $("#loadedScreen").animate({left: "-=" + 1000 + "px"});
     video.play();
     video.pause();
     fullscreen();
@@ -1682,7 +1910,7 @@ function carregarJSONBDInitial(num_sessao) {
     success: function(data){
       cadeirasJSON = data;
       console.log("JSON Loaded Correctly from DB Initial cadeiras " + num_sessao);
-      loadScene();
+      loadScene();s
     },
     error:    function(textStatus,errorThrown){
       console.log(textStatus);
@@ -1797,6 +2025,7 @@ var uuidTexturaAntiga ="";
 // Mouse Click Event
 //
 function onMouseDown(e) {
+
   // if we are in the cinema overview
   if(!sittingDown && insideHelp == false) {
     // normal raycaster variables
@@ -1985,7 +2214,6 @@ function onMouseDown(e) {
   }
   else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
-    console.log("sair");
     sittingDown = false;
     setupTweenOverview();
 
@@ -2109,8 +2337,6 @@ animate();
 //
 function changePerspective(x, y, z,obj) {
 
-  console.log("change perspective");
-
   setTimeout(function(){ video.play(); }, 3000);
   sittingDown = true;
 
@@ -2118,7 +2344,6 @@ function changePerspective(x, y, z,obj) {
   lastControlsLat = controls.lat;
   lastControlsLon = controls.lon;
 
-  console.log("entrou tween 1");
   setupTweenFP(obj);
 
   for(var i=0; i<spriteEyeArray.length ; i++)
@@ -2294,8 +2519,6 @@ function setupTweenFP(obj) {
 //
 function setupTweenOverview() {
 
-  console.log("comecei tween");
-
   // tween the fov fowards
   tweenFov = new TWEEN.Tween(camera).to({
     fov:60
@@ -2339,8 +2562,6 @@ function setupTweenOverview() {
       lon:lastControlsLon
     },2000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
   }).start();
-
-  console.log("acabei tween");
 
 }
 
