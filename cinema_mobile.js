@@ -1018,7 +1018,6 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 	}
 
 	function touchmove( event ) {
-    console.log(scope.rotateSpeed);
     if (zoomIn == true){
       scope.rotateSpeed = 0.07;
     }else{
@@ -1060,13 +1059,11 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 				dollyDelta.subVectors( dollyEnd, dollyStart );
 
 				if ( dollyDelta.y > 0 ) {
-          console.log("IN");
-          console.log(dollyDelta.y);
+
 					scope.dollyOut();
 
 				} else {
-          console.log("OUT");
-          console.log(dollyDelta.y);
+
 					scope.dollyIn();
 
 				}
@@ -1985,7 +1982,6 @@ function onMouseDown(e) {
   }
   else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
-    console.log("sair");
     sittingDown = false;
     setupTweenOverview();
 
@@ -2108,17 +2104,19 @@ animate();
 // if we click the view perspective button or EYE icon
 //
 function changePerspective(x, y, z,obj) {
+  if( navigator.userAgent.match(/Android/i)
+  || navigator.userAgent.match(/webOS/i)
+  || navigator.userAgent.match(/BlackBerry/i)
+  || navigator.userAgent.match(/Windows Phone/i)){
+    setTimeout(function(){ video.play(); }, 3000); 
+  }
 
-  console.log("change perspective");
-
-  setTimeout(function(){ video.play(); }, 3000);
   sittingDown = true;
 
   lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
   lastControlsLat = controls.lat;
   lastControlsLon = controls.lon;
 
-  console.log("entrou tween 1");
   setupTweenFP(obj);
 
   for(var i=0; i<spriteEyeArray.length ; i++)
@@ -2209,6 +2207,18 @@ function setupTweenFP(obj) {
   TWEEN.removeAll();
   // calculate centroid
   obj.geometry.computeBoundingBox();
+  if( navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i) || navigator.userAgent.match(/iPod/i)) {
+    var mapplay = new THREE.TextureLoader().load( "img/play.png" );
+    var materialplay = new THREE.SpriteMaterial( { map: mapplay, color: 0xffffff, fog: true } );
+    var spriteplay = new THREE.Sprite( materialplay );
+    spriteplay.position.x = -6.160114995658247;
+    spriteplay.position.y = 1.0;
+    spriteplay.position.z = 0.009249939938009306;
+    spriteplay.onclick = function() {
+      video.play();
+    }
+    mainScene.add( spriteplay );
+  }
 
   var centroid = new THREE.Vector3();
   centroid.addVectors( obj.geometry.boundingBox.min, obj.geometry.boundingBox.max );
@@ -2294,8 +2304,6 @@ function setupTweenFP(obj) {
 //
 function setupTweenOverview() {
 
-  console.log("comecei tween");
-
   // tween the fov fowards
   tweenFov = new TWEEN.Tween(camera).to({
     fov:60
@@ -2340,7 +2348,6 @@ function setupTweenOverview() {
     },2000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
   }).start();
 
-  console.log("acabei tween");
 
 }
 
