@@ -1219,7 +1219,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
               var eyeGeometry = new THREE.BoxGeometry( 0.1, 1, 1 );
 
-              var spriteEyeMaterial = new THREE.MeshBasicMaterial( { map: eyeTexture, opacity:0.0, transparent:false} );
+              var spriteEyeMaterial = new THREE.MeshBasicMaterial( { map: eyeTexture } );
 
               var spriteEyeInstance = new THREE.Mesh(spriteEyeModel.geometry,spriteEyeMaterial);
               spriteEyeInstance.name = "spriteEye";
@@ -1693,7 +1693,7 @@ function loadSala() {
   // load JSON model
   loaderJSON.load( "models/Cinema_Motta/Sala_Baked_03.js", function( geometry, materials ) {
 
-    //var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
+    var bufferGeometry = new THREE.BufferGeometry().fromGeometry( geometry );
 
     materials[0] = new THREE.MeshBasicMaterial(materials[0]);
     materials[1] = new THREE.MeshBasicMaterial(materials[1]);
@@ -1702,38 +1702,37 @@ function loadSala() {
 
     material1 = new THREE.MeshBasicMaterial();
     material1.map = materials[0].map;
-    material1.map.magFilter = THREE.NearestFilter;
-    material1.map.minFilter = THREE.LinearMipMapNearestFilter;
-    material1.map.anisotropy = 16;
+    material1.map.magFilter = THREE.LinearFilter;
+    material1.map.minFilter = THREE.LinearMipMapLinearFilter;
+    material1.map.anisotropy = renderer.getMaxAnisotropy();
     material1.overdraw = 1.0;
     materials[0] = material1;
 
     material2 = new THREE.MeshBasicMaterial();
     material2.map = materials[1].map;
-    material2.map.magFilter = THREE.NearestFilter;
-    material2.map.minFilter = THREE.LinearMipMapNearestFilter;
-    material2.map.anisotropy = 16;
+    material2.map.magFilter = THREE.LinearFilter;
+    material2.map.minFilter = THREE.LinearMipMapLinearFilter;
+    material2.map.anisotropy = renderer.getMaxAnisotropy();
     material2.overdraw = 1.0;
     materials[1] = material2;
 
     material3 = new THREE.MeshBasicMaterial();
     material3.map = materials[2].map;
-    material3.map.magFilter = THREE.NearestFilter;
-    material3.map.minFilter = THREE.LinearMipMapNearestFilter;
-    material3.map.anisotropy = 16;
+    material3.map.magFilter = THREE.LinearFilter;
+    material3.map.minFilter = THREE.LinearMipMapLinearFilter;
+    material3.map.anisotropy = renderer.getMaxAnisotropy();
     material3.overdraw = 1.0;
     materials[2] = material3;
 
     material4 = new THREE.MeshBasicMaterial();
     material4.map = materials[3].map;
-    material4.map.magFilter = THREE.NearestFilter;
-    material4.map.minFilter = THREE.LinearMipMapNearestFilter;
-    material4.map.anisotropy = 16;
+    material4.map.magFilter = THREE.LinearFilter;
+    material4.map.minFilter = THREE.LinearMipMapLinearFilter;
+    material4.map.anisotropy = renderer.getMaxAnisotropy();
     material4.overdraw = 1.0;
     materials[3] = material4;
 
-
-    var mesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial( materials ));
+    var mesh = new THREE.Mesh( bufferGeometry , new THREE.MeshFaceMaterial( materials ));
 
     mesh.position.x = mesh.position.x-0.2;
     mesh.position.y = mesh.position.y+0.3;
@@ -2135,7 +2134,7 @@ function onMouseDown(e) {
 
           var eyeGeometry = new THREE.BoxGeometry( 0.1, 1, 1 );
 
-          var spriteEyeMaterial = new THREE.MeshBasicMaterial( { map: eyeTexture, opacity:0.0, transparent:false} );
+          var spriteEyeMaterial = new THREE.MeshBasicMaterial( { map: eyeTexture} );
 
           var spriteEyeInstance = new THREE.Mesh(spriteEyeModel.geometry,spriteEyeMaterial);
           spriteEyeInstance.name = "spriteEye";
