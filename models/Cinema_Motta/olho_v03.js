@@ -30,7 +30,7 @@
 	"DbgName" : "lambert3SG",
 	"colorDiffuse" : [0.0, 0.0, 0.0],
 	"illumination" : 4,
-	"mapDiffuse" : "olho-icon.png",
+	"mapDiffuse" : "eye-icon.png",
 	"opticalDensity" : 1.0
 	}],
 
