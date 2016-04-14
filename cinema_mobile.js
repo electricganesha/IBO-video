@@ -1457,122 +1457,236 @@ function init() {
 
   showMenuSelect(); // this method initialises the side div container
 
-  // create the main selection menu
-  var iDiv = document.createElement('div');
-  iDiv.style.width = '100%';
-  iDiv.style.cursor = "pointer";
-  iDiv.style.textAlign = "center";
-  iDiv.style.height = '100%';
-  iDiv.style.position = "absolute";
-  iDiv.id = 'loadedScreen';
-  iDiv.style.top = '0';
-  iDiv.style.display = "block";
+  if(window.innerHeight > window.innerWidth){
+    // create the main selection menu
+    var iDiv = document.createElement('div');
+    iDiv.style.width = '100%';
+    iDiv.style.cursor = "pointer";
+    iDiv.style.textAlign = "center";
+    iDiv.style.height = '100%';
+    iDiv.style.backgroundColor= "rgba(0, 0, 0, 0.8)";
+    iDiv.style.position = "absolute";
+    iDiv.id = 'loadedScreen';
+    iDiv.style.top = '0';
+    iDiv.style.display = "block";
 
-  var divMain = document.createElement('div');
-  divMain.style.color = "white";
-  divMain.style.backgroundColor= "rgba(0, 0, 0, 0.8)";
-  divMain.style.cursor = "pointer";
-  divMain.style.width = '100%';
-  divMain.style.textAlign = "center";
-  divMain.style.fontFamily = "osb";
-  divMain.style.height = '100%';
-  divMain.style.position = "absolute";
-  divMain.id = 'textScreen';
-  divMain.style.top = '50%';
-	divMain.style.transform = "translateY(-50%)";
+    var divMain = document.createElement('div');
+    divMain.style.color = "white";
+    divMain.style.cursor = "pointer";
+    divMain.style.width = '100%';
+    divMain.style.textAlign = "center";
+    divMain.style.fontFamily = "osb";
+    divMain.style.position = "absolute";
+    divMain.id = 'textScreen';
+    divMain.style.top = '50%';
+    divMain.style.transform = "translateY(-50%)";
 
-  var divtexto1 = document.createElement('div');
-  divtexto1.style.borderBottom = "solid 1px #1bbc9b";
-  divtexto1.style.width = "40%";
-  divtexto1.style.height = "30px";
-  divtexto1.style.margin = "auto";
+    var divtexto1 = document.createElement('div');
+    divtexto1.style.borderBottom = "solid 1px #1bbc9b";
+    divtexto1.style.width = "60%";
+    divtexto1.style.height = "30px";
+    divtexto1.style.margin = "auto";
 
-  var textowelcome = document.createElement('p');
-  textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
-  textowelcome.style.fontFamily = "osr";
-  textowelcome.style.fontSize = "18px";
+    var textowelcome = document.createElement('p');
+    textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
+    textowelcome.style.fontFamily = "osr";
+    textowelcome.style.fontSize = "18px";
 
-  var textoespaco = document.createElement('p');
-  textoespaco.innerHTML = "<br>";
-  textoespaco.style.fontFamily = "osr";
+    var textoespaco = document.createElement('p');
+    textoespaco.innerHTML = "<br>";
+    textoespaco.style.fontFamily = "osr";
 
-  var textoapre = document.createElement('p');
-  textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
-  textoapre.style.fontFamily = "osr";
-  textoapre.style.fontSize = "11px";
+    var textoapre = document.createElement('p');
+    textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
+    textoapre.style.fontFamily = "osr";
+    textoapre.style.fontSize = "11px";
 
-  var divleft = document.createElement('div');
-  divleft.style.borderRight = "solid 1px #1bbc9b";
-  divleft.style.width = "24%";
-  divleft.style.float = "left";
-  divleft.style.height = "130px";
-  divleft.style.marginTop = "3%";
+    var divleft = document.createElement('div');
+    divleft.style.borderRight = "solid 1px #1bbc9b";
+    divleft.style.width = "49%";
+    divleft.style.float = "left";
+    divleft.style.height = "110px";
+    divleft.style.marginTop = "3%";
 
-  var divlefttext = document.createElement('p');
-  divlefttext.innerHTML = "Navegar";
-  divlefttext.style.fontFamily = "osr";
-  divlefttext.style.fontSize = "11px";
-  divlefttext.style.color = "#1bbc9b";
+    var divlefttext = document.createElement('p');
+    divlefttext.innerHTML = "Navegar";
+    divlefttext.style.fontFamily = "osr";
+    divlefttext.style.fontSize = "11px";
+    divlefttext.style.color = "#1bbc9b";
 
-  var divleftimg = document.createElement('img');
-  divleftimg.id = "divleftimg";
-  divleftimg.style.width = "60px";
-  divleftimg.style.marginTop = "5px";
+    var divleftimg = document.createElement('img');
+    divleftimg.id = "divleftimg";
+    divleftimg.style.width = "60px";
+    divleftimg.style.marginTop = "5px";
 
+    var divmid = document.createElement('div');
+    divmid.style.width = "49%";
+    divmid.style.float = "left";
+    divmid.style.height = "110px";
+    divmid.style.marginTop = "3%";
 
-  var divmid = document.createElement('div');
-  divmid.style.borderRight = "solid 1px #1bbc9b";
-  divmid.style.width = "25%";
-  divmid.style.float = "left";
-  divmid.style.height = "130px";
-  divmid.style.marginTop = "3%";
+    var divmidtext = document.createElement('p');
+    divmidtext.innerHTML = "Zoom";
+    divmidtext.style.fontFamily = "osr";
+    divmidtext.style.fontSize = "11px";
+    divmidtext.style.color = "#1bbc9b";
 
-  var divmidtext = document.createElement('p');
-  divmidtext.innerHTML = "Zoom";
-  divmidtext.style.fontFamily = "osr";
-  divmidtext.style.fontSize = "11px";
-  divmidtext.style.color = "#1bbc9b";
+    var divmidimg = document.createElement('img');
+    divmidimg.id = "divmidimg";
+    divmidimg.style.width = "60px";
+    divmidimg.style.marginTop = "10px";
 
-  var divmidimg = document.createElement('img');
-  divmidimg.id = "divmidimg";
-  divmidimg.style.width = "60px";
-  divmidimg.style.marginTop = "10px";
+    var divright = document.createElement('div');
+    divright.style.borderRight = "solid 1px #1bbc9b";
+    divright.style.width = "49%";
+    divright.style.float = "left";
+    divright.style.height = "110px";
+    divright.style.marginTop = "3%";
 
-  var divright = document.createElement('div');
-  divright.style.borderRight = "solid 1px #1bbc9b";
-  divright.style.width = "24%";
-  divright.style.float = "left";
-  divright.style.height = "130px";
-  divright.style.marginTop = "3%";
+    var divrighttext = document.createElement('p');
+    divrighttext.innerHTML = "Selecione os seus lugares";
+    divrighttext.style.fontFamily = "osr";
+    divrighttext.style.fontSize = "11px";
+    divrighttext.style.color = "#1bbc9b";
 
-  var divrighttext = document.createElement('p');
-  divrighttext.innerHTML = "Selecione os seus lugares";
-  divrighttext.style.fontFamily = "osr";
-  divrighttext.style.fontSize = "11px";
-  divrighttext.style.color = "#1bbc9b";
+    var divrightimg = document.createElement('img');
+    divrightimg.id = "divrightimg";
+    divrightimg.style.width = "60px";
+    divrightimg.style.marginTop = "10px";
 
-  var divrightimg = document.createElement('img');
-  divrightimg.id = "divrightimg";
-  divrightimg.style.width = "60px";
-  divrightimg.style.marginTop = "10px";
+    var diveye = document.createElement('div');
+    diveye.style.width = "49%";
+    diveye.style.float = "left";
+    diveye.style.height = "110px";
+    diveye.style.marginTop = "3%";
 
-  var diveye = document.createElement('div');
-  diveye.style.width = "24%";
-  diveye.style.float = "left";
-  diveye.style.height = "130px";
-  diveye.style.marginTop = "3%";
+    var diveyetext = document.createElement('p');
+    diveyetext.innerHTML = "Ver perspectiva do lugar";
+    diveyetext.style.fontFamily = "osr";
+    diveyetext.style.fontSize = "11px";
+    diveyetext.style.color = "#1bbc9b";
 
-  var diveyetext = document.createElement('p');
-  diveyetext.innerHTML = "Ver perspectiva do lugar";
-  diveyetext.style.fontFamily = "osr";
-  diveyetext.style.fontSize = "11px";
-  diveyetext.style.color = "#1bbc9b";
+    var diveyeimg = document.createElement('img');
+    diveyeimg.id = "diveyeimg";
+    diveyeimg.style.width = "60px";
+    diveyeimg.style.marginTop = "10px";
+  }else{
+    // create the main selection menu
+    var iDiv = document.createElement('div');
+    iDiv.style.width = '100%';
+    iDiv.style.cursor = "pointer";
+    iDiv.style.textAlign = "center";
+    iDiv.style.height = '100%';
+    iDiv.style.position = "absolute";
+    iDiv.id = 'loadedScreen';
+    iDiv.style.top = '0';
+    iDiv.style.display = "block";
 
-  var diveyeimg = document.createElement('img');
-  diveyeimg.id = "diveyeimg";
-  diveyeimg.style.width = "60px";
-  diveyeimg.style.marginTop = "10px";
+    var divMain = document.createElement('div');
+    divMain.style.color = "white";
+    divMain.style.backgroundColor= "rgba(0, 0, 0, 0.8)";
+    divMain.style.cursor = "pointer";
+    divMain.style.width = '100%';
+    divMain.style.textAlign = "center";
+    divMain.style.fontFamily = "osb";
+    divMain.style.height = '100%';
+    divMain.style.position = "absolute";
+    divMain.id = 'textScreen';
+    divMain.style.top = '50%';
+    divMain.style.transform = "translateY(-50%)";
 
+    var divtexto1 = document.createElement('div');
+    divtexto1.style.borderBottom = "solid 1px #1bbc9b";
+    divtexto1.style.width = "40%";
+    divtexto1.style.height = "30px";
+    divtexto1.style.margin = "auto";
+
+    var textowelcome = document.createElement('p');
+    textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
+    textowelcome.style.fontFamily = "osr";
+    textowelcome.style.fontSize = "18px";
+
+    var textoespaco = document.createElement('p');
+    textoespaco.innerHTML = "<br>";
+    textoespaco.style.fontFamily = "osr";
+
+    var textoapre = document.createElement('p');
+    textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
+    textoapre.style.fontFamily = "osr";
+    textoapre.style.fontSize = "11px";
+
+    var divleft = document.createElement('div');
+    divleft.style.borderRight = "solid 1px #1bbc9b";
+    divleft.style.width = "24%";
+    divleft.style.float = "left";
+    divleft.style.height = "130px";
+    divleft.style.marginTop = "3%";
+
+    var divlefttext = document.createElement('p');
+    divlefttext.innerHTML = "Navegar";
+    divlefttext.style.fontFamily = "osr";
+    divlefttext.style.fontSize = "11px";
+    divlefttext.style.color = "#1bbc9b";
+
+    var divleftimg = document.createElement('img');
+    divleftimg.id = "divleftimg";
+    divleftimg.style.width = "60px";
+    divleftimg.style.marginTop = "5px";
+
+    var divmid = document.createElement('div');
+    divmid.style.borderRight = "solid 1px #1bbc9b";
+    divmid.style.width = "25%";
+    divmid.style.float = "left";
+    divmid.style.height = "130px";
+    divmid.style.marginTop = "3%";
+
+    var divmidtext = document.createElement('p');
+    divmidtext.innerHTML = "Zoom";
+    divmidtext.style.fontFamily = "osr";
+    divmidtext.style.fontSize = "11px";
+    divmidtext.style.color = "#1bbc9b";
+
+    var divmidimg = document.createElement('img');
+    divmidimg.id = "divmidimg";
+    divmidimg.style.width = "60px";
+    divmidimg.style.marginTop = "10px";
+
+    var divright = document.createElement('div');
+    divright.style.borderRight = "solid 1px #1bbc9b";
+    divright.style.width = "24%";
+    divright.style.float = "left";
+    divright.style.height = "130px";
+    divright.style.marginTop = "3%";
+
+    var divrighttext = document.createElement('p');
+    divrighttext.innerHTML = "Selecione os seus lugares";
+    divrighttext.style.fontFamily = "osr";
+    divrighttext.style.fontSize = "11px";
+    divrighttext.style.color = "#1bbc9b";
+
+    var divrightimg = document.createElement('img');
+    divrightimg.id = "divrightimg";
+    divrightimg.style.width = "60px";
+    divrightimg.style.marginTop = "10px";
+
+    var diveye = document.createElement('div');
+    diveye.style.width = "24%";
+    diveye.style.float = "left";
+    diveye.style.height = "130px";
+    diveye.style.marginTop = "3%";
+
+    var diveyetext = document.createElement('p');
+    diveyetext.innerHTML = "Ver perspectiva do lugar";
+    diveyetext.style.fontFamily = "osr";
+    diveyetext.style.fontSize = "11px";
+    diveyetext.style.color = "#1bbc9b";
+
+    var diveyeimg = document.createElement('img');
+    diveyeimg.id = "diveyeimg";
+    diveyeimg.style.width = "60px";
+    diveyeimg.style.marginTop = "10px";
+
+  }
 
   divtexto1.appendChild(textowelcome);
   divtexto1.appendChild(textoespaco);
@@ -1604,10 +1718,7 @@ function init() {
 
   $("#loadedScreen" ).click(function() {
     isLoadingInfo = false;
-
-    var screenSize = screen.width+(screen.width-document.body.clientWidth);
-
-    $("#loadedScreen").animate({left: "-=" + 1000 + "px"});
+    $("#loadedScreen").fadeOut("slow");
     video.play();
     video.pause();
     fullscreen();
@@ -1967,7 +2078,7 @@ function carregarJSONBDInitial(num_sessao) {
     success: function(data){
       cadeirasJSON = data;
       console.log("JSON Loaded Correctly from DB Initial cadeiras " + num_sessao);
-      loadScene();s
+      loadScene();
     },
     error:    function(textStatus,errorThrown){
       console.log(textStatus);
