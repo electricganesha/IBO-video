@@ -206,7 +206,7 @@ var materialcadeiraOcupadaMobile = new THREE.MeshBasicMaterial( {
 
 // STRUCTURAL / DOM / RENDERER
 
-renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
+renderer = new THREE.WebGLRenderer({ precision: "highp", antialias:true });
 renderer.setSize( window.innerWidth, window.innerHeight );
 element = renderer.domElement;
 container = document.body;
@@ -230,6 +230,7 @@ THREE.DefaultLoadingManager.onProgress = function ( item, loaded, total ) {
   if(loaded == total && firstTimeLoading)
   {
     firstTimeLoading = false;
+    $('#loadingDiv').hide();
     init();
   }
 };
@@ -265,10 +266,40 @@ function startLoadingScene() {
 
   currentScene = loadingScene;
 
-  loader = new THREE.JSONLoader();
-  loader.load( "models/loading3.js", function( geometry,materials ) {
+  var loadingDiv = document.createElement('div');
+  loadingDiv.innerHTML = " loading ... ";
+  loadingDiv.style.position = "absolute";
+  loadingDiv.style.width = "100%";
+  loadingDiv.style.textAlign = "center";
+  loadingDiv.id = "loadingDiv";
+  loadingDiv.style.fontFamily = "osr";
+  loadingDiv.style.color = "#FFF";
+  loadingDiv.style.top = '65%';
+  loadingDiv.style.fontSize = "24px";
+  document.body.appendChild(loadingDiv);
 
-    loaderMesh = new THREE.Mesh( geometry, new THREE.MeshNormalMaterial() );
+  loadingDiv.style.animation = "coloranimLoading 1.5s infinite";
+  loadingDiv.style.webkitAnimation = "coloranimLoading 1.5s infinite";
+
+  loader = new THREE.JSONLoader();
+  loader.load( "models/cadeiraloading.js", function( geometry,materials ) {
+
+    material1 = new THREE.MeshPhongMaterial();
+    material1.map = materials[0].map;
+    material1.normalMap = texturaCadeiraNormalMap;
+    materials[0] = material1;
+
+    material2 = new THREE.MeshPhongMaterial();
+    material2.map = materials[1].map;
+    material2.normalMap = texturaBracoNormalMap;
+    materials[1] = material2;
+
+    material3 = new THREE.MeshPhongMaterial();
+    material3.map = materials[2].map;
+    material3.normalMap = texturaBracoNormalMap;
+    materials[2] = material3;
+
+    loaderMesh = new THREE.Mesh( geometry, new THREE.MeshFaceMaterial(materials) );
 
     loadingScene.add(loaderMesh);
 
@@ -1106,7 +1137,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	function touchend( event ) {
 
-    if(!isDrag)
+    if(!isDrag && (navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPod/i) ))
     {
       // if we are in the cinema overview
       if(!sittingDown) {
@@ -1353,7 +1384,7 @@ function init() {
 
   //document.body.appendChild( statsFPS.domElement );
 
-  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 15 );
 
   camera.position.x = -6.160114995658247;
   camera.position.y = 1.5;
@@ -2371,7 +2402,7 @@ function changePerspectiveOrtographic(x, y, z,obj) {
 
   centroid.applyMatrix4( obj.matrixWorld );
   //sittingDown = true;
-  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
+  camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 15 );
 
   camera.position.x = centroid.x;
   camera.position.y = centroid.y+0.25; // head height
@@ -2630,7 +2661,7 @@ function switchToOrtho() {
     document.getElementById("legEsq").style.display = "block";
     isPerspectiveOrtho = false;
 
-    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 50 );
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 15 );
 
     camera.position.x = -6.160114995658247;
     camera.position.y = 1.5;
