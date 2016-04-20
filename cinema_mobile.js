@@ -2536,7 +2536,7 @@ function animate() {
   ctx.listener.setPosition(p.x, p.y, p.z);
 
   var vector = new THREE.Vector3(0, 0, -1);
-  vector.applyEuler(camera.rotation, camera.eulerOrder);
+  vector.applyEuler(camera.rotation, camera.rotation.order);
   ctx.listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
 
   }

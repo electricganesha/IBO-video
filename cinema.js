@@ -2889,7 +2889,7 @@ var up = new THREE.Vector3(0,1,0);
 function animate() {
 
   var vector = new THREE.Vector3(0, 0, -1);
-  vector.applyEuler(camera.rotation, camera.eulerOrder);
+  vector.applyEuler(camera.rotation, camera.rotation.order);
   listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
 
   requestAnimationFrame(animate);
