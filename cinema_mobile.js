@@ -208,6 +208,78 @@ var materialcadeiraOcupadaMobile = new THREE.MeshBasicMaterial( {
   map: texturaCadeiraOcupada,
 });
 
+// Create a new audio context.
+var sound = {};
+var ctx = new AudioContext();
+
+function loadWebAudio()
+{
+  // Detect if the audio context is supported.
+  window.AudioContext = (
+    window.AudioContext ||
+    window.webkitAudioContext ||
+    null
+  );
+
+  if (!AudioContext) {
+    throw new Error("AudioContext not supported!");
+  }
+
+  // Create an object with a sound source and a volume control.
+  sound.source = ctx.createBufferSource();
+  sound.volume = ctx.createGain();
+
+  // Load a sound file using an ArrayBuffer XMLHttpRequest.
+  var request = new XMLHttpRequest();
+  request.open("GET", "video/pushshowreel.mp3", true);
+  request.responseType = "arraybuffer";
+  request.onload = function(e) {
+
+    // Create a buffer from the response ArrayBuffer.
+    ctx.decodeAudioData(this.response, function onSuccess(buffer) {
+      sound.buffer = buffer;
+
+      // Make the sound source use the buffer and start playing it.
+      sound.source.buffer = sound.buffer;
+    }, function onFailure() {
+      alert("Decoding the audio buffer failed");
+    });
+  };
+  request.send();
+
+  sound.panner = ctx.createPanner();
+
+  sound.source.connect(sound.panner);
+  sound.panner.connect(ctx.destination);
+
+  sound.panner.panningModel = 'equalpower';
+  sound.panner.refDistance = 0.1;
+  sound.panner.maxDistance = 10000;
+  sound.panner.rolloffFactor = 1;
+  sound.panner.coneInnerAngle = 0;
+  sound.panner.coneOuterAngle = 45;
+  sound.panner.coneOuterGain = 1;
+
+  var p = new THREE.Vector3();
+  p.setFromMatrixPosition(screenReferenceSphere.matrixWorld);
+
+  // And copy the position over to the sound of the object.
+  sound.panner.setPosition(p.x, p.y, p.z);
+
+  var vec = new THREE.Vector3(0,0,1);
+  var m = screenReferenceSphere.matrixWorld;
+
+  // Save the translation column and zero it.
+  var mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+  m.elements[12] = m.elements[13] = m.elements[14] = 0;
+
+  // Multiply the 0,0,1 vector by the world matrix and normalize the result.
+  vec.applyProjection(m);
+  vec.normalize();
+
+  sound.panner.setOrientation(vec.x, vec.y, vec.z);
+}
+
 // STRUCTURAL / DOM / RENDERER
 
 renderer = new THREE.WebGLRenderer({ precision: "highp", antialias:true });
@@ -1029,8 +1101,6 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 			case 1:	// one-fingered touch: rotate
 				if ( scope.noRotate === true ) { return; }
 
-        console.log(rotateStart);
-
         lastTouchedMouseX = event.touches[0].clientX;
         lastTouchedMouseY = event.touches[0].clientY;
 
@@ -1402,6 +1472,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
 
 function init() {
+
   // 0: fps, 1: ms, 2: mb
   statsFPS.setMode( 0 );
 
@@ -1719,8 +1790,10 @@ function init() {
   $("#loadedScreen" ).click(function() {
     isLoadingInfo = false;
     $("#loadedScreen").fadeOut("slow");
+
     video.play();
     video.pause();
+
     fullscreen();
     insideHelp = false;
     $("#LegDiv").animate({bottom: "+=80px"});
@@ -1925,6 +1998,12 @@ function loadSala() {
     screenReferenceSphere.position.x = -6.160114995658247;
     screenReferenceSphere.position.y = 1.0;
     screenReferenceSphere.position.z = 0.009249939938009306;
+
+
+    //screenReferenceSphere.position.set(screenReferenceSphere.position.x, screenReferenceSphere.position.y, screenReferenceSphere.position.z);
+    screenReferenceSphere.updateMatrixWorld();
+
+    loadWebAudio();
 
   } );
 
@@ -2378,7 +2457,9 @@ function onMouseDown(e) {
     sittingDown = false;
     setupTweenOverview();
 
+    sound.source.stop();
     video.pause();
+    loadWebAudio();
 
     if(!isVR){
       for(var i=0; i<spriteEyeArray.length ; i++)
@@ -2443,6 +2524,38 @@ function update(dt) {
 //
 function animate() {
 
+  if(!isVR)
+  {
+  // Get the camera position.
+  //camera.position.set(newX, newY, newZ);
+  camera.updateMatrixWorld();
+  var p = new THREE.Vector3();
+  p.setFromMatrixPosition(camera.matrixWorld);
+
+  // And copy the position over to the listener.
+  ctx.listener.setPosition(p.x, p.y, p.z);
+
+  var vector = new THREE.Vector3(0, 0, -1);
+  vector.applyEuler(camera.rotation, camera.eulerOrder);
+  ctx.listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
+
+  }
+  else
+  {
+    // Get the camera position.
+    //camera.position.set(newX, newY, newZ);
+    camera.updateMatrixWorld();
+    var p = new THREE.Vector3();
+    p.setFromMatrixPosition(camera.matrixWorld);
+
+    // And copy the position over to the listener.
+    ctx.listener.setPosition(p.x, p.y, p.z);
+
+    var cameraRotation = new THREE.Euler(camera.getWorldDirection().x,camera.getWorldDirection().y,camera.getWorldDirection().z);
+
+    ctx.listener.setOrientation(cameraRotation.x,cameraRotation.y,cameraRotation.z,0,1,0);
+  }
+
   requestAnimationFrame(animate);
   // if we are rendering the loading scene
   if(isLoading)
@@ -2502,6 +2615,7 @@ function changePerspective(x, y, z,obj) {
   || navigator.userAgent.match(/BlackBerry/i)
   || navigator.userAgent.match(/Windows Phone/i)){
     setTimeout(function(){ video.play(); }, 3000);
+    setTimeout(function(){ sound.source.start(); }, 4300);
   }
 
   sittingDown = true;
@@ -2657,6 +2771,9 @@ function setupTweenFP(obj) {
   }).onComplete(function () {
     controls.target = new THREE.Vector3(vectorTeste.x, vectorTeste.y + 0.22, vectorTeste.z);
     controls.center = controls.target;
+
+    /*listener.setPosition(camera.position.x,camera.position.y,camera.position.z);
+    listener.setOrientation(-1,0,0,0,1,0);*/
   }).start();
 
   if(!isVR)
@@ -2749,7 +2866,7 @@ function animateVr() {
 function switchToVr() {
   if (isVR==false) // if we're in cinema overview 3D change to VR view
   {
-    controls = new THREE.DeviceOrientationControls(camera);
+    controls = new THREE.DeviceOrientationControls(camera,true);
     controls.connect();
     renderVR = new THREE.StereoEffect(renderer);
     renderVR.eyeSeparation = 0.01;
