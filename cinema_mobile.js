@@ -475,6 +475,7 @@ THREE.DeviceOrientationControls = function ( object ) {
       var intersections;
 
 
+      raycaster.setFromCamera( mouse2, camera );
 
       // search the raycasted objects in the octree
       octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
