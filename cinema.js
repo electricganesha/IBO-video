@@ -1,6 +1,6 @@
 $.ajax({
   type: "GET",
-  url: "js/three.js",
+  url: "js/three.min.js",
   dataType: "script",
   async: false
 });
