@@ -1,6 +1,6 @@
 $.ajax({
   type: "GET",
-  url: "js/three.js",
+  url: "js/three.min.js",
   dataType: "script",
   async: false
 });
@@ -229,6 +229,58 @@ var materialcadeiraOcupada = new THREE.MeshPhongMaterial( {
   normalMap: texturaCadeiraNormalMap
 });
 
+//WEB AUDIO
+// Detect if the audio context is supported.
+window.AudioContext = (
+  window.AudioContext ||
+  window.webkitAudioContext ||
+  null
+);
+
+var AudioContext = window.AudioContext || window.webkitAudioContext;
+
+if (!AudioContext) {
+  throw new Error("AudioContext not supported!");
+}
+
+navigator.getUserMedia = (navigator.getUserMedia ||
+  navigator.webkitGetUserMedia ||
+  navigator.mozGetUserMedia ||
+  navigator.msGetUserMedia);
+
+  // Create a new audio context.
+  var audioCtx = new AudioContext();
+
+  var panner = audioCtx.createPanner();
+
+  var listener = audioCtx.listener;
+  listener.setPosition(0,0,-5);
+  listener.setOrientation(-1,0,0,0,1,0);
+
+  var gainNode = audioCtx.createGain();
+
+  var source;
+
+
+// WEB AUDIO
+function setupAudioProcessing()
+{
+
+  panner.refDistance = 1;
+  panner.maxDistance = 10000;
+  panner.rolloffFactor = 0.1;
+  panner.coneInnerAngle = 0;
+  panner.coneOuterAngle = 45;
+  panner.coneOuterGain = 1;
+  panner.setPosition(-6,1.5,0);
+  panner.setOrientation(1,0,0);
+
+  source = audioCtx.createMediaElementSource(video);
+  source.connect(panner);
+
+  panner.connect(audioCtx.destination);
+}
+
 // STRUCTURAL / DOM / RENDERER
 
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
@@ -377,6 +429,8 @@ function fullscreen() {
 
 
 function init() {
+
+  setupAudioProcessing();
 
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 15 );
 
@@ -2827,10 +2881,16 @@ function onMouseWheel(e) {
   return false;
 }
 
+var up = new THREE.Vector3(0,1,0);
+
 //
 // main render function (render cycle)
 //
 function animate() {
+
+  var vector = new THREE.Vector3(0, 0, -1);
+  vector.applyEuler(camera.rotation, camera.rotation.order);
+  listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
 
   requestAnimationFrame(animate);
   // if we are rendering the loading scene
@@ -3057,6 +3117,7 @@ function setupTweenFP(obj) {
   },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
 
   }).onComplete(function () {
+    listener.setPosition(camera.position.x,camera.position.y,camera.position.z);
   }).start();
 
   // calculate rotation based on two vectors
