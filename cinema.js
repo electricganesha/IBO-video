@@ -10,7 +10,7 @@ $.ajax({
   url: "js/Octree.js",
   dataType: "script",
   async: false
-}); 
+});
 
 $.ajax({
   type: "GET",
@@ -609,7 +609,7 @@ function init() {
 
   var splashelp = document.createElement('div');
   splashelp.style.color = "white";
-  splashelp.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
+  splashelp.style.backgroundColor= "rgba(0, 0, 0, 1)";
   splashelp.style.width = '350px';
   splashelp.style.textAlign = "center";
   splashelp.style.fontFamily = "osb";
@@ -619,7 +619,7 @@ function init() {
 
   var splashelpbt = document.createElement('div');
   splashelpbt.style.color = "white";
-  splashelpbt.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
+  splashelpbt.style.backgroundColor= "rgba(189, 33, 36, 1)";
   splashelpbt.style.cursor = "pointer";
   splashelpbt.style.width = '50px';
   splashelpbt.style.textAlign = "center";
@@ -641,8 +641,8 @@ function init() {
   splashelpbttext.innerHTML = "?";
   splashelpbttext.style.fontFamily = "osb";
   splashelpbttext.style.fontSize = "32px";
-  splashelpbttext.style.color = "#1bbc9b";
-  splashelpbttext.style.marginTop = "0px";
+  splashelpbttext.style.color = "#FFFFFF";
+  splashelpbttext.style.marginTop = "3px";
 
   var divlefth = document.createElement('div');
   divlefth.style.borderRight = "solid 1px #1bbc9b";
@@ -837,19 +837,6 @@ function showMenuSelect(){
   loading_seats.style.oFilter = "blur(15px)";
   loading_seats.style.msFilter = "blur(15px)";
 
-  /*var textDivLoading = document.createElement('div');
-  textDivLoading.style.color = "white";
-  textDivLoading.style.cursor = "pointer";
-  textDivLoading.innerHTML = "Loading Occupation";
-  textDivLoading.style.width = '50%';
-  textDivLoading.style.textAlign = "center";
-  textDivLoading.style.fontFamily = "osb";
-  textDivLoading.style.fontSize= "50px";
-  textDivLoading.style.position = "absolute";
-  textDivLoading.id = 'textDivLoading';
-  textDivLoading.style.left = '24%';
-  textDivLoading.style.top = '40%';
-  loading_seats.appendChild(textDivLoading);*/
   document.body.appendChild(loading_seats);
   function carregarCinemas() {
     $.ajax({
@@ -877,7 +864,7 @@ function showMenuSelect(){
           dias = data - 1;
           showData.style.pointerEvents = "all";
           showData.style.cursor = "auto";
-          showData.style.color = "#1bbc9b";
+          showData.style.color = "#FFFFFF";
         },
         error:    function(textStatus,errorThrown){
           console.log(textStatus);
@@ -885,26 +872,6 @@ function showMenuSelect(){
         }
       });
     }
-
-  function carregarSessao() {
-    $.ajax({
-      url:        'php/ler_BDSessao.php',
-      dataType:   "json", // <== JSON-P request
-      success:    function(data){
-        sessoesJSON = data;
-        $("#showSessaoDiv").html("");
-        loadSessoes();
-        showSessao.style.pointerEvents = "all";
-        showSessao.style.cursor = "auto";
-        showSessao.style.color = "#1bbc9b";
-      },
-      error:    function(textStatus,errorThrown){
-        console.log(textStatus);
-        console.log(errorThrown);
-      }
-
-    });
-  }
 
   function loadCinemas (){
     for( var p=0 ; p<cinemasJSON.length ; p++){
@@ -923,23 +890,11 @@ function showMenuSelect(){
         this.style.backgroundColor = "#344b5d";
       }
       nome_cinema.onmouseout = function() {
-        this.style.backgroundColor = "#263343";
+        this.style.backgroundColor = "#313131";
       }
       nome_cinema.onclick = function() {
         cinemaSelecionado = this.text;
         nCinemaSelecionado = this.className;
-        showData.text = "Data";
-        showData.appendChild(iconData);
-        $('#iconData').className = 'fa fa-angle-down';
-        showSessao.text = "Sessão";
-        showSessao.appendChild(iconSessao);
-        $('#iconSessao').className = 'fa fa-angle-down';
-        showData.style.pointerEvents = "none";
-        showData.style.cursor = "default";
-        showData.style.color = "#446368";
-        showSessao.style.pointerEvents = "none";
-        showSessao.style.cursor = "default";
-        showSessao.style.color = "#446368";
         carregarData();
         showDivCinemas.text = cinemaSelecionado;
         showDivCinemas.appendChild(icon);
@@ -1410,7 +1365,7 @@ function showMenuSelect(){
   divInfo.style.height = '100%';
   divInfo.style.padding = '0';
   divInfo.style.position = "absolute";
-  divInfo.style.background = '#2d3e50';
+  divInfo.style.background = '#757575';
   divInfo.id = 'menuInfo';
   divInfo.setAttribute('class', 'menuInfo');
   divInfo.style.right = '0';
@@ -1420,13 +1375,14 @@ function showMenuSelect(){
   var showDivCinemas = document.createElement("a");
   showDivCinemas.href = "#";
   showDivCinemas.style.display = "block";
-  showDivCinemas.style.height = '25px';
+  showDivCinemas.style.height = '30px';
   showDivCinemas.style.width = "100%";
-  showDivCinemas.style.marginTop = "5px";
-  showDivCinemas.style.borderBottom = "solid 2px #344b5d";
+  showDivCinemas.style.paddingTop = "5px";
+  showDivCinemas.style.borderBottom = "solid 1px #727272";
   showDivCinemas.id = "showDivCinemas";
-  showDivCinemas.style.color = "#1bbc9b";
-  showDivCinemas.text = "Escolha o Cinema";
+  showDivCinemas.style.color = "#FFFFFF";
+  showDivCinemas.style.backgroundColor = '#151314';
+  showDivCinemas.text = "Escolha o Evento";
   showDivCinemas.style.fontFamily = "ossb";
   showDivCinemas.style.textDecoration = "none";
   showDivCinemas.onclick = function() {
@@ -1465,177 +1421,11 @@ function showMenuSelect(){
   showCinemas.style.width = "100%";
   showCinemas.id = "showCinemas";
   showCinemas.style.textAlign = "left";
-  showCinemas.style.backgroundColor = "#263343";
-  showCinemas.text = "Escolha o Cinema";
+  showCinemas.style.backgroundColor = "#313131";
   showCinemas.style.fontFamily = "ossb";
   showCinemas.style.overflowY = "auto";
 
   carregarCinemas();
-
-  // create link to show the calendar
-  var showData = document.createElement("a");
-  showData.href = "#";
-  showData.style.pointerEvents = "none";
-  showData.style.cursor = "default";
-  showData.style.float = "left";
-  showData.style.height = '30px';
-  showData.style.width = "33.2%";
-  showData.style.borderRight = "solid 2px #344b5d";
-  showData.id = "showData";
-  showData.style.color = "#446368";
-  showData.innerHTML = "Data";
-  showData.style.fontFamily = "ossb";
-  showData.style.textDecoration = "none";
-  showData.onclick = function() {
-    $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    if (slidedowndata == false){
-      $('#showDataDiv').datepicker('destroy');
-      if (slidedown == true) {
-        $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
-        $('#showCinemas').slideUp();
-        slidedown = false;
-      }
-      if (slidedownsessao == false){
-        $('#showDataDiv').slideDown();
-        slidedowndata = true;
-        $('#showDataDiv').datepicker({
-          inline: true,
-          minDate: 0,
-          maxDate: "+" + dias + "D",
-          dateFormat: 'd M',
-          onSelect: function(dateText, inst) {
-            carregarSessao();
-            showData.text = $(this).val();
-            showData.appendChild(iconData);
-            $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-            $('#showDataDiv').slideUp();
-            slidedowndata = false;
-            showSessao.style.pointerEvents = "all";
-            showSessao.style.cursor = "auto";
-            showSessao.style.color = "#1bbc9b";
-          }
-        });
-      }else{
-        $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-        $('#showSessaoDiv').slideUp();
-        slidedownsessao = false;
-        $('#showDataDiv').slideDown();
-        slidedowndata = true;
-        $('#showDataDiv').datepicker({
-          inline: true,
-          minDate: 0,
-          maxDate: "+" + dias + "D",
-          dateFormat: 'd M',
-          onSelect: function(dateText, inst) {
-            carregarSessao();
-            showData.text = $(this).val();
-            showData.appendChild(iconData);
-            $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-            $('#showDataDiv').slideUp();
-            slidedowndata = false;
-            showSessao.style.pointerEvents = "all";
-            showSessao.style.cursor = "auto";
-            showSessao.style.color = "#1bbc9b";
-          }
-        });
-      }
-    }else{
-      $('#showDataDiv').slideUp();
-      slidedowndata = false;
-    }
-  }
-
-  // create icon for link show calendar
-  var iconData = document.createElement("i");
-  iconData.className = "fa fa-angle-down";
-  iconData.style.float = "right";
-  iconData.id ="iconData";
-  iconData.style.marginRight = "10px";
-  iconData.style.marginTop = "4px";
-
-  // create div that contain the calendar
-  var showDataDiv = document.createElement("div");
-  showDataDiv.style.display = "none";
-  showDataDiv.style.height = '190px';
-  showDataDiv.style.width = "100%";
-  showDataDiv.id = "showDataDiv";
-  showDataDiv.style.textAlign = "left";
-  showDataDiv.style.backgroundColor = "#263343";
-  showDataDiv.style.marginTop = "-30px";
-  showDataDiv.style.fontFamily = "ossb";
-  showDataDiv.style.textAlign = "center";
-  showDataDiv.style.overflowY = "hidden";
-
-  // create link to show the session
-  var showSessao = document.createElement("a");
-  showSessao.href = "#";
-  showSessao.style.pointerEvents = "none";
-  showSessao.style.cursor = "default";
-  showSessao.style.display = "inline-block";
-  showSessao.style.height = '30px';
-  showSessao.style.width = "32%";
-  showSessao.style.borderRight = "solid 2px #344b5d";
-  showSessao.id = "showSessao";
-  showSessao.style.color = "#446368";
-  showSessao.text = "Sessão";
-  showSessao.style.fontFamily = "ossb";
-  showSessao.style.textDecoration = "none";
-  showSessao.onclick = function() {
-    $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    if (slidedownsessao == false){
-      if (slidedown == true) {
-        $('#icon').toggleClass('fa fa-angle-down fa fa-angle-up');
-        $('#showCinemas').slideUp();
-        slidedown = false;
-      }
-      if (slidedowndata == false){
-        $('#showSessaoDiv').slideDown();
-        slidedownsessao = true;
-      }else{
-        $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-        $('#showDataDiv').slideUp();
-        slidedowndata = false;
-        $('#showSessaoDiv').slideDown();
-        slidedownsessao = true;
-      }
-    }else{
-      $('#showSessaoDiv').slideUp();
-      slidedownsessao = false;
-    }
-  }
-
-  // create icon for link show sessao
-  var iconSessao = document.createElement("i");
-  iconSessao.className = "fa fa-angle-down";
-  iconSessao.style.float = "right";
-  iconSessao.id ="iconSessao";
-  iconSessao.style.marginRight = "10px";
-  iconSessao.style.marginTop = "4px";
-
-  // create div that contain the hour
-  var showSessaoDiv = document.createElement("div");
-  showSessaoDiv.style.display = "none";
-  showSessaoDiv.style.height = '50px';
-  showSessaoDiv.style.width = "100%";
-  showSessaoDiv.id = "showSessaoDiv";
-  showSessaoDiv.style.backgroundColor = "#263343";
-  showSessaoDiv.style.fontFamily = "ossb";
-  showSessaoDiv.style.overflowY = "hidden";
-
-  // create element for Room Number
-  var showRoomNumber = document.createElement("a");
-  showRoomNumber.href = "#";
-  showRoomNumber.style.pointerEvents = "none";
-  showRoomNumber.style.cursor = "default";
-  showRoomNumber.style.float = "right";
-  showRoomNumber.style.display = "inline-block";
-  showRoomNumber.style.height = '30px';
-  showRoomNumber.style.width = "33.2%";
-  showRoomNumber.id = "showRoomNumber";
-  showRoomNumber.style.color = "#1bbc9b";
-  showRoomNumber.text = "Sala 2";
-  showRoomNumber.style.fontFamily = "ossb";
-  showRoomNumber.style.textDecoration = "none";
 
   // create red element for display seats
   var bannerSeats = document.createElement("p");
@@ -1643,7 +1433,7 @@ function showMenuSelect(){
   bannerSeats.innerHTML = "Lugares";
   bannerSeats.style.width = "100%";
   bannerSeats.style.height = "20px";
-  bannerSeats.style.backgroundColor = "#e54b65";
+  bannerSeats.style.backgroundColor = "#BD2124";
   bannerSeats.style.display = "inline-block";
   bannerSeats.style.fontFamily = "ossb";
   bannerSeats.style.lineHeight ="80%";
@@ -1659,7 +1449,7 @@ function showMenuSelect(){
   selectLugares.style.width = "100%";
   selectLugares.id = "selectLugares";
   selectLugares.style.marginTop = "-14px";
-  selectLugares.style.backgroundColor = "#263343";
+  selectLugares.style.backgroundColor = "#313131";
   selectLugares.style.overflowY = "auto";
 
   var total = document.createElement("p");
@@ -1729,20 +1519,6 @@ function showMenuSelect(){
     document.location.href = "resultados.php";
   },false);
 
-  // create div that contain the advertise
-  var pub = document.createElement("div");
-  pub.style.height = '250px';
-  pub.style.width = "100%";
-  pub.id = "divImagem";
-  pub.style.bottom = "150px";
-  pub.style.right = "0";
-  pub.style.position = "absolute";
-
-  var imgPub = document.createElement("img");
-  imgPub.id = "imagem";
-  imgPub.style.height = '100%';
-  imgPub.style.width = "90%";
-
   divInfoMovie.appendChild(logoCinema);
   divInfoMovie.appendChild(movieName);
   divInfoMovie.appendChild(movieInfo);
@@ -1752,25 +1528,12 @@ function showMenuSelect(){
   showDivCinemas.appendChild(icon);
   divInfo.appendChild(showCinemas);
 
-  showData.appendChild(iconData);
-  showSessao.appendChild(iconSessao);
-
-  divInfo.appendChild(showData);
-  divInfo.appendChild(showRoomNumber);
-  divInfo.appendChild(showSessao);
-
-  divInfo.appendChild(showDataDiv);
-  divInfo.appendChild(showSessaoDiv);
-
   divInfo.appendChild(bannerSeats);
   divInfo.appendChild(selectLugares);
   divInfo.appendChild(total);
   divInfo.appendChild(btnComprar);
-  pub.appendChild(imgPub);
-  divInfo.appendChild(pub);
   document.body.appendChild(iDiv);
   document.getElementById("logoCinema").src="img/logo.png";
-  document.getElementById("imagem").src="img/imagem.png";
 
   $('#menuSelect').bind('mouseenter' ,"*", function(e){
     mouseIsOnMenu = true;
@@ -2560,9 +2323,9 @@ function onMouseDown(e) {
           showDivPreco.style.marginBottom = "5px";
           showDivPreco.id = "showDivPreco";
           showDivPreco.style.color = "#FFF";
-          showDivPreco.style.backgroundColor = "#243141";
-          showDivPreco.innerHTML = "Normal: <b>6,95 EUR</b>";
-          containerDiv.className = "normal";
+          showDivPreco.style.backgroundColor = "#313131";
+          showDivPreco.innerHTML = "<b>Free&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--</b>";
+          containerDiv.className = "free";
           showDivPreco.style.fontFamily = "osl";
           showDivPreco.style.textDecoration = "none";
           showDivPreco.onclick = function() {
@@ -2611,29 +2374,29 @@ function onMouseDown(e) {
           // create div that contain the list of prices
           var showPreco = document.createElement("div");
           showPreco.style.display = "none";
-          showPreco.style.height = '100px';
+          showPreco.style.height = '80px';
           showPreco.style.width = "100%";
           showPreco.id = "showPreco_"+obj.name;
           showPreco.style.textAlign = "left";
-          showPreco.style.backgroundColor = "#243141";
+          showPreco.style.backgroundColor = "#313131";
           showPreco.style.fontFamily = "ossb";
           showPreco.style.overflowY = "auto";
 
           var normal = document.createElement("a");
           normal.href = "#";
-          normal.innerHTML = "Normal: <b>6,95 EUR</b>";
+          normal.innerHTML = "<b>Free&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--</b>";
           normal.style.fontFamily = "osl";
           normal.style.textDecoration = "none";
           normal.style.color = "#FFF";
-          normal.className = "normal";
+          normal.className = "free";
           normal.style.display = "block";
           normal.style.width = "90%";
           normal.style.paddingLeft = "10%";
           normal.onmouseover = function() {
-            this.style.backgroundColor = "#344b5d";
+            this.style.backgroundColor = "#4c4c4c";
           }
           normal.onmouseout = function() {
-            this.style.backgroundColor = "#263343";
+            this.style.backgroundColor = "#313131";
           }
           normal.onclick = function() {
             precotxtSelecionado = this.innerHTML;
@@ -2645,54 +2408,27 @@ function onMouseDown(e) {
             slidedownpreco = false;
             calculaTotal(0);
           }
-
-          var estudante = document.createElement("a");
-          estudante.href = "#";
-          estudante.innerHTML = "Estudante: <b>6,05 EUR</b>";
-          estudante.style.fontFamily = "osl";
-          estudante.style.textDecoration = "none";
-          estudante.style.color = "#FFF";
-          estudante.className = "estudante";
-          estudante.style.display = "block";
-          estudante.style.width = "90%";
-          estudante.style.paddingLeft = "10%";
-          estudante.onmouseover = function() {
-            this.style.backgroundColor = "#344b5d";
+//<b>VIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;€10</b>
+          var vip = document.createElement("a");
+          vip.href = "#";
+          vip.innerHTML = "<b>VIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;€10</b>";
+          vip.style.fontFamily = "osl";
+          vip.style.textDecoration = "none";
+          vip.style.color = "#FFF";
+          vip.className = "executive";
+          vip.style.display = "block";
+          vip.style.width = "90%";
+          vip.style.paddingLeft = "10%";
+          vip.onmouseover = function() {
+            this.style.backgroundColor = "#4c4c4c";
           }
-          estudante.onmouseout = function() {
-            this.style.backgroundColor = "#263343";
+          vip.onmouseout = function() {
+            this.style.backgroundColor = "#313131";
           }
-          estudante.onclick = function() {
+          vip.onclick = function() {
             precotxtSelecionado = this.innerHTML;
             showDivPreco.innerHTML = precotxtSelecionado;
-            containerDiv.className = estudante.className;
-            showDivPreco.appendChild(iconDivPreco);
-            $(showDivPreco).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-            $('#showPreco_'+obj.name).slideUp();
-            slidedownreco = false;
-            calculaTotal(0);
-          }
-
-          var senior = document.createElement("a");
-          senior.href = "#";
-          senior.innerHTML = "Senior: <b>6,05 EUR</b>";
-          senior.style.fontFamily = "osl";
-          senior.style.textDecoration = "none";
-          senior.style.color = "#FFF";
-          senior.className = "senior";
-          senior.style.display = "block";
-          senior.style.width = "90%";
-          senior.style.paddingLeft = "10%";
-          senior.onmouseover = function() {
-            this.style.backgroundColor = "#344b5d";
-          }
-          senior.onmouseout = function() {
-            this.style.backgroundColor = "#263343";
-          }
-          senior.onclick = function() {
-            precotxtSelecionado = this.innerHTML;
-            showDivPreco.innerHTML = precotxtSelecionado;
-            containerDiv.className = senior.className;
+            containerDiv.className = vip.className;
             showDivPreco.appendChild(iconDivPreco);
             $(showDivPreco).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
             $('#showPreco_'+obj.name).slideUp();
@@ -2700,26 +2436,26 @@ function onMouseDown(e) {
             calculaTotal(0);
           }
 
-          var crianca10 = document.createElement("a");
-          crianca10.href = "#";
-          crianca10.innerHTML = "Criança até 10 anos: <b>6,05 EUR</b>";
-          crianca10.style.fontFamily = "osl";
-          crianca10.style.textDecoration = "none";
-          crianca10.style.color = "#FFF";
-          crianca10.className = "crianca";
-          crianca10.style.display = "block";
-          crianca10.style.width = "90%";
-          crianca10.style.paddingLeft = "10%";
-          crianca10.onmouseover = function() {
-            this.style.backgroundColor = "#344b5d";
+          var executive = document.createElement("a");
+          executive.href = "#";
+          executive.innerHTML = "<b>Executive&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;€5</b>";
+          executive.style.fontFamily = "osl";
+          executive.style.textDecoration = "none";
+          executive.style.color = "#FFF";
+          executive.className = "executive";
+          executive.style.display = "block";
+          executive.style.width = "90%";
+          executive.style.paddingLeft = "10%";
+          executive.onmouseover = function() {
+            this.style.backgroundColor = "#4c4c4c";
           }
-          crianca10.onmouseout = function() {
-            this.style.backgroundColor = "#263343";
+          executive.onmouseout = function() {
+            this.style.backgroundColor = "#313131";
           }
-          crianca10.onclick = function() {
+          executive.onclick = function() {
             precotxtSelecionado = this.innerHTML;
             showDivPreco.innerHTML = precotxtSelecionado;
-            containerDiv.className = crianca10.className;
+            containerDiv.className = executive.className;
             showDivPreco.appendChild(iconDivPreco);
             $(showDivPreco).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
             $('#showPreco_'+obj.name).slideUp();
@@ -2728,9 +2464,8 @@ function onMouseDown(e) {
           }
 
           showPreco.appendChild(normal);
-          showPreco.appendChild(estudante);
-          showPreco.appendChild(senior);
-          showPreco.appendChild(crianca10);
+          showPreco.appendChild(vip);
+          showPreco.appendChild(executive);
 
           containerDiv.appendChild(textContainer);
           containerDiv.appendChild(perspectiveLink);
@@ -3221,21 +2956,17 @@ function calculaTotal(valorInicial) {
 
     switch(retrievedClass)
     {
-      case("normal"):
-      total += 6.95;
-      selectedChairs[i].class = "normal";
+      case("free"):
+      total += 0;
+      selectedChairs[i].class = "free";
       break;
-      case("estudante"):
-      total += 6.05;
-      selectedChairs[i].class = "estudante";
+      case("vip"):
+      total += 10;
+      selectedChairs[i].class = "vip";
       break;
-      case("senior"):
-      total += 6.05;
-      selectedChairs[i].class = "senior";
-      break;
-      case("crianca"):
-      total += 6.05;
-      selectedChairs[i].class = "crianca";
+      case("executive"):
+      total += 5;
+      selectedChairs[i].class = "executive";
       break;
     }
   }
