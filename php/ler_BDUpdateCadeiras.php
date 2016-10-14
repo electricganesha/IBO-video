@@ -1,7 +1,7 @@
 <?php
 	$dados = $_POST['dados'];
 	$dadosdecode = json_decode($dados, true);
-	$mysqli = new mysqli('localhost', 'cinema', 'cinema', 'bd_cinema');
+	$mysqli = new mysqli('eu-cdbr-azure-west-d.cloudapp.net', 'b30cd661f2834b', 'e8c9e5be', 'bd_cinema');
 	for ($i=1; $i<= count($dadosdecode); $i++){
 		$n_sessao = $dadosdecode[$i][sessao];
 		$n_fila = $dadosdecode[$i][fila];

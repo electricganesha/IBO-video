@@ -208,26 +208,23 @@ var materialcadeiraOcupadaMobile = new THREE.MeshBasicMaterial( {
   map: texturaCadeiraOcupada,
 });
 
-// Detect if the audio context is supported.
-window.AudioContext = (
-  window.AudioContext ||
-  window.webkitAudioContext ||
-  null
-);
-
-if (!AudioContext) {
-  throw new Error("AudioContext not supported!");
-}
-else {
-  var ctx = new AudioContext();
-}
-
 // Create a new audio context.
 var sound = {};
-
+var ctx = new AudioContext();
 
 function loadWebAudio()
 {
+  // Detect if the audio context is supported.
+  window.AudioContext = (
+    window.AudioContext ||
+    window.webkitAudioContext ||
+    null
+  );
+
+  if (!AudioContext) {
+    throw new Error("AudioContext not supported!");
+  }
+
   // Create an object with a sound source and a volume control.
   sound.source = ctx.createBufferSource();
   sound.volume = ctx.createGain();
@@ -478,7 +475,6 @@ THREE.DeviceOrientationControls = function ( object ) {
       var intersections;
 
 
-      raycaster.setFromCamera( mouse2, camera );
 
       // search the raycasted objects in the octree
       octreeObjects = octree.search( raycaster.ray.origin, raycaster.ray.far, true, raycaster.ray.direction );
