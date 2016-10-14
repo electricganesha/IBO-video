@@ -10,7 +10,7 @@ $.ajax({
   url: "js/Octree.js",
   dataType: "script",
   async: false
-});
+}); 
 
 $.ajax({
   type: "GET",
