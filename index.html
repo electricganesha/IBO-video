@@ -101,7 +101,7 @@
   <body>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/jquery-ui.js"></script>
-
+    <script src="js/peer.js"></script>
     <script>
     function detectmob() {
       if( navigator.userAgent.match(/Android/i)
@@ -120,13 +120,13 @@
     }
 
     if (detectmob()){
-      document.write('<video id="video" loop style="display:none" preload="none" muted> <source src="video\/pushshowreel.mp4" type="video\/mp4"><\/video>')
+      document.write('<video id="video" loop style="display:none" preload="none" muted><source src="video\/pushshowreel.mp4" type="video\/mp4"><\/video>')
       document.write("<script src='cinema_mobile.js'><\/script>");
     }else{
-      document.write('<video id="video" loop style="display:none" preload="none"> <source src="video\/pushshowreel.mp4" type="video\/mp4"><\/video>')
+      document.write('<video id="video" style="display:none"><\/video>')
       document.write("<script src='cinema.js'><\/script>");
     }
-    </script> 
+    </script>
   </body>
 
 </html>

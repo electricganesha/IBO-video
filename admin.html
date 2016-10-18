@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset=utf-8>
+    <title>PUSH IBO - Immersive Box Office</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" href="css/font-awesome.css">
+  </head>
+
+  <body>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/peer.js"></script>
+    <video id="video1" autoplay></video>
+    <script>
+    var video = document.getElementById( 'video1' );
+
+    var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
+
+    var peer = new Peer({key: '1yy04g33loqd7vi'});
+    peer.on('open', function(id) {
+      console.log('My peer ID is: ' + id);
+    });
+
+    peer.on('connection', function(conn) {
+      navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+      if (navigator.getUserMedia) {
+          navigator.getUserMedia({video: true, audio: true}, function(stream) {
+            peer.on('call', function(call) {
+              call.answer(stream);
+            });
+            video.srcObject = stream;
+          }, function(err) {
+            console.log('Failed to get local stream' ,err);
+          });
+      };
+    });
+
+    </script>
+  </body>
+
+</html>

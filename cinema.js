@@ -78,10 +78,38 @@ var texturaBraco = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diff
 var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
 
 var video = document.getElementById( 'video' );
+var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
+
 textureVideo = new THREE.VideoTexture( video );
+textureVideo.generateMipmaps = false;
 textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
-textureVideo.format = THREE.RGBFormat;
+//textureVideo.format = THREE.RGBFormat;
+var peer = new Peer({key: '1yy04g33loqd7vi'});
+
+var conn = peer.connect('f8e1i7ne6juac3di');
+
+conn.on('open', function() {
+  navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+  if (navigator.getUserMedia) {
+      navigator.getUserMedia({video: true, audio: true}, function(stream) {
+        var call = peer.call('f8e1i7ne6juac3di', stream);
+        call.on('stream', function(remoteStream) {
+          video.srcObject = remoteStream;
+        });
+      }, function(err) {
+        console.log('Failed to get local stream' ,err);
+      });
+  };
+});
+
+
+/*navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+if (navigator.getUserMedia) {
+    navigator.getUserMedia({video:true, audio: true}, function(stream) {
+        video.srcObject = stream;
+    }, function (){console.warn("Error getting audio stream from getUserMedia")});
+};*/
 
 // BOOLEANS
 
@@ -785,8 +813,8 @@ function init() {
   $("#loadedScreen").fadeIn("slow");
   $("#loadedScreen" ).click(function() {
     $("#loadedScreen").fadeOut("slow");
-    video.play();
-    video.pause();
+    //video.play();
+    //video.pause();
     insideHelp = false;
     $("#legenda").animate({"marginTop": '-=100px'});
     $("#splashelp").animate({"left": '+=50px'});
@@ -1018,7 +1046,7 @@ function showMenuSelect(){
   legEsq.style.float = "left";
   legEsq.style.textAlign = "center";
   legEsq.style.height = '100px';
-  legEsq.style.background = '#1cbb9b';
+  legEsq.style.background = '#5d5d5d';
   legEsq.style.borderRadius = "10px";
   legEsq.id = 'legEsq';
   legEsq.className = 'legEsq';
@@ -1042,7 +1070,7 @@ function showMenuSelect(){
   legMid.style.textAlign = "center";
   legMid.style.height = '200px';
   legMid.style.marginLeft = '25px';
-  legMid.style.background = '#243141';
+  legMid.style.background = '#2f2f2f';
   legMid.style.borderRadius = "10px";
   legMid.id = 'legMid';
   // create legend for cinema
@@ -1051,7 +1079,7 @@ function showMenuSelect(){
   legDir.style.float = "right";
   legDir.style.textAlign = "center";
   legDir.style.height = '200px';
-  legDir.style.background = '#1cbb9b';
+  legDir.style.background = '#5d5d5d';
   legDir.style.borderRadius = "10px";
   legDir.id = 'legDir';
   legDir.onclick = function() {
@@ -1217,7 +1245,7 @@ function showMenuSelect(){
 
   var pcapacity = document.createElement('p');
   pcapacity.innerHTML = "Capacidade:";
-  pcapacity.style.color = "#1cbb9b";
+  pcapacity.style.color = "#7a7a7a";
   pcapacity.style.fontSize = "17px";
   pcapacity.style.fontFamily = "osb";
   pcapacity.style.float = "left";
@@ -1249,7 +1277,7 @@ function showMenuSelect(){
 
   var pfreeseats = document.createElement('p');
   pfreeseats.innerHTML = "Lugares livres:";
-  pfreeseats.style.color = "#1cbb9b";
+  pfreeseats.style.color = "#7a7a7a";
   pfreeseats.style.fontSize = "17px";
   pfreeseats.style.fontFamily = "osb";
   pfreeseats.style.float = "left";
@@ -1328,7 +1356,7 @@ function showMenuSelect(){
   // create div for collect information about movie
   var divInfoMovie = document.createElement('div');
   divInfoMovie.style.width = '100%';
-  divInfoMovie.style.height = '150px';
+  divInfoMovie.style.height = '170px';
   divInfoMovie.style.padding = '0';
   divInfoMovie.style.position = "absolute";
   divInfoMovie.style.background = '#FFF';
@@ -1341,23 +1369,16 @@ function showMenuSelect(){
   logoCinema.id = "logoCinema";
   logoCinema.style.marginTop = "3%";
 
-  // create element for name of movie
-  var movieName = document.createElement("p");
-  movieName.id = "movieName";
-  movieName.innerHTML = "Deadpool | 3D";
-  movieName.style.fontFamily = "osb";
-  movieName.style.lineHeight ="80%";
-  movieName.style.color = "#243141";
-  movieName.style.fontSize = "18px";
 
   // create element for info of movie
   var movieInfo = document.createElement("p");
   movieInfo.id = "movieInfo";
-  movieInfo.innerHTML = "Acção, Aventura, Comedia | M/14";
-  movieInfo.style.fontFamily = "osr";
+  movieInfo.innerHTML = "imersive theatrical experience";
+  movieInfo.style.fontFamily = "osb";
   movieInfo.style.lineHeight ="80%";
   movieInfo.style.color = "#243141";
-  movieInfo.style.fontSize = "14px";
+  movieInfo.style.fontSize = "16px";
+  movieInfo.style.marginTop = "10px";
 
   // create div for collect information
   var divInfo = document.createElement('div');
@@ -1369,7 +1390,7 @@ function showMenuSelect(){
   divInfo.id = 'menuInfo';
   divInfo.setAttribute('class', 'menuInfo');
   divInfo.style.right = '0';
-  divInfo.style.top = '150px';
+  divInfo.style.top = '170px';
 
   // create link to show the cinemas
   var showDivCinemas = document.createElement("a");
@@ -1378,7 +1399,6 @@ function showMenuSelect(){
   showDivCinemas.style.height = '30px';
   showDivCinemas.style.width = "100%";
   showDivCinemas.style.paddingTop = "5px";
-  showDivCinemas.style.borderBottom = "solid 1px #727272";
   showDivCinemas.id = "showDivCinemas";
   showDivCinemas.style.color = "#FFFFFF";
   showDivCinemas.style.backgroundColor = '#151314';
@@ -1520,7 +1540,6 @@ function showMenuSelect(){
   },false);
 
   divInfoMovie.appendChild(logoCinema);
-  divInfoMovie.appendChild(movieName);
   divInfoMovie.appendChild(movieInfo);
   iDiv.appendChild(divInfoMovie);
   iDiv.appendChild(divInfo);
@@ -1533,7 +1552,7 @@ function showMenuSelect(){
   divInfo.appendChild(total);
   divInfo.appendChild(btnComprar);
   document.body.appendChild(iDiv);
-  document.getElementById("logoCinema").src="img/logo.png";
+  document.getElementById("logoCinema").src="img/p4p.png";
 
   $('#menuSelect').bind('mouseenter' ,"*", function(e){
     mouseIsOnMenu = true;
@@ -2408,14 +2427,13 @@ function onMouseDown(e) {
             slidedownpreco = false;
             calculaTotal(0);
           }
-//<b>VIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;€10</b>
           var vip = document.createElement("a");
           vip.href = "#";
           vip.innerHTML = "<b>VIP&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;€10</b>";
           vip.style.fontFamily = "osl";
           vip.style.textDecoration = "none";
           vip.style.color = "#FFF";
-          vip.className = "executive";
+          vip.className = "vip";
           vip.style.display = "block";
           vip.style.width = "90%";
           vip.style.paddingLeft = "10%";
@@ -2626,7 +2644,6 @@ function animate() {
   var vector = new THREE.Vector3(0, 0, -1);
   vector.applyEuler(camera.rotation, camera.rotation.order);
   listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
-
   requestAnimationFrame(animate);
   // if we are rendering the loading scene
   if(isLoading)
@@ -2717,7 +2734,7 @@ function changePerspective(x, y, z,obj) {
     clickhelpbt = false;
   }
   $("#menuSelect").animate({"right": '-=300px'});
-  setTimeout(function(){ video.play(); }, 2000);
+  //setTimeout(function(){ video.play(); }, 2000);
   sittingDown = true;
 
   lastCameraPositionBeforeTween = new THREE.Vector3(camera.position.x,camera.position.y,camera.position.z);
@@ -2953,7 +2970,6 @@ function calculaTotal(valorInicial) {
   {
     var retrievedSelector = $("#"+selectedChairs[i].name);
     var retrievedClass = retrievedSelector.attr('class');
-
     switch(retrievedClass)
     {
       case("free"):
