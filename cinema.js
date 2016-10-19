@@ -78,6 +78,8 @@ var texturaBraco = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diff
 var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
 
 var video = document.getElementById( 'video' );
+var audio = document.getElementById('audio');
+
 var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
 
 textureVideo = new THREE.VideoTexture( video );
@@ -85,22 +87,54 @@ textureVideo.generateMipmaps = false;
 textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
 //textureVideo.format = THREE.RGBFormat;
+
 var peer = new Peer({key: '1yy04g33loqd7vi'});
-
-var conn = peer.connect('f8e1i7ne6juac3di');
-
-conn.on('open', function() {
-  navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
-  if (navigator.getUserMedia) {
-      navigator.getUserMedia({video: true, audio: true}, function(stream) {
-        var call = peer.call('f8e1i7ne6juac3di', stream);
-        call.on('stream', function(remoteStream) {
-          video.srcObject = remoteStream;
-        });
-      }, function(err) {
-        console.log('Failed to get local stream' ,err);
-      });
-  };
+var id;
+$.ajax({
+  url: 'php/get_id.php',
+  dataType: "text",
+  success:function(data){
+    id = data;
+    var conn = peer.connect(id);
+    conn.on('open', function() {
+      navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+      if (navigator.getUserMedia) {
+          navigator.getUserMedia({video: true, audio: true}, function(stream) {
+            console.log(id);
+            var call = peer.call(id, stream);
+            call.on('stream', function(remoteStream) {
+              video.src = window.URL.createObjectURL(remoteStream);
+              audio.src = window.URL.createObjectURL(remoteStream);
+              audio.onloadedmetadata = function(e){
+                  console.log('now playing the audio');
+                  audio.play();
+              }
+            });
+          }, function(err) {
+            console.log('Failed to get local stream' ,err);
+          });
+      } if (navigator.mozGetUserMedia) {
+          navigator.mediaDevices.getUserMedia({video: true, audio: false}, function(stream) {
+            console.log(id);
+            var call = peer.call(id, stream);
+            call.on('stream', function(remoteStream) {
+              video.src = window.URL.createObjectURL(remoteStream);
+              audio.src = window.URL.createObjectURL(remoteStream);
+              audio.onloadedmetadata = function(e){
+                  console.log('now playing the audio');
+                  audio.play();
+              }
+            });
+          }, function(err) {
+            console.log('Failed to get local stream' ,err);
+          });
+      };
+    });
+  },
+  error:function(textStatus,errorThrown){
+    console.log(textStatus);
+    console.log(errorThrown);
+  }
 });
 
 
@@ -209,7 +243,6 @@ var deviceOrientationSelectedPoint;
 var screenReferenceSphere; // the sphere (invisible) located in the middle of the screen, to lookAt
 
 var updateFcts = []; // the array with the video frames
-var video; // the video canvas
 var plane; // the video screen
 
 
@@ -256,58 +289,6 @@ var materialcadeiraOcupada = new THREE.MeshPhongMaterial( {
   map: texturaCadeiraOcupada,
   normalMap: texturaCadeiraNormalMap
 });
-
-//WEB AUDIO
-// Detect if the audio context is supported.
-window.AudioContext = (
-  window.AudioContext ||
-  window.webkitAudioContext ||
-  null
-);
-
-var AudioContext = window.AudioContext || window.webkitAudioContext;
-
-if (!AudioContext) {
-  throw new Error("AudioContext not supported!");
-}
-
-navigator.getUserMedia = (navigator.getUserMedia ||
-  navigator.webkitGetUserMedia ||
-  navigator.mozGetUserMedia ||
-  navigator.msGetUserMedia);
-
-  // Create a new audio context.
-  var audioCtx = new AudioContext();
-
-  var panner = audioCtx.createPanner();
-
-  var listener = audioCtx.listener;
-  listener.setPosition(0,0,-5);
-  listener.setOrientation(-1,0,0,0,1,0);
-
-  var gainNode = audioCtx.createGain();
-
-  var source;
-
-
-// WEB AUDIO
-function setupAudioProcessing()
-{
-
-  panner.refDistance = 1;
-  panner.maxDistance = 10000;
-  panner.rolloffFactor = 0.1;
-  panner.coneInnerAngle = 0;
-  panner.coneOuterAngle = 45;
-  panner.coneOuterGain = 1;
-  panner.setPosition(-6,1.5,0);
-  panner.setOrientation(1,0,0);
-
-  source = audioCtx.createMediaElementSource(video);
-  source.connect(panner);
-
-  panner.connect(audioCtx.destination);
-}
 
 // STRUCTURAL / DOM / RENDERER
 
@@ -458,8 +439,6 @@ function fullscreen() {
 
 function init() {
 
-  setupAudioProcessing();
-
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 15 );
 
   camera.position.x = -6.160114995658247;
@@ -536,14 +515,14 @@ function init() {
 	divMain.style.transform = "translateY(-50%)";
 
   var divtexto1 = document.createElement('div');
-  divtexto1.style.borderBottom = "solid 1px #1bbc9b";
+  divtexto1.style.borderBottom = "solid 1px #5d5d5d";
   divtexto1.style.width = "35%";
   divtexto1.style.paddingTop = "15px";
   divtexto1.style.height = "65px";
   divtexto1.style.margin = "auto";
 
   var textowelcome = document.createElement('p');
-  textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
+  textowelcome.innerHTML = "Bem Vindo à <b><span style='color:#bd2124'>PLAY 4 POVERTY</span></b>";
   textowelcome.style.fontFamily = "osr";
   textowelcome.style.fontSize = "23px";
 
@@ -557,7 +536,7 @@ function init() {
   textoapre.style.fontSize = "14px";
 
   var divleft = document.createElement('div');
-  divleft.style.borderRight = "solid 1px #1bbc9b";
+  divleft.style.borderRight = "solid 1px #5d5d5d";
   divleft.style.width = "33.2%";
   divleft.style.marginTop = "50px";
   divleft.style.float = "left";
@@ -567,7 +546,7 @@ function init() {
   divlefttext.innerHTML = "Para navegar mova o cursor";
   divlefttext.style.fontFamily = "osr";
   divlefttext.style.fontSize = "14px";
-  divlefttext.style.color = "#1bbc9b";
+  divlefttext.style.color = "white";
 
   var divleftimg = document.createElement('img');
   divleftimg.id = "divleftimg";
@@ -575,7 +554,7 @@ function init() {
 
 
   var divmid = document.createElement('div');
-  divmid.style.borderRight = "solid 1px #1bbc9b";
+  divmid.style.borderRight = "solid 1px #5d5d5d";
   divmid.style.width = "33.2%";
   divmid.style.marginTop = "50px";
   divmid.style.float = "left";
@@ -585,7 +564,7 @@ function init() {
   divmidtext.innerHTML = "Faça zoom com a roda";
   divmidtext.style.fontFamily = "osr";
   divmidtext.style.fontSize = "14px";
-  divmidtext.style.color = "#1bbc9b";
+  divmidtext.style.color = "white";
 
   var divmidimg = document.createElement('img');
   divmidimg.id = "divmidimg";
@@ -601,7 +580,7 @@ function init() {
   divrighttext.innerHTML = "Selecione os seus lugares";
   divrighttext.style.fontFamily = "osr";
   divrighttext.style.fontSize = "14px";
-  divrighttext.style.color = "#1bbc9b";
+  divrighttext.style.color = "white";
 
   var divrightimg = document.createElement('img');
   divrightimg.id = "divrightimg";
@@ -618,7 +597,7 @@ function init() {
   diveyetext.innerHTML = "Ver perspectiva do lugar";
   diveyetext.style.fontFamily = "osr";
   diveyetext.style.fontSize = "14px";
-  diveyetext.style.color = "#1bbc9b";
+  diveyetext.style.color = "white";
 
   var diveyeimg = document.createElement('img');
   diveyeimg.id = "diveyeimg";
@@ -626,19 +605,19 @@ function init() {
 
 
   var splashMain = document.createElement('div');
-  splashMain.style.width = '400px';
+  splashMain.style.width = '650px';
   splashMain.style.fontFamily = "osb";
-  splashMain.style.height = '350px';
+  splashMain.style.height = '310px';
   splashMain.style.position = "absolute";
   splashMain.id = 'splashelp';
   splashMain.style.top = '10%';
-  splashMain.style.left = '-400px';
+  splashMain.style.left = '-650px';
 
 
   var splashelp = document.createElement('div');
   splashelp.style.color = "white";
-  splashelp.style.backgroundColor= "rgba(0, 0, 0, 1)";
-  splashelp.style.width = '350px';
+  splashelp.style.backgroundColor= "rgba(0, 0, 0, 0.5)";
+  splashelp.style.width = '600px';
   splashelp.style.textAlign = "center";
   splashelp.style.fontFamily = "osb";
   splashelp.style.height = '100%';
@@ -657,10 +636,10 @@ function init() {
   splashelpbt.id = 'splashelpbt';
   splashelpbt.onclick = function() {
     if (!clickhelpbt){
-      $("#splashelp").animate({"left": '+=350px'});
+      $("#splashelp").animate({"left": '+=600px'});
       clickhelpbt = true;
     }else{
-      $("#splashelp").animate({"left": '-=350px'});
+      $("#splashelp").animate({"left": '-=600px'});
       clickhelpbt = false;
     }
   }
@@ -673,7 +652,7 @@ function init() {
   splashelpbttext.style.marginTop = "3px";
 
   var divlefth = document.createElement('div');
-  divlefth.style.borderRight = "solid 1px #1bbc9b";
+  divlefth.style.borderRight = "solid 1px #5d5d5d";
   divlefth.style.width = "33%";
   divlefth.style.marginTop = "30px";
   divlefth.style.float = "left";
@@ -684,7 +663,7 @@ function init() {
   divlefttexth.style.fontFamily = "osr";
   divlefttexth.style.fontSize = "13px";
   divlefttexth.style.width = "90%";
-  divlefttexth.style.color = "#1bbc9b";
+  divlefttexth.style.color = "white";
   divlefttexth.style.margin = "auto";
   divlefttexth.style.marginTop = "5px";
 
@@ -694,7 +673,7 @@ function init() {
   divleftimgh.style.width = "50px";
 
   var divmidh = document.createElement('div');
-  divmidh.style.borderRight = "solid 1px #1bbc9b";
+  divmidh.style.borderRight = "solid 1px #5d5d5d";
   divmidh.style.width = "33%";
   divmidh.style.marginTop = "30px";
   divmidh.style.float = "left";
@@ -705,7 +684,7 @@ function init() {
   divmidtexth.style.fontFamily = "osr";
   divmidtexth.style.fontSize = "13px";
   divmidtexth.style.width = "90%";
-  divmidtexth.style.color = "#1bbc9b";
+  divmidtexth.style.color = "white";
   divmidtexth.style.margin = "auto";
   divmidtexth.style.marginTop = "5px";
 
@@ -725,7 +704,7 @@ function init() {
   divrighttexth.style.fontFamily = "osr";
   divrighttexth.style.fontSize = "13px";
   divrighttexth.style.width = "90%";
-  divrighttexth.style.color = "#1bbc9b";
+  divrighttexth.style.color = "white";
   divrighttexth.style.margin = "auto";
   divrighttexth.style.marginTop = "5px";
 
@@ -746,7 +725,7 @@ function init() {
   diveyetexth.style.fontFamily = "osr";
   diveyetexth.style.fontSize = "13px";
   diveyetexth.style.width = "90%";
-  diveyetexth.style.color = "#1bbc9b";
+  diveyetexth.style.color = "white";
   diveyetexth.style.margin = "auto";
 
   var diveyeimgh = document.createElement('img');
@@ -800,15 +779,15 @@ function init() {
   iDiv.appendChild(divMain);
   document.body.appendChild(iDiv);
   document.body.appendChild(splashMain);
-  document.getElementById("divleftimg").src="img/move_mouse.png";
-  document.getElementById("divmidimg").src="img/mouse.png";
-  document.getElementById("divrightimg").src="img/mouse_click.png";
-  document.getElementById("diveyeimg").src="img/eye.png";
+  document.getElementById("divleftimg").src="img/move_mousemenu.png";
+  document.getElementById("divmidimg").src="img/mousemenu.png";
+  document.getElementById("divrightimg").src="img/mouse_clickmenu.png";
+  document.getElementById("diveyeimg").src="img/eyemenu.png";
 
-  document.getElementById("divleftimgh").src="img/move_mouse.png";
-  document.getElementById("divmidimgh").src="img/mouse.png";
-  document.getElementById("divrightimgh").src="img/mouse_click.png";
-  document.getElementById("diveyeimgh").src="img/eye.png";
+  document.getElementById("divleftimgh").src="img/move_mousemenu.png";
+  document.getElementById("divmidimgh").src="img/mousemenu.png";
+  document.getElementById("divrightimgh").src="img/mouse_clickmenu.png";
+  document.getElementById("diveyeimgh").src="img/eyemenu.png";
 
   $("#loadedScreen").fadeIn("slow");
   $("#loadedScreen" ).click(function() {
@@ -1465,7 +1444,7 @@ function showMenuSelect(){
   // create div that contain the list of selected seats
   var selectLugares = document.createElement("div");
   selectLugares.style.height = 'auto';
-  selectLugares.style.maxHeight = '30%'
+  selectLugares.style.maxHeight = '70%'
   selectLugares.style.width = "100%";
   selectLugares.id = "selectLugares";
   selectLugares.style.marginTop = "-14px";
@@ -2164,7 +2143,7 @@ function onMouseDown(e) {
 
           if (primeiravez == true){
             if (document.getElementById("splashelp").style.left == "0px"){
-              $("#splashelp").animate({"left": '-=350px'});
+              $("#splashelp").animate({"left": '-=450px'});
               clickhelpbt = false;
             }
 
@@ -2509,7 +2488,7 @@ function onMouseDown(e) {
   else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
     if (document.getElementById("splashelp").style.left == "0px"){
-      $("#splashelp").animate({"left": '-=350px'});
+      $("#splashelp").animate({"left": '-=450px'});
       clickhelpbt = false;
     }
     $("#menuSelect").animate({"right": '+=300px'});
@@ -2529,7 +2508,7 @@ function onMouseDown(e) {
   else if (insideHelp == false)
   {
     if (document.getElementById("splashelp").style.left == "0px"){
-      $("#splashelp").animate({"left": '-=350px'});
+      $("#splashelp").animate({"left": '-=450px'});
       clickhelpbt = false;
     }
 
@@ -2576,7 +2555,7 @@ function removeCadeira(obj) {
   {
     isSelected = false;
     if (document.getElementById("splashelp").style.left == "0px"){
-      $("#splashelp").animate({"left": '-=350px'});
+      $("#splashelp").animate({"left": '-=450px'});
       clickhelpbt = false;
     }
 
@@ -2643,7 +2622,7 @@ function animate() {
 
   var vector = new THREE.Vector3(0, 0, -1);
   vector.applyEuler(camera.rotation, camera.rotation.order);
-  listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
+  //listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
   requestAnimationFrame(animate);
   // if we are rendering the loading scene
   if(isLoading)
@@ -2730,7 +2709,7 @@ animate();
 //
 function changePerspective(x, y, z,obj) {
   if (document.getElementById("splashelp").style.left == "0px"){
-    $("#splashelp").animate({"left": '-=350px'});
+    $("#splashelp").animate({"left": '-=450px'});
     clickhelpbt = false;
   }
   $("#menuSelect").animate({"right": '-=300px'});
@@ -2869,7 +2848,7 @@ function setupTweenFP(obj) {
   },2000).easing(TWEEN.Easing.Sinusoidal.InOut).onUpdate(function () {
 
   }).onComplete(function () {
-    listener.setPosition(camera.position.x,camera.position.y,camera.position.z);
+    //listener.setPosition(camera.position.x,camera.position.y,camera.position.z);
   }).start();
 
   // calculate rotation based on two vectors

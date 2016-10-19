@@ -94,10 +94,43 @@ var texturaBraco = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diff
 var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
 
 var video = document.getElementById( 'video' );
+var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
+
 textureVideo = new THREE.VideoTexture( video );
+textureVideo.generateMipmaps = false;
 textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
-textureVideo.format = THREE.RGBFormat;
+//textureVideo.format = THREE.RGBFormat;
+
+var peer = new Peer({key: '1yy04g33loqd7vi'});
+var id;
+$.ajax({
+  url: 'php/get_id.php',
+  dataType: "text",
+  success:function(data){
+    id = data;
+    console.log(id);
+    var conn = peer.connect(id);
+    conn.on('open', function() {
+      navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+      if (navigator.getUserMedia) {
+          navigator.getUserMedia({video: true, audio: true}, function(stream) {
+            console.log(id);
+            var call = peer.call(id, stream);
+            call.on('stream', function(remoteStream) {
+              video.srcObject = remoteStream;
+            });
+          }, function(err) {
+            console.log('Failed to get local stream' ,err);
+          });
+      };
+    });
+  },
+  error:function(textStatus,errorThrown){
+    console.log(textStatus);
+    console.log(errorThrown);
+  }
+});
 
 // BOOLEANS
 

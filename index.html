@@ -28,73 +28,6 @@
         overflow-x:hidden;
         overflow-y:hidden;
         }
-
-        .ui-datepicker-calendar{
-          margin: auto;
-          width: 90%;
-          font-family: osl;
-          color: #344b5d;
-        }
-
-        .ui-datepicker-title{
-          font-family: osb;
-          color: #e54b65;
-          border-bottom: solid 2px #344b5d;
-          text-transform: uppercase;
-        }
-
-        .ui-datepicker-calendar a {
-          font-family: osl;
-          color: #FFF;
-          text-decoration: none;
-        }
-
-        .ui-datepicker-calendar a:hover {
-          color: #1bbc9b;
-        }
-
-        .ui-datepicker-calendar thead {
-          font-family: osb;
-          color: #e54b65;
-          pointer-events: all;
-          cursor: auto;
-        }
-
-        @-webkit-keyframes coloranim {
-            0%     {background-color:#1cbb9b;}
-            50.0%  {background-color:#e54b65;}
-            100.0%  {background-color:#1cbb9b;}
-        }
-
-        @keyframes coloranim {
-            0%     {background-color:#1cbb9b;}
-            50.0%  {background-color:#e54b65;}
-            100.0%  {background-color:#1cbb9b;}
-        }
-
-        @-webkit-keyframes coloranimbt {
-            0%     {background-color:rgba(0, 0, 0, 0.7);}
-            50.0%  {background-color:#e54b65;}
-            100.0%  {background-color:rgba(0, 0, 0, 0.7);}
-        }
-
-        @keyframes coloranimbt {
-            0%     {background-color:rgba(0, 0, 0, 0.7);}
-            50.0%  {background-color:#e54b65;}
-            100.0%  {background-color:rgba(0, 0, 0, 0.7);}
-        }
-
-        @-webkit-keyframes coloranimLoading {
-            0%     {color:#ffffff;}
-            50.0%  {color:#000000;}
-            100.0%  {color:#ffffff;}
-        }
-
-        @keyframes coloranimLoading {
-            0%     {color:#ffffff;}
-            50.0%  {color:#000000;}
-            100.0%  {color:#ffffff;}
-        }
     </style>
   </head>
 
@@ -112,7 +45,6 @@
       || navigator.userAgent.match(/BlackBerry/i)
       || navigator.userAgent.match(/Windows Phone/i)){
         return true;
-
       }
       else{
         return false;
@@ -120,10 +52,11 @@
     }
 
     if (detectmob()){
-      document.write('<video id="video" loop style="display:none" preload="none" muted><source src="video\/pushshowreel.mp4" type="video\/mp4"><\/video>')
+      document.write('<video id="video" style="display:none"><\/video>');
       document.write("<script src='cinema_mobile.js'><\/script>");
     }else{
-      document.write('<video id="video" style="display:none"><\/video>')
+      document.write('<video id="video" style="display:none"><\/video>');
+      document.write('<audio id="audio" style="display:none"></audio>');
       document.write("<script src='cinema.js'><\/script>");
     }
     </script>

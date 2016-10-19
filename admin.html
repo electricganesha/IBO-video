@@ -21,6 +21,18 @@
     var peer = new Peer({key: '1yy04g33loqd7vi'});
     peer.on('open', function(id) {
       console.log('My peer ID is: ' + id);
+      localStorage.setItem("id", id);
+      $.ajax({
+        url: 'php/save_id.php',
+        dataType: "text",
+        data: ({id_conf: id}),
+        success:function(data){
+        },
+        error:function(textStatus,errorThrown){
+          console.log(textStatus);
+          console.log(errorThrown);
+        }
+      });
     });
 
     peer.on('connection', function(conn) {
