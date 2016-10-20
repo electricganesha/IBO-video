@@ -607,7 +607,7 @@ function init() {
   var splashMain = document.createElement('div');
   splashMain.style.width = '650px';
   splashMain.style.fontFamily = "osb";
-  splashMain.style.height = '310px';
+  splashMain.style.height = '190px';
   splashMain.style.position = "absolute";
   splashMain.id = 'splashelp';
   splashMain.style.top = '10%';
@@ -653,7 +653,7 @@ function init() {
 
   var divlefth = document.createElement('div');
   divlefth.style.borderRight = "solid 1px #5d5d5d";
-  divlefth.style.width = "33%";
+  divlefth.style.width = "24%";
   divlefth.style.marginTop = "30px";
   divlefth.style.float = "left";
   divlefth.style.height = "130px";
@@ -674,7 +674,7 @@ function init() {
 
   var divmidh = document.createElement('div');
   divmidh.style.borderRight = "solid 1px #5d5d5d";
-  divmidh.style.width = "33%";
+  divmidh.style.width = "24%";
   divmidh.style.marginTop = "30px";
   divmidh.style.float = "left";
   divmidh.style.height = "130px";
@@ -694,10 +694,11 @@ function init() {
   divmidimgh.style.width = "28px";
 
   var divrighth = document.createElement('div');
-  divrighth.style.width = "33%";
+  divrighth.style.borderRight = "solid 1px #5d5d5d";
+  divrighth.style.width = "24%";
   divrighth.style.marginTop = "30px";
   divrighth.style.float = "left";
-  divrighth.style.height = "150px";
+  divrighth.style.height = "130px";
 
   var divrighttexth = document.createElement('p');
   divrighttexth.innerHTML = "Selecione os seus lugares";
@@ -714,11 +715,10 @@ function init() {
   divrightimgh.style.width = "28px";
 
   var diveyeh = document.createElement('div');
-  diveyeh.style.width = "33.2%";
-  diveyeh.style.margin = "0 auto";
-  diveyeh.style.height = "120px";
-  diveyeh.style.paddingTop = "10px";
-  diveyeh.style.clear = "both";
+  diveyeh.style.width = "24%";
+  diveyeh.style.marginTop = "30px";
+  diveyeh.style.float = "left";
+  diveyeh.style.height = "150px";
 
   var diveyetexth = document.createElement('p');
   diveyetexth.innerHTML = "Ver perspectiva do lugar";
@@ -727,6 +727,7 @@ function init() {
   diveyetexth.style.width = "90%";
   diveyetexth.style.color = "white";
   diveyetexth.style.margin = "auto";
+  diveyetexth.style.marginTop = "5px";
 
   var diveyeimgh = document.createElement('img');
   diveyeimgh.id = "diveyeimgh";
