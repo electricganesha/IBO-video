@@ -14759,7 +14759,7 @@ THREE.ImageLoader.prototype = {
 		var scope = this;
 
 		var cached = THREE.Cache.get( url );
-		
+
 		if ( cached !== undefined ) {
 
 			scope.manager.itemStart( url );

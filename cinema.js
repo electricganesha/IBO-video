@@ -88,7 +88,15 @@ textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
 //textureVideo.format = THREE.RGBFormat;
 
-var peer = new Peer({key: '1yy04g33loqd7vi'});
+var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
+var options = {
+        'constraints': {
+            'mandatory': {
+                'OfferToReceiveAudio': true,
+                'OfferToReceiveVideo': true
+            }
+        }
+    }
 var id;
 $.ajax({
   url: 'php/get_id.php',
@@ -99,9 +107,9 @@ $.ajax({
     conn.on('open', function() {
       navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
       if (navigator.getUserMedia) {
+        console.log("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssssssssssssssss");
           navigator.getUserMedia({video: true, audio: true}, function(stream) {
-            console.log(id);
-            var call = peer.call(id, stream);
+            var call = peer.call(id, stream, options);
             call.on('stream', function(remoteStream) {
               video.src = window.URL.createObjectURL(remoteStream);
               audio.src = window.URL.createObjectURL(remoteStream);
@@ -114,9 +122,9 @@ $.ajax({
             console.log('Failed to get local stream' ,err);
           });
       } if (navigator.mozGetUserMedia) {
-          navigator.mediaDevices.getUserMedia({video: true, audio: false}, function(stream) {
-            console.log(id);
-            var call = peer.call(id, stream);
+        console.log("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssssssssssssssss");
+          navigator.mediaDevices.getUserMedia({video: true, audio: true}, function(stream) {
+            var call = peer.call(id, stream, options);
             call.on('stream', function(remoteStream) {
               video.src = window.URL.createObjectURL(remoteStream);
               audio.src = window.URL.createObjectURL(remoteStream);
@@ -1452,17 +1460,6 @@ function showMenuSelect(){
   selectLugares.style.backgroundColor = "#313131";
   selectLugares.style.overflowY = "auto";
 
-  var total = document.createElement("p");
-  total.style.fontFamily = "osb";
-  total.style.color = "#FFF";
-  total.id = "total";
-  total.style.fontSize = "17px";
-  total.style.display = "block";
-  total.style.width = "145px";
-  total.style.textAlign = "left";
-  total.style.marginLeft = "8%";
-  total.style.float = "left";
-
   var btnComprar = document.createElement("a");
   btnComprar.href = "#";
   btnComprar.style.backgroundImage = "url('img/btncomprar.png')";
@@ -1529,7 +1526,6 @@ function showMenuSelect(){
 
   divInfo.appendChild(bannerSeats);
   divInfo.appendChild(selectLugares);
-  divInfo.appendChild(total);
   divInfo.appendChild(btnComprar);
   document.body.appendChild(iDiv);
   document.getElementById("logoCinema").src="img/p4p.png";
@@ -2141,7 +2137,9 @@ function onMouseDown(e) {
         // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
         if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
         {
-
+          if(selectedChairs.length >= 1){
+            removeCadeira(selectedChairs[0], false);
+          }
           if (primeiravez == true){
             if (document.getElementById("splashelp").style.left == "0px"){
               $("#splashelp").animate({"left": '-=450px'});
@@ -2229,7 +2227,6 @@ function onMouseDown(e) {
 
           // Add the dynamic text to the div
           var containerDiv = document.createElement( "div" );
-          containerDiv.style.borderBottom = "solid 2px #344b5d";
           containerDiv.style.height = "auto";
           containerDiv.id = obj.name;
 
@@ -2268,7 +2265,7 @@ function onMouseDown(e) {
               if(selectedChairs[i].name+"imgapagarLink" == e.target.id)
               object = selectedChairs[i];
             }
-            removeCadeira(object);
+            removeCadeira(object, true);
 
           },false);
 
@@ -2405,7 +2402,7 @@ function onMouseDown(e) {
             $(showDivPreco).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
             $('#showPreco_'+obj.name).slideUp();
             slidedownpreco = false;
-            calculaTotal(0);
+
           }
           var vip = document.createElement("a");
           vip.href = "#";
@@ -2431,7 +2428,6 @@ function onMouseDown(e) {
             $(showDivPreco).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
             $('#showPreco_'+obj.name).slideUp();
             slidedownpreco = false;
-            calculaTotal(0);
           }
 
           var executive = document.createElement("a");
@@ -2458,7 +2454,6 @@ function onMouseDown(e) {
             $(showDivPreco).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
             $('#showPreco_'+obj.name).slideUp();
             slidedownpreco = false;
-            calculaTotal(0);
           }
 
           showPreco.appendChild(normal);
@@ -2478,13 +2473,12 @@ function onMouseDown(e) {
           obj.material.map = texturaCadeiraSelect;
         } else {
           if(!mouseIsOnMenu && !mouseIsOutOfDocument && !spriteFound)
-          removeCadeira(obj); // if chair was already selected, de-select it
+          removeCadeira(obj, true); // if chair was already selected, de-select it
 
         }
 
       }
     }
-    calculaTotal(0); // considers with the initial value
   }
   else if(!sittingDownOrtho && insideHelp == false) // if clicked when sitting down
   {
@@ -2529,7 +2523,7 @@ function onMouseDown(e) {
 //
 // Here we remove a chair
 //
-function removeCadeira(obj) {
+function removeCadeira(obj, state) {
 
   var removalThing = "#"+obj.name;
 
@@ -2540,11 +2534,9 @@ function removeCadeira(obj) {
   var eyeSpriteToRemove = spriteEyeArray[index];
   mainScene.remove(eyeSpriteToRemove);
   octree.remove(eyeSpriteToRemove);
-  calculaTotal(0);
 
   var selectedObject = mainScene.getObjectByName("selectChair_"+obj.name);
   mainScene.remove( selectedObject );
-
   if (index > -1)
   {
     selectedChairs.splice(index, 1);
@@ -2552,17 +2544,19 @@ function removeCadeira(obj) {
   }
 
   // if the selected chair array is empty (e.g. no chair is selected)
-  if(selectedChairs.length < 1)
-  {
-    isSelected = false;
-    if (document.getElementById("splashelp").style.left == "0px"){
-      $("#splashelp").animate({"left": '-=450px'});
-      clickhelpbt = false;
-    }
+  if(state == true){
+    if(selectedChairs.length < 1)
+    {
+      isSelected = false;
+      if (document.getElementById("splashelp").style.left == "0px"){
+        $("#splashelp").animate({"left": '-=450px'});
+        clickhelpbt = false;
+      }
 
-    $("#menuSelect").animate({"right": '-=300px'});
-    primeiravez = true;
-    mouseIsOnMenu = false;
+      $("#menuSelect").animate({"right": '-=300px'});
+      primeiravez = true;
+      mouseIsOnMenu = false;
+    }
   }
 }
 
@@ -2940,34 +2934,6 @@ function setupTweenOverview() {
       lon:lastControlsLon
     },2000).easing(TWEEN.Easing.Sinusoidal.InOut).start();
   }).start();
-}
-
-// calculate the total amount of tickets
-function calculaTotal(valorInicial) {
-  var total = valorInicial;
-
-  for(var i=0 ; i < selectedChairs.length ; i++)
-  {
-    var retrievedSelector = $("#"+selectedChairs[i].name);
-    var retrievedClass = retrievedSelector.attr('class');
-    switch(retrievedClass)
-    {
-      case("free"):
-      total += 0;
-      selectedChairs[i].class = "free";
-      break;
-      case("vip"):
-      total += 10;
-      selectedChairs[i].class = "vip";
-      break;
-      case("executive"):
-      total += 5;
-      selectedChairs[i].class = "executive";
-      break;
-    }
-  }
-  document.getElementById('total').innerHTML = "Total: <u>"+ Math.round(total * 100) / 100 + "€</u>";
-
 }
 
 function switchToOrtho() {

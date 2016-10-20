@@ -102,7 +102,7 @@ textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
 //textureVideo.format = THREE.RGBFormat;
 
-var peer = new Peer({key: '1yy04g33loqd7vi'});
+var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
 var id;
 $.ajax({
   url: 'php/get_id.php',

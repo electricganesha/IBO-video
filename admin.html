@@ -18,7 +18,7 @@
 
     var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
 
-    var peer = new Peer({key: '1yy04g33loqd7vi'});
+    var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
     peer.on('open', function(id) {
       console.log('My peer ID is: ' + id);
       localStorage.setItem("id", id);
