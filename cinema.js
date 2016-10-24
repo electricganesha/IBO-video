@@ -92,8 +92,8 @@ window.onload = function () {
     document.getElementById('button').onclick = function () {
         document.getElementById('modal').style.display = "none"
 
-        var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
-        //var peer = new Peer(,{key: '1yy04g33loqd7vi'});
+        var peer = new Peer(document.getElementById('textareaID1').value,{host: 'push.serveftp.com', port: 9000, path: '/'});
+        //var peer = new Peer(document.getElementById('textareaID1').value,{key: '1yy04g33loqd7vi'});
         var options = {
                 'constraints': {
                     'mandatory': {
