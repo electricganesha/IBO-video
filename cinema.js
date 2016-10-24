@@ -88,62 +88,72 @@ textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
 //textureVideo.format = THREE.RGBFormat;
 
-var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
-var options = {
-        'constraints': {
-            'mandatory': {
-                'OfferToReceiveAudio': true,
-                'OfferToReceiveVideo': true
+window.onload = function () {
+    document.getElementById('button').onclick = function () {
+        document.getElementById('modal').style.display = "none"
+
+        var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
+        //var peer = new Peer(,{key: '1yy04g33loqd7vi'});
+        var options = {
+                'constraints': {
+                    'mandatory': {
+                        'OfferToReceiveAudio': true,
+                        'OfferToReceiveVideo': true
+                    }
+                }
             }
-        }
-    }
-var id;
-$.ajax({
-  url: 'php/get_id.php',
-  dataType: "text",
-  success:function(data){
-    id = data;
-    var conn = peer.connect(id);
-    conn.on('open', function() {
-      navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
-      if (navigator.getUserMedia) {
-        console.log("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssssssssssssssss");
-          navigator.getUserMedia({video: true, audio: true}, function(stream) {
-            var call = peer.call(id, stream, options);
-            call.on('stream', function(remoteStream) {
-              video.src = window.URL.createObjectURL(remoteStream);
-              audio.src = window.URL.createObjectURL(remoteStream);
-              audio.onloadedmetadata = function(e){
-                  console.log('now playing the audio');
-                  audio.play();
-              }
+        var id;
+        $.ajax({
+          url: 'php/get_id.php',
+          dataType: "text",
+          success:function(data){
+            id = data;
+            var conn = peer.connect(id);
+            conn.on('open', function() {
+              navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+              if (navigator.getUserMedia) {
+                console.log("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssssssssssssssss");
+                  navigator.getUserMedia({video: true, audio: true}, function(stream) {
+                    var call = peer.call(id, stream, options);
+                    call.on('stream', function(remoteStream) {
+                      video.src = window.URL.createObjectURL(remoteStream);
+                      audio.src = window.URL.createObjectURL(remoteStream);
+                      audio.onloadedmetadata = function(e){
+                          console.log('now playing the audio');
+                          audio.play();
+                      }
+                    });
+                  }, function(err) {
+                    console.log('Failed to get local stream' ,err);
+                  });
+              } if (navigator.mozGetUserMedia) {
+                console.log("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssssssssssssssss");
+                  navigator.mediaDevices.getUserMedia({video: true, audio: true}, function(stream) {
+                    var call = peer.call(id, stream, options);
+                    call.on('stream', function(remoteStream) {
+                      video.src = window.URL.createObjectURL(remoteStream);
+                      audio.src = window.URL.createObjectURL(remoteStream);
+                      audio.onloadedmetadata = function(e){
+                          console.log('now playing the audio');
+                          audio.play();
+                      }
+                    });
+                  }, function(err) {
+                    console.log('Failed to get local stream' ,err);
+                  });
+              };
             });
-          }, function(err) {
-            console.log('Failed to get local stream' ,err);
-          });
-      } if (navigator.mozGetUserMedia) {
-        console.log("yeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeessssssssssssssssssssssss");
-          navigator.mediaDevices.getUserMedia({video: true, audio: true}, function(stream) {
-            var call = peer.call(id, stream, options);
-            call.on('stream', function(remoteStream) {
-              video.src = window.URL.createObjectURL(remoteStream);
-              audio.src = window.URL.createObjectURL(remoteStream);
-              audio.onloadedmetadata = function(e){
-                  console.log('now playing the audio');
-                  audio.play();
-              }
-            });
-          }, function(err) {
-            console.log('Failed to get local stream' ,err);
-          });
-      };
-    });
-  },
-  error:function(textStatus,errorThrown){
-    console.log(textStatus);
-    console.log(errorThrown);
-  }
-});
+          },
+          error:function(textStatus,errorThrown){
+            console.log(textStatus);
+            console.log(errorThrown);
+          }
+        });
+
+
+    };
+};
+
 
 
 /*navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);

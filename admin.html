@@ -19,6 +19,7 @@
     var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
 
     var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
+    //var peer = new Peer({key: '1yy04g33loqd7vi'});
     peer.on('open', function(id) {
       console.log('My peer ID is: ' + id);
       localStorage.setItem("id", id);
@@ -35,13 +36,68 @@
       });
     });
 
+    peer.on('close', function() { console.log("someone closed connection."); });
+
+    peer.on('disconnected', function() { console.log("someone disconnected."); });
+
+    peer.on('error', function() { console.log("something bad happened. ERROR."); });
+
     peer.on('connection', function(conn) {
       navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
       if (navigator.getUserMedia) {
           navigator.getUserMedia({video: true, audio: true}, function(stream) {
             peer.on('call', function(call) {
               call.answer(stream);
+
+              var count = 0;
+
+              for(key in peer.connections)
+              {
+
+                var connec = peer.connections[key][0];
+
+                connec.on('close', function() {
+
+                  var count = 0;
+
+                  for(key in peer.connections)
+                  {
+                    if(peer.connections[key][0].open == true)
+                      count++;
+                  }
+                  $('#ligacoes').html('Numero de ligacoes : ' + count);
+
+                  var connectedUsers = "";
+
+                  for(key in peer.connections)
+                  {
+                    if(peer.connections[key][0].open == true)
+                      connectedUsers += key + "<br>";
+                  }
+
+                  $('#users').html(connectedUsers);
+
+                 });
+
+              }
+
+              for(key in peer.connections)
+              {
+                count++;
+              }
+              $('#ligacoes').html('Numero de ligacoes : ' + count);
+
+              var connectedUsers = "";
+
+              for(key in peer.connections)
+              {
+                connectedUsers += key + "<br>";
+              }
+
+              $('#users').html(connectedUsers);
+
             });
+
             video.srcObject = stream;
           }, function(err) {
             console.log('Failed to get local stream' ,err);
@@ -50,6 +106,8 @@
     });
 
     </script>
+    <div id="ligacoes"></div>
+    <div id="users"></div>
   </body>
 
 </html>
