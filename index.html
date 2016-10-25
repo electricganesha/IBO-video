@@ -3,7 +3,7 @@
 
   <head>
     <meta charset=utf-8>
-    <title>PUSH IBO - Immersive Box Office</title>
+    <title>P4P - Conference Room</title>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="css/font-awesome.css">
     <style>
@@ -28,42 +28,8 @@
         overflow-x:hidden;
         overflow-y:hidden;
         }
-
-        #modal {
-    position: fixed;
-    font-family: Arial, Helvetica, sans-serif;
-    top: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.8);
-    z-index: 99999;
-    height: 100%;
-    width: 100%;
-}
-.modalconent {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #fff;
-    width: 50%;
-    padding: 20px;
-}
-
     </style>
   </head>
-
-  <div id="modal">
-    <div class="modalconent">
-      <div style="text-align:center;">
-        <h1> P4P Conference Room </h1>
-        <textarea id="textareaID1" placeholder="Por favor introduza o seu nome..."></textarea>
-        <br>
-        <br>
-        <button id="button">OK</button>
-      </div>
-    </div>
-</div>
-
   <body>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/jquery-ui.js"></script>
@@ -92,8 +58,6 @@
       document.write('<audio id="audio" style="display:none"></audio>');
       document.write("<script src='cinema.js'><\/script>");
     }
-
-    $('#textareaID1').focus();
 
     </script>
   </body>
