@@ -1,113 +1,61 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset=utf-8>
-    <title>PUSH IBO - Immersive Box Office</title>
+    <title>P4P Conference Room Admin</title>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="css/font-awesome.css">
-  </head>
-
-  <body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/adminStyle.css">
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="js/peer.js"></script>
-    <video id="video1" autoplay></video>
-    <script>
-    var video = document.getElementById( 'video1' );
+    <script src="js/adminConference.js"></script>
+  </head>
+  <body>
+    <div id="sideMenuUsers" class="sidenav">
+      <div id="ligacoes" style="text-align:center; width:90%; margin-left:10px; border-bottom:1px solid black; padding:10px;"></div>
+      <br>
+      <div style="margin-left:10px;" id="users"></div>
+    </div>
+    <div id="main" class="container" style="width:100%;">
+      <div class="row" style="width:100%; margin:auto; text-align:center;">
+        <img style="margin-top:10px; margin-bottom:10px;" src="img/p4p.png"></img><h1 style="margin-left:10px; border-bottom:2px solid #BD2124; padding-bottom:30px;"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room - Admin</h1>
 
-    var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
+        <div id="login" style="margin:auto; width:50%; text-align:left; margin-top:30px;">
+          <div class="row" style="margin-bottom:10px; margin-top:10px;">
+            <div class="col-md-6" style="text-align:right; width:35%;">
+              <small> Your name : </small> &nbsp;
+            </div>
+            <div class="col-md-6">
+              <input id="loginInputFirstName" class="loginConfInput" type="text" placeholder="First Name"></input>&nbsp;<input id="loginInputLastName" class="loginConfInput" type="text" placeholder="Last Name"></input>
+            </div>
+          </div>
+          <div class="row" style="margin-bottom:10px;">
+            <div class="col-md-6" style="text-align:right;  width:35%;">
+              <small> Conference/Room name : </small> &nbsp;
+            </div>
+            <div class="col-md-6">
+              <input id="loginInputConfName" class="loginConfInput" type="text" placeholder="Conference/Room Name"></input><button type="button" id="loginConfButton" onclick="startConf()" class='btn'> Start </button>
+            </div>
+          </div>
+          <br>
+          <div class="row" style="text-align:center; font-size:20px;">
+            <div id="formErrorMessageDiv" style="display:none;"><p style="display:inline;"> Please specify a </p> <p id="formErrorMessage" style="display:inline; color:#BD2124;"> </p> <p style="display:inline;"> in order to continue. </p></div>
+          </div>
+        </div>
 
-    var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
-    //var peer = new Peer({key: '1yy04g33loqd7vi'});
-    peer.on('open', function(id) {
-      console.log('My peer ID is: ' + id);
-      localStorage.setItem("id", id);
-      $.ajax({
-        url: 'php/save_id.php',
-        dataType: "text",
-        data: ({id_conf: id}),
-        success:function(data){
-        },
-        error:function(textStatus,errorThrown){
-          console.log(textStatus);
-          console.log(errorThrown);
-        }
-      });
-    });
-
-    peer.on('close', function() { console.log("someone closed connection."); });
-
-    peer.on('disconnected', function() { console.log("someone disconnected."); });
-
-    peer.on('error', function() { console.log("something bad happened. ERROR."); });
-
-    peer.on('connection', function(conn) {
-      navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
-      if (navigator.getUserMedia) {
-          navigator.getUserMedia({video: true, audio: true}, function(stream) {
-            peer.on('call', function(call) {
-              call.answer(stream);
-
-              var count = 0;
-
-              for(key in peer.connections)
-              {
-
-                var connec = peer.connections[key][0];
-
-                connec.on('close', function() {
-
-                  var count = 0;
-
-                  for(key in peer.connections)
-                  {
-                    if(peer.connections[key][0].open == true)
-                      count++;
-                  }
-                  $('#ligacoes').html('Numero de ligacoes : ' + count);
-
-                  var connectedUsers = "";
-
-                  for(key in peer.connections)
-                  {
-                    if(peer.connections[key][0].open == true)
-                      connectedUsers += key + "<br>";
-                  }
-
-                  $('#users').html(connectedUsers);
-
-                 });
-
-              }
-
-              for(key in peer.connections)
-              {
-                count++;
-              }
-              $('#ligacoes').html('Numero de ligacoes : ' + count);
-
-              var connectedUsers = "";
-
-              for(key in peer.connections)
-              {
-                connectedUsers += key + "<br>";
-              }
-
-              $('#users').html(connectedUsers);
-
-            });
-
-            video.srcObject = stream;
-          }, function(err) {
-            console.log('Failed to get local stream' ,err);
-          });
-      };
-    });
-
-    </script>
-    <div id="ligacoes"></div>
-    <div id="users"></div>
+        <div id="mainStructure" style="width:100%; padding-top:10px; display:none;">
+          <div style="margin:auto; margin-bottom:5px;"> <b><u>Status</u></b></div>
+          <div id="peerStatus"></div>
+          <div id="peerStatusWaiting" style="margin:auto;"></div>
+        </div>
+        <br>
+        <video id="video1" autoplay style="border:3px solid #BD2124; margin-left:10px; margin-top:20px; margin-bottom:20px; clear:both; display:none;"></video>
+      </div>
+    </div>
   </body>
-
+  <a href="https://www.pushvfx.com"><img style="position:absolute; bottom:0px; right:0px; margin-bottom:10px; margin-right:10px;" width="150px" src="img/Push_Logo_transparente.png"></img></a>
 </html>
