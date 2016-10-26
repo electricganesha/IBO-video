@@ -6,6 +6,7 @@
     <title>P4P - Conference Room</title>
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
     <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <style>
         @font-face {
             font-family: osb;
@@ -28,6 +29,43 @@
         overflow-x:hidden;
         overflow-y:hidden;
         }
+
+        .Blink {
+          animation: blinker 1s cubic-bezier(0, 0, 1, 1) infinite alternate;
+        }
+        @keyframes blinker {
+          from { opacity: 1; }
+          to { opacity: 0.2; }
+        }
+
+        .conferencia{
+          border : 1px solid #5d5d5d;
+          -webkit-transition : border 500ms ease-out;
+          -moz-transition : border 500ms ease-out;
+          -o-transition : border 500ms ease-out;
+        }
+
+        .conferencia:hover{
+           border : 1px solid #bd2124;
+        }
+
+        .npeople {
+          border-left: 1px solid #5d5d5d;
+          -webkit-transition : border-left 500ms ease-out;
+          -moz-transition : border-left 500ms ease-out;
+          -o-transition : border-left 500ms ease-out;
+        }
+
+        .confdata {
+          border-bottom: 1px solid #5d5d5d;
+          -webkit-transition : border-bottom 500ms ease-out;
+          -moz-transition : border-bottom 500ms ease-out;
+          -o-transition : border-bottom 500ms ease-out;
+        }
+
+        .conferencia:hover > .npeople { border-left: 1px solid #bd2124; }
+
+        .conferencia:hover > .npeople > .confdata {border-bottom: 1px solid #bd2124; }
     </style>
   </head>
   <body>
