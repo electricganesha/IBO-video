@@ -256,10 +256,10 @@ function callDB(id,state,speakerFirstName,speakerLastName,conferenceRoomName)
     success:function(data){
     },
     error:function(textStatus,errorThrown){
-      console.log(textStatus);
-      console.log(errorThrown);
-      $('#peerStatus').html("Not connected, something went wrong. " + textStatus);
-      $('#peerStatus').css("color", "red");
+      $('#peerStatus').html("Not connected, something went wrong.<br> <h1>" + textStatus["status"] + " / " + textStatus["statusText"] + "</h1>");
+      $('#peerStatus').css("color", "#BD2124");
+      $('#peerStatusWaiting').html("<b>Please try again.</b>");
+      $('#peerStatusWaiting').css("color", "#BD2124");
     }
   });
 
