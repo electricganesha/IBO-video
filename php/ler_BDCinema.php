@@ -1,7 +1,6 @@
 <?php
-  $sessao = $_POST['sessao'];
-  $mysqli = new mysqli('eu-cdbr-azure-west-d.cloudapp.net', 'b30cd661f2834b', 'e8c9e5be', 'bd_cinema');
-	$sql = "SELECT * from `" . $sessao . "`";
+  $mysqli = new mysqli('localhost', 'p4p', 'p4p', 'bd_conf');
+	$sql = "SELECT * from cadeiras";
 	$query = $mysqli->query($sql);
 	while($row = $query->fetch_assoc())
 	{

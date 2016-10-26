@@ -112,17 +112,47 @@ $.ajax({
     console.log(id);
     var conn = peer.connect(id);
     conn.on('open', function() {
-      navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
       if (navigator.getUserMedia) {
-          navigator.getUserMedia({video: true, audio: true}, function(stream) {
-            console.log(id);
-            var call = peer.call(id, stream);
-            call.on('stream', function(remoteStream) {
-              video.srcObject = remoteStream;
-            });
-          }, function(err) {
-            console.log('Failed to get local stream' ,err);
+        navigator.getUserMedia({video: false, audio: true}, function(stream) {
+          var call = peer.call(id, stream);
+          call.on('stream', function(remoteStream) {
+            video.src = window.URL.createObjectURL(remoteStream);
+            audio.src = window.URL.createObjectURL(remoteStream);
+            audio.onloadedmetadata = function(e){
+                audio.play();
+            }
           });
+        }, function() {
+          var call = peer.calladmin(id, options);
+          call.on('stream', function(remoteStream) {
+            video.src = window.URL.createObjectURL(remoteStream);
+            audio.src = window.URL.createObjectURL(remoteStream);
+            audio.onloadedmetadata = function(e){
+                audio.play();
+            }
+          });
+        });
+      } if (navigator.mozGetUserMedia) {
+        navigator.mediaDevices.getUserMedia({video: false, audio: true}, function(stream) {
+          var call = peer.call(id, stream);
+          call.on('stream', function(remoteStream) {
+            video.src = window.URL.createObjectURL(remoteStream);
+            audio.src = window.URL.createObjectURL(remoteStream);
+            audio.onloadedmetadata = function(e){
+                audio.play();
+            }
+          });
+        }, function() {
+          var call = peer.calladmin(id, options);
+          call.on('stream', function(remoteStream) {
+            video.src = window.URL.createObjectURL(remoteStream);
+            audio.src = window.URL.createObjectURL(remoteStream);
+            audio.onloadedmetadata = function(e){
+                audio.play();
+            }
+          });
+        });
       };
     });
   },
