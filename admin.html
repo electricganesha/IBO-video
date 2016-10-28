@@ -3,7 +3,7 @@
   <head>
     <meta charset=utf-8>
     <title>P4P Conference Room Admin</title>
-    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, width=device-width">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
     <link rel="stylesheet" href="css/font-awesome.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/adminStyle.css">
@@ -21,12 +21,11 @@
       <div style="margin-left:10px;" id="users"></div>
     </div>
     <div id="main" class="container" style="width:100%;">
-      <div class="row" style="width:100%; margin:auto; text-align:center;">
-        <img style="margin-top:10px; margin-bottom:10px;" src="img/p4p.png"></img><h1 style="margin-left:10px; border-bottom:2px solid #BD2124; padding-bottom:30px;"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room - Admin</h1>
-
-        <div id="login" style="margin:auto; width:50%; text-align:left; margin-top:30px;">
-          <div class="row" style="margin-bottom:10px; margin-top:10px;">
-            <div class="col-md-6" style="text-align:right; width:35%;">
+      <div class="row" id="mainRow">
+        <img id="mainImage" style="margin-top:10px; margin-bottom:10px;" src="img/p4p.png"></img><h1 id="mainTitle" style="margin-left:10px; border-bottom:2px solid #BD2124; padding-bottom:30px;"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room - Admin</h1>
+        <div id="login">
+          <div class="row">
+            <div class="col-md-6" id="yourNameColumn">
               <small> Your name : </small> &nbsp;
             </div>
             <div class="col-md-6">
@@ -34,7 +33,7 @@
             </div>
           </div>
           <div class="row" style="margin-bottom:10px;">
-            <div class="col-md-6" style="text-align:right;  width:35%;">
+            <div class="col-md-6" id="conferenceNameColumn">
               <small> Conference/Room name : </small> &nbsp;
             </div>
             <div class="col-md-6">
@@ -42,20 +41,21 @@
             </div>
           </div>
           <br>
-          <div class="row" style="text-align:center; font-size:20px;">
+          <div class="row" id="errorRow">
             <div id="formErrorMessageDiv" style="display:none;"><p style="display:inline;"> Please specify a </p> <p id="formErrorMessage" style="display:inline; color:#BD2124;"> </p> <p style="display:inline;"> in order to continue. </p></div>
           </div>
         </div>
-
-        <div id="mainStructure" style="width:100%; padding-top:10px; display:none;">
+        <div id="mainStructure">
           <div style="margin:auto; margin-bottom:5px;"> <b><u>Status</u></b></div>
           <div id="peerStatus"></div>
           <div id="peerStatusWaiting" style="margin:auto;"></div>
         </div>
         <br>
-        <video id="video1" autoplay style="border:3px solid #BD2124; margin-left:10px; margin-top:20px; margin-bottom:20px; clear:both; display:none;"></video>
+        <video id="video" autoplay></video>
       </div>
     </div>
+    <div id="footer">
+      <a id="poweredByPUSH" href="https://www.pushvfx.com"><img id="poweredByPUSHImage" width="150px" src="img/Push_Logo_transparente.png"></img></a>
+    </div>
   </body>
-  <a href="https://www.pushvfx.com"><img style="position:absolute; bottom:0px; right:0px; margin-bottom:10px; margin-right:10px;" width="150px" src="img/Push_Logo_transparente.png"></img></a>
 </html>

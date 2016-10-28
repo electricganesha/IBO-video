@@ -3,6 +3,18 @@ var peerStatusWaitingIsActive = true;
 var speakerQueue = [];
 var connectedUsers = [];
 
+window.onload = function() {
+  console.log(window.innerHeight);
+  console.log($('#poweredByPUSHImage').height());
+
+  var totalDeviceHeight = window.innerHeight;
+  var footerHeight = $('#poweredByPUSHImage').height();
+
+  var mainDiv = totalDeviceHeight - footerHeight;
+
+  $('#main').css("height",mainDiv+"px");
+  $('#footer').css("height",footerHeight+"px");
+};
 
 function startConf()
 {
@@ -46,7 +58,7 @@ function startConference()
 
   speakerButtonIsActive = true;
 
-  var video = document.getElementById( 'video1' );
+  var video = document.getElementById( 'video' );
 
   var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
 
@@ -119,7 +131,8 @@ function startConference()
 
                 setTimeout(function(){
 
-                  $('#video1').fadeIn(200);
+                  $('#video').fadeIn(200);
+                  $('#mainStructure').toggleClass('mainStructureVideo');
 
                 }, 1500);
 
@@ -267,4 +280,5 @@ function callDB(id,state,speakerFirstName,speakerLastName,conferenceRoomName)
 
 $(window).on('beforeunload', function() {
   callDB(id,"disconnected","","","");
+  return null;
 });

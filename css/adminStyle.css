@@ -1,18 +1,18 @@
 @font-face {
-    font-family: osb;
-    src: url(../fonts/OpenSans-Bold.ttf);
+  font-family: osb;
+  src: url(../fonts/OpenSans-Bold.ttf);
 }
 @font-face {
-    font-family: osr;
-    src: url(../fonts/OpenSans-Regular.ttf);
+  font-family: osr;
+  src: url(../fonts/OpenSans-Regular.ttf);
 }
 @font-face {
-    font-family: ossb;
-    src: url(../fonts/OpenSans-Semibold.ttf);
+  font-family: ossb;
+  src: url(../fonts/OpenSans-Semibold.ttf);
 }
 @font-face {
-    font-family: osl;
-    src: url(../fonts/OpenSans-Light.ttf);
+  font-family: osl;
+  src: url(../fonts/OpenSans-Light.ttf);
 }
 
 body
@@ -20,6 +20,14 @@ body
   background-color: black;
   color:white;
   font-family:'osb';
+}
+
+#mainRow
+{
+  background-color:black;
+  width:100%;
+  margin:auto;
+  text-align:center;
 }
 
 .loginConfInput
@@ -86,50 +94,214 @@ body
   margin-left:-7.5px;
 }
 
-#mainRow
-{
-  background-color: lightblue;
-}
-
 .sidenav {
-    height: 100%; /* 100% Full-height */
-    width: 0; /* 0 width - change this with JavaScript */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Stay on top */
-    top: 0;
-    left: 0;
-    background-color: #BD2124; /* Black*/
-    overflow-x: hidden; /* Disable horizontal scroll */
-    padding-top: 60px; /* Place content 60px from the top */
-    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+  height: 100%; /* 100% Full-height */
+  width: 0; /* 0 width - change this with JavaScript */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Stay on top */
+  top: 0;
+  left: 0;
+  background-color: #BD2124; /* Black*/
+  overflow-x: hidden; /* Disable horizontal scroll */
+  padding-top: 60px; /* Place content 60px from the top */
+  transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
 }
 
 /* The navigation menu links */
 .sidenav a {
-    padding: 8px 8px 8px 32px;
-    text-decoration: none;
-    font-size: 25px;
-    color: #818181;
-    display: block;
-    transition: 0.3s
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+  transition: 0.3s
 }
 
 /* When you mouse over the navigation links, change their color */
 .sidenav a:hover, .offcanvas a:focus{
-    color: #f1f1f1;
+  color: #f1f1f1;
 }
 
 /* Position and style the close button (top right corner) */
 .sidenav .closebtn {
-    position: absolute;
-    top: 0;
-    right: 25px;
-    font-size: 36px;
-    margin-left: 50px;
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+#yourNameColumn
+{
+  text-align:right;
+  width:35%;
+}
+
+#conferenceNameColumn
+{
+  text-align:right;
+  width:35%;
+}
+
+#poweredByPUSH
+{
+  position:absolute;
+  bottom:0px;
+  right:0px;
+  margin-bottom:10px;
+  margin-right:10px;
+}
+
+#login
+{
+  margin:auto;
+  width:50%;
+  text-align:left;
+  margin-top:30px;
+}
+
+#inputRow
+{
+  margin-bottom:10px;
+  margin-top:10px;
+}
+
+#errorRow
+{
+  text-align:center;
+  font-size:20px;
 }
 
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
 #main {
-    transition: margin-left .5s;
-    padding: 20px;
+  transition: margin-left .5s;
+  padding: 20px;
+}
+
+#video
+{
+  border:3px solid #BD2124;
+  margin-left:10px;
+  margin-top:20px;
+  margin-bottom:20px;
+  clear:both;
+  display:none;
+}
+
+@media screen and (min-width: 1px) and (max-width: 480px) {
+
+  #main
+  {
+    padding-bottom:0px;
+  }
+
+  #mainRow
+  {
+    background-color:black;
+    margin:0px;
+  }
+
+  #mainImage
+  {
+    width:50%;
+  }
+
+  #mainTitle
+  {
+    font-size:18px;
+  }
+
+  #yourNameColumn
+  {
+    text-align:left;
+    width:100%;
+    margin-bottom:5px;
+  }
+
+  #conferenceNameColumn
+  {
+    text-align:left;
+    width:100%;
+    margin-top:10px;
+    margin-bottom:5px;
+  }
+
+  #loginConfButton
+  {
+    background-color: #BD2124;
+    width:208px;
+    height:30px;
+    margin-top:10px;
+    margin-left:0px;
+  }
+
+  #login
+  {
+    margin:auto;
+    width:60%;
+    text-align:left;
+    margin-top:0px;
+    height:100%;
+  }
+
+  #formErrorMessageDiv
+  {
+    margin-top:-11%;
+    position:relative;
+    font-size:14px;
+  }
+
+  #mainStructure
+  {
+    width:100%;
+    padding-top:10px;
+    display:none;
+    font-size:14px;
+    margin-bottom:20px;
+    height:90%;
+  }
+
+  #footer
+  {
+    clear:both;
+    position:relative;
+  }
+
+  #poweredByPUSH
+  {
+    margin-right:35%;
+  }
+
+  #poweredByPUSH img
+  {
+    width:100px;
+  }
+
+  #video
+  {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: 100;
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+  .mainStructureVideo
+  {
+    position:absolute;
+    background-color:rgba(0,0,0,0.5);
+    top:0px;
+    width:90% !important;
+    padding-top:5px;
+    display:none;
+    font-size:10px !important;
+    height:70px !important;
+    z-index: 99999;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius:25px;
+  }
 }
