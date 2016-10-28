@@ -16,6 +16,7 @@ window.onload = function() {
   $('#footer').css("height",footerHeight+"px");
 };
 
+var current_id;
 function startConf()
 {
   if($('#loginInputFirstName').val() == 0)
@@ -62,10 +63,11 @@ function startConference()
 
   var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
 
-  //var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
-  var peer = new Peer({key: 'xinpfgueyexez5mi'});
+  var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
+  //var peer = new Peer({key: '1yy04g33loqd7vi'});
   peer.on('open', function(id) {
     console.log('My peer ID is: ' + id);
+    current_id = id;
     $('#peerStatus').html("Connected with ID <b>" + id + "</b>");
     $('#peerStatus').css("color", "lawngreen");
     $('#peerStatusWaiting').html("<b>Waiting for users to connect.</b>");
@@ -175,7 +177,17 @@ function startConference()
                   }
 
                 }
-
+                $.ajax({
+                  url: 'php/updatecounter.php',
+                  dataType: "text",
+                  data:({id_peer:current_id, estado:"saiu", numero_pessoas: connectedUsers.length}),
+                  success:function(data){
+                  },
+                  error:function(textStatus,errorThrown){
+                    console.log(textStatus);
+                    console.log(errorThrown);
+                  }
+                });
                 refreshConnectionLabel(connectedUsers.length);
                 refreshUserList();
             }
@@ -278,7 +290,9 @@ function callDB(id,state,speakerFirstName,speakerLastName,conferenceRoomName)
 
 }
 
-$(window).on('beforeunload', function() {
-  callDB(id,"disconnected","","","");
-  return null;
-});
+window.onbeforeunload = function(e) {
+  var dialogText = 'Dialog text here';
+  e.returnValue = dialogText;
+  callDB(current_id,"disconnected","","","");
+  return dialogText;
+};
