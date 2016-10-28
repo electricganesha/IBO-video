@@ -417,7 +417,7 @@ function getconf(){
             divconf.appendChild(divconfinfo);
 
             var divconfinfodata = document.createElement('div');
-            divconfinfodata.innerHTML = data[i].date;
+            divconfinfodata.innerHTML = data[i].dia;
             divconfinfodata.style.fontSize = "11px";
             divconfinfodata.style.width = "100%";
             divconfinfodata.style.height = "46%";
@@ -480,9 +480,9 @@ function getconf(){
                 divconf.style.border = "solid 1px #bd2124";
             }
 
-            if(data[i].date != ""){
+            if(data[i].dia != ""){
               var divdataconf = document.createElement('div');
-              divdataconf.innerHTML = data[i].date;
+              divdataconf.innerHTML = data[i].dia;
               divdataconf.style.fontSize = "12px";
               divdataconf.style.float = "right";
               divdataconf.style.width = "120px";
@@ -558,7 +558,7 @@ function getconf(){
             divconf.appendChild(divconfinfo);
 
             var divconfinfodata = document.createElement('div');
-            divconfinfodata.innerHTML = data[i].date;
+            divconfinfodata.innerHTML = data[i].dia;
             divconfinfodata.style.fontSize = "11px";
             divconfinfodata.style.width = "100%";
             divconfinfodata.style.height = "46%";
@@ -621,9 +621,9 @@ function getconf(){
                 divconf.style.border = "solid 1px #bd2124";
             }
 
-            if(data[i].date != ""){
+            if(data[i].dia != ""){
               var divdataconf = document.createElement('div');
-              divdataconf.innerHTML = data[i].date;
+              divdataconf.innerHTML = data[i].dia;
               divdataconf.style.fontSize = "12px";
               divdataconf.style.float = "right";
               divdataconf.style.width = "120px";
@@ -701,7 +701,7 @@ function getconf(){
             divconf.appendChild(divconfinfo);
 
             var divconfinfodata = document.createElement('div');
-            divconfinfodata.innerHTML = data[i].date;
+            divconfinfodata.innerHTML = data[i].dia;
             divconfinfodata.style.fontSize = "11px";
             divconfinfodata.style.width = "100%";
             divconfinfodata.style.height = "46%";
@@ -764,9 +764,9 @@ function getconf(){
                 divconf.style.border = "solid 1px #bd2124";
             }
 
-            if(data[i].date != ""){
+            if(data[i].dia != ""){
               var divdataconf = document.createElement('div');
-              divdataconf.innerHTML = data[i].date;
+              divdataconf.innerHTML = data[i].dia;
               divdataconf.style.fontSize = "12px";
               divdataconf.style.float = "right";
               divdataconf.style.width = "120px";
