@@ -243,7 +243,7 @@ document.body.appendChild(waterMarkDiv);
 // Load the initial scenes
 
 if(firstTimeRunning){
-  carregarJSONBDInitial(0);
+  carregarJSONBDInitial('cadeiras');
   firstTimeRunning = false;
 }
 
@@ -521,7 +521,7 @@ function getconf(){
 
               var pnome = document.createElement('p');
               pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "16px";
+              pnome.style.fontSize = "15px";
               pnome.style.padding =  "0";
               pnome.style.margin =  "0";
               pnome.style.marginTop =  "5px";
@@ -855,8 +855,9 @@ function getconf(){
                   clearInterval(timerconf);
                   $("#loadedScreen").fadeOut("slow");
                   insideHelp = false;
-                  $("#legenda").animate({"marginTop": '-=100px'});
-                  $("#splashelp").animate({"left": '+=50px'});
+                  $("#splashelp").animate({"left": '+=60px'});
+                  $("#legEsq").animate({"left": '+=60px'});
+                  $("#legDir").animate({"left": '+=60px'});
                   setTimeout(function(){
                     legEsq.style.animation = "coloranim 1.5s 2";
                     legEsq.style.webkitAnimation = "coloranim 1.5s 2";
@@ -878,6 +879,24 @@ function getconf(){
                   },false);
 
                   $('#splashelp').bind('mouseleave', "*", function(e){
+                    mouseIsOnMenu = false;
+                  },false);
+
+                  $('#legDir').bind('mouseenter' ,"*", function(e){
+                    mouseIsOnMenu = true;
+                    controls.lookSpeed = 0;
+                  },false);
+
+                  $('#legDir').bind('mouseleave', "*", function(e){
+                    mouseIsOnMenu = false;
+                  },false);
+
+                  $('#legEsq').bind('mouseenter' ,"*", function(e){
+                    mouseIsOnMenu = true;
+                    controls.lookSpeed = 0;
+                  },false);
+
+                  $('#legEsq').bind('mouseleave', "*", function(e){
                     mouseIsOnMenu = false;
                   },false);
                 },
@@ -965,6 +984,7 @@ function init() {
   var iDiv = document.createElement('div');
   iDiv.style.width = '100%';
   iDiv.style.cursor = "default";
+  iDiv.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
   iDiv.style.textAlign = "center";
   iDiv.style.height = '100%';
   iDiv.style.position = "absolute";
@@ -980,10 +1000,8 @@ function init() {
 
   var divMain = document.createElement('div');
   divMain.style.color = "white";
-  divMain.style.borderRadius = "15px";
-  divMain.style.backgroundColor= "rgba(0, 0, 0, 0.7)";
   divMain.style.cursor = "default";
-  divMain.style.width = '80%';
+  divMain.style.width = '90%';
   divMain.style.textAlign = "center";
   divMain.style.fontFamily = "osb";
   divMain.style.height = '650px';
@@ -996,13 +1014,12 @@ function init() {
   var divinfocin = document.createElement('div');
   divinfocin.style.color = "white";
   divinfocin.style.cursor = "default";
-  divinfocin.style.width = '49.4%';
+  divinfocin.style.width = '40%';
   divinfocin.style.textAlign = "center";
   divinfocin.style.fontFamily = "osb";
   divinfocin.style.position = "absolute";
   divinfocin.id = 'textScreenhelp';
   divinfocin.style.float = "left";
-  divinfocin.style.borderRight = "solid 1px #5d5d5d";
   divinfocin.style.marginTop = "40px";
 
   var divtexto1 = document.createElement('div');
@@ -1016,10 +1033,6 @@ function init() {
   textowelcome.innerHTML = "Welcome to <b><span style='color:#bd2124'>PLAY 4 POVERTY</span></b>";
   textowelcome.style.fontFamily = "osr";
   textowelcome.style.fontSize = "23px";
-
-  //var textoespaco = document.createElement('p');
-  //textoespaco.innerHTML = "<br>";
-  //textoespaco.style.fontFamily = "osr";
 
   var textoapre = document.createElement('p');
   textoapre.innerHTML = "P4P Virtual Conference Room";
@@ -1092,13 +1105,13 @@ function init() {
   diveyeimg.style.marginTop = "20px";
 
   var splashMain = document.createElement('div');
-  splashMain.style.width = '650px';
+  splashMain.style.width = '660px';
   splashMain.style.fontFamily = "osb";
   splashMain.style.height = '190px';
   splashMain.style.position = "absolute";
   splashMain.id = 'splashelp';
-  splashMain.style.top = '10%';
-  splashMain.style.left = '-650px';
+  splashMain.style.top = '28.3%';
+  splashMain.style.left = '-660px';
 
 
   var splashelp = document.createElement('div');
@@ -1115,10 +1128,10 @@ function init() {
   splashelpbt.style.color = "white";
   splashelpbt.style.backgroundColor= "rgba(189, 33, 36, 1)";
   splashelpbt.style.cursor = "pointer";
-  splashelpbt.style.width = '50px';
+  splashelpbt.style.width = '60px';
   splashelpbt.style.textAlign = "center";
   splashelpbt.style.fontFamily = "osb";
-  splashelpbt.style.height = '50px';
+  splashelpbt.style.height = '60px';
   splashelpbt.style.float = "right";
   splashelpbt.id = 'splashelpbt';
   splashelpbt.onclick = function() {
@@ -1136,7 +1149,7 @@ function init() {
   splashelpbttext.style.fontFamily = "osb";
   splashelpbttext.style.fontSize = "32px";
   splashelpbttext.style.color = "#FFFFFF";
-  splashelpbttext.style.marginTop = "3px";
+  splashelpbttext.style.marginTop = "5px";
 
   var divlefth = document.createElement('div');
   divlefth.style.borderRight = "solid 1px #5d5d5d";
@@ -1224,7 +1237,7 @@ function init() {
   var divMainConf = document.createElement('div');
   divMainConf.style.color = "white";
   divMainConf.style.cursor = "default";
-  divMainConf.style.width = '49%';
+  divMainConf.style.width = '59%';
   divMainConf.style.textAlign = "center";
   divMainConf.style.fontFamily = "osb";
   //divMainConf.style.border = "solid 1px yellow";
@@ -1293,6 +1306,82 @@ function init() {
   conftitle.style.borderBottom = "solid 1px #5d5d5d";
   conftitle.style.marginBottom = "10px";
 
+  var legEsq = document.createElement('div');
+  legEsq.style.width = '60px';
+  legEsq.style.backgroundColor= "rgba(189, 33, 36, 1)";
+  legEsq.style.fontFamily = "osb";
+  legEsq.style.height = '60px';
+  legEsq.style.textAlign = 'center';
+  legEsq.style.position = "absolute";
+  legEsq.style.top = '6%';
+  legEsq.style.left = '-60px';
+  legEsq.id = 'legEsq';
+  legEsq.className = 'legEsq';
+  legEsq.onclick = function() {
+    if (!clickfull){
+      fullscreen();
+      clickfull = true;
+    }else{
+      fullscreen();
+      clickfull = false;
+    }
+  }
+  legEsq.onmouseover = function() {
+    legEsq.style.cursor = 'pointer';
+  }
+
+  var ptrocafs = document.createElement('p');
+  ptrocafs.innerHTML = "FullScreen";
+  ptrocafs.style.color = "white";
+  ptrocafs.style.fontSize = "10px";
+  ptrocafs.style.fontFamily = "osb";
+  ptrocafs.style.marginTop = "4px";
+  ptrocafs.style.height = "10px";
+  ptrocafs.id = "ptrocafs";
+
+  var ptrocafsImg = document.createElement('img');
+  ptrocafsImg.id = "ptrocafsImg";
+  ptrocafsImg.style.width = "25px";
+  ptrocafsImg.style.margin = "auto";
+
+  legEsq.appendChild(ptrocafs);
+  legEsq.appendChild(ptrocafsImg);
+
+  var legDir = document.createElement('div');
+  legDir.style.width = '60px';
+  legDir.style.backgroundColor= "rgba(189, 33, 36, 1)";
+  legDir.style.fontFamily = "osb";
+  legDir.style.height = '60px';
+  legDir.style.textAlign = 'center';
+  legDir.style.position = "absolute";
+  legDir.style.top = '17%';
+  legDir.style.left = '-60px';
+  legDir.id = 'legDir';
+  legDir.className = 'legDir';
+  legDir.onclick = function() {
+    switchToOrtho();
+  }
+  legDir.onmouseover = function() {
+    legDir.style.cursor = 'pointer';
+  }
+
+  var ptrocapresp = document.createElement('p');
+  ptrocapresp.innerHTML = "Ver Planta";
+  ptrocapresp.style.color = "white";
+  ptrocapresp.style.fontSize = "10px";
+  ptrocapresp.style.fontFamily = "osb";
+  ptrocapresp.style.marginTop = "10px";
+  ptrocapresp.style.height = "10px";
+  ptrocapresp.id = "ptrocapresp";
+
+  var ptrocaprespImg = document.createElement('img');
+  ptrocaprespImg.id = "ptrocaprespImg";
+  ptrocaprespImg.style.width = "40px";
+  ptrocaprespImg.style.margin = "auto";
+
+  legDir.appendChild(ptrocapresp);
+  legDir.appendChild(ptrocaprespImg);
+
   divtexto1.appendChild(textowelcome);
   //divtexto1.appendChild(textoespaco);
   divMain.appendChild(divtexto1);
@@ -1351,6 +1440,8 @@ function init() {
 
   document.body.appendChild(iDiv);
   document.body.appendChild(splashMain);
+  document.body.appendChild(legEsq);
+  document.body.appendChild(legDir);
 
   $('#formulariocli').hide();
   $('.btentrar').hide();
@@ -1363,6 +1454,9 @@ function init() {
   document.getElementById("divmidimgh").src="img/mousemenu.png";
   document.getElementById("divrightimgh").src="img/mouse_clickmenu.png";
   document.getElementById("diveyeimgh").src="img/eyemenu.png";
+
+  document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
+  document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
 
   getconf();
 
@@ -1381,8 +1475,9 @@ function init() {
     clearInterval(timerconf);
     $("#loadedScreen").fadeOut("slow");
     insideHelp = false;
-    $("#legenda").animate({"marginTop": '-=100px'});
-    $("#splashelp").animate({"left": '+=50px'});
+    $("#splashelp").animate({"left": '+=60px'});
+    $("#legDir").animate({"left": '+=60px'});
+    $("#legEsq").animate({"left": '+=60px'});
     setTimeout(function(){
       legEsq.style.animation = "coloranim 1.5s 2";
       legEsq.style.webkitAnimation = "coloranim 1.5s 2";
@@ -1486,6 +1581,24 @@ function init() {
   $('#splashelp').bind('mouseleave', "*", function(e){
     mouseIsOnMenu = false;
   },false);
+
+  $('#legDir').bind('mouseenter' ,"*", function(e){
+    mouseIsOnMenu = true;
+    controls.lookSpeed = 0;
+  },false);
+
+  $('#legDir').bind('mouseleave', "*", function(e){
+    mouseIsOnMenu = false;
+  },false);
+
+  $('#legEsq').bind('mouseenter' ,"*", function(e){
+    mouseIsOnMenu = true;
+    controls.lookSpeed = 0;
+  },false);
+
+  $('#legEsq').bind('mouseleave', "*", function(e){
+    mouseIsOnMenu = false;
+  },false);
 }
 
 //
@@ -1510,21 +1623,6 @@ function showMenuSelect(){
   loading_seats.style.msFilter = "blur(15px)";
 
   document.body.appendChild(loading_seats);
-  function carregarCinemas() {
-    $.ajax({
-      url:        'php/ler_BDCc.php',
-      dataType:   "json", // <== JSON-P request
-      success:    function(data){
-        cinemasJSON = data;
-        loadCinemas();
-      },
-      error:    function(textStatus,errorThrown){
-        console.log(textStatus);
-        console.log(errorThrown);
-      }
-
-    });
-  }
 
   function carregarData() {
       $.ajax({
@@ -1664,324 +1762,6 @@ function showMenuSelect(){
     }
   }
 
-  // create main legenda for cinema
-  var legDiv = document.createElement('div');
-  legDiv.style.width = '100%';
-  legDiv.style.height = '80px';
-  legDiv.style.position = "absolute";
-  legDiv.id = 'LegDiv';
-  legDiv.style.bottom = "0px";
-
-
-  // create sub main legenda for cinema
-  var legenda = document.createElement('div');
-  legenda.style.width = '900px';
-  legenda.style.margin = "auto";
-  legenda.style.textAlign = "center";
-  legenda.style.borderRadius = "10px";
-  legenda.id = 'legenda';
-  legenda.style.marginTop = "100px";
-
-  var legEsq = document.createElement('div');
-  legEsq.style.width = '90px';
-  legEsq.style.float = "left";
-  legEsq.style.textAlign = "center";
-  legEsq.style.height = '100px';
-  legEsq.style.background = '#5d5d5d';
-  legEsq.style.borderRadius = "10px";
-  legEsq.id = 'legEsq';
-  legEsq.className = 'legEsq';
-  legEsq.onclick = function() {
-    if (!clickfull){
-      fullscreen();
-      clickfull = true;
-    }else{
-      fullscreen();
-      clickfull = false;
-    }
-  }
-  legEsq.onmouseover = function() {
-    legEsq.style.cursor = 'pointer';
-  }
-
-  // create legend for cinema
-  var legMid = document.createElement('div');
-  legMid.style.width = '670px';
-  legMid.style.float = "left";
-  legMid.style.textAlign = "center";
-  legMid.style.height = '200px';
-  legMid.style.marginLeft = '25px';
-  legMid.style.background = '#2f2f2f';
-  legMid.style.borderRadius = "10px";
-  legMid.id = 'legMid';
-  // create legend for cinema
-  var legDir = document.createElement('div');
-  legDir.style.width = '90px';
-  legDir.style.float = "right";
-  legDir.style.textAlign = "center";
-  legDir.style.height = '200px';
-  legDir.style.background = '#5d5d5d';
-  legDir.style.borderRadius = "10px";
-  legDir.id = 'legDir';
-  legDir.onclick = function() {
-    switchToOrtho();
-  }
-  legDir.onmouseover = function() {
-    legDir.style.cursor = 'pointer';
-  }
-
-  //Topic see prespective
-  var topicDiv1 = document.createElement('div');
-  topicDiv1.style.textAlign = "center";
-  topicDiv1.style.float = "left";
-  topicDiv1.style.width = "120px";
-  topicDiv1.style.marginTop = "15px";
-  //topicDiv1.style.border = "solid 2px red";
-  topicDiv1.style.marginLeft = "23px";
-  topicDiv1.style.height = "28px";
-  topicDiv1.id = 'topicDiv1';
-
-  var pverPresp = document.createElement('p');
-  pverPresp.innerHTML = "Ver Perspectiva";
-  pverPresp.style.color = "#FFF";
-  pverPresp.style.fontSize = "12px";
-  pverPresp.style.fontFamily = "osr";
-  pverPresp.style.float = "right";
-  pverPresp.style.marginTop = "4px";
-
-  var pverPrespImg = document.createElement('img');
-  pverPrespImg.id = "pverPrespImg";
-  pverPrespImg.style.float = "left";
-
-  topicDiv1.appendChild(pverPrespImg);
-  topicDiv1.appendChild(pverPresp);
-  legMid.appendChild(topicDiv1);
-
-  //Topic available
-  var topicDiv2 = document.createElement('div');
-  topicDiv2.style.textAlign = "center";
-  topicDiv2.style.float = "left";
-  topicDiv2.style.width = "77px";
-  //topicDiv2.style.border = "solid 2px red";
-  topicDiv2.style.marginTop = "15px";
-  topicDiv2.style.marginLeft = "23px";
-  topicDiv2.style.height = "20px";
-  topicDiv2.id = 'topicDiv2';
-  topicDiv2.style.marginTop = '20px';
-
-  var pavailable = document.createElement('p');
-  pavailable.innerHTML = "Disponível";
-  pavailable.style.color = "#FFF";
-  pavailable.style.fontSize = "12px";
-  pavailable.style.fontFamily = "osr";
-  pavailable.style.float = "right";
-  pavailable.style.marginTop = "0px";
-
-  var pavailableImg = document.createElement('img');
-  pavailableImg.id = "pavailableImg";
-  pavailableImg.style.float = "left";
-  pavailableImg.style.marginTop = "2px";
-
-  topicDiv2.appendChild(pavailableImg);
-  topicDiv2.appendChild(pavailable);
-  legMid.appendChild(topicDiv2);
-
-  //Topic selected
-  var topicDiv3 = document.createElement('div');
-  topicDiv3.style.textAlign = "center";
-  topicDiv3.style.float = "left";
-  topicDiv3.style.width = "85px";
-  //topicDiv3.style.border = "solid 2px red";
-  topicDiv3.style.marginTop = "15px";
-  topicDiv3.style.marginLeft = "23px";
-  topicDiv3.style.height = "20px";
-  topicDiv3.id = 'topicDiv3';
-  topicDiv3.style.marginTop = '20px';
-
-  var pselected = document.createElement('p');
-  pselected.innerHTML = "Selecionado";
-  pselected.style.color = "#FFF";
-  pselected.style.fontSize = "12px";
-  pselected.style.fontFamily = "osr";
-  pselected.style.float = "right";
-  pselected.style.marginTop = "0px";
-
-  var pselectedImg = document.createElement('img');
-  pselectedImg.id = "pselectedImg";
-  pselectedImg.style.float = "left";
-  pselectedImg.style.marginTop = "2px";
-
-  topicDiv3.appendChild(pselectedImg);
-  topicDiv3.appendChild(pselected);
-  legMid.appendChild(topicDiv3);
-
-  //Topic defecient
-  var topicDiv4 = document.createElement('div');
-  topicDiv4.style.textAlign = "center";
-  topicDiv4.style.float = "left";
-  topicDiv4.style.width = "162px";
-  //topicDiv4.style.border = "solid 2px red";
-  topicDiv4.style.marginTop = "15px";
-  topicDiv4.style.marginLeft = "23px";
-  topicDiv4.style.height = "20px";
-  topicDiv4.id = 'topicDiv3';
-  topicDiv4.style.marginTop = '20px';
-
-  var pdefecient = document.createElement('p');
-  pdefecient.innerHTML = "Mobilidade Condicionada";
-  pdefecient.style.color = "#FFF";
-  pdefecient.style.fontSize = "12px";
-  pdefecient.style.fontFamily = "osr";
-  pdefecient.style.float = "right";
-  pdefecient.style.marginTop = "0px";
-
-  var pdefecientImg = document.createElement('img');
-  pdefecientImg.id = "pdefecientImg";
-  pdefecientImg.style.float = "left";
-  pdefecientImg.style.marginTop = "2px";
-
-  topicDiv4.appendChild(pdefecientImg);
-  topicDiv4.appendChild(pdefecient);
-  legMid.appendChild(topicDiv4);
-
-  //Topic not available
-  var topicDiv5 = document.createElement('div');
-  topicDiv5.style.textAlign = "center";
-  topicDiv5.style.float = "left";
-  topicDiv5.style.width = "85px";
-  //topicDiv5.style.border = "solid 2px red";
-  topicDiv5.style.marginTop = "15px";
-  topicDiv5.style.marginLeft = "23px";
-  topicDiv5.style.height = "20px";
-  topicDiv5.id = 'topicDiv5';
-  topicDiv5.style.marginTop = '20px';
-
-  var pnotava = document.createElement('p');
-  pnotava.innerHTML = "Indisponível";
-  pnotava.style.color = "#FFF";
-  pnotava.style.fontSize = "12px";
-  pnotava.style.fontFamily = "osr";
-  pnotava.style.float = "right";
-  pnotava.style.marginTop = "0px";
-
-  var pnotavaImg = document.createElement('img');
-  pnotavaImg.id = "pnotavaImg";
-  pnotavaImg.style.float = "left";
-  pnotavaImg.style.marginTop = "2px";
-
-  topicDiv5.appendChild(pnotavaImg);
-  topicDiv5.appendChild(pnotava);
-  legMid.appendChild(topicDiv5);
-
-  //Topic Capacity
-  var capacityDiv = document.createElement('div');
-  capacityDiv.style.textAlign = "center";
-  capacityDiv.style.float = "left";
-  capacityDiv.style.width = "135px";
-  //topicDiv5.style.border = "solid 2px red";
-  capacityDiv.style.marginLeft = "23px";
-  capacityDiv.style.height = "20px";
-  capacityDiv.id = 'capacityDiv';
-  capacityDiv.style.marginTop = '10px';
-
-  var pcapacity = document.createElement('p');
-  pcapacity.innerHTML = "Capacidade:";
-  pcapacity.style.color = "#7a7a7a";
-  pcapacity.style.fontSize = "17px";
-  pcapacity.style.fontFamily = "osb";
-  pcapacity.style.float = "left";
-  pcapacity.style.marginTop = "0px";
-
-  var pcapacityNumber = document.createElement('p');
-  pcapacityNumber.innerHTML = capacidade;
-  pcapacityNumber.id = "pcapacityNumber";
-  pcapacityNumber.style.color = "#FFF";
-  pcapacityNumber.style.fontSize = "17px";
-  pcapacityNumber.style.fontFamily = "osb";
-  pcapacityNumber.style.float = "right";
-  pcapacityNumber.style.marginTop = "0px";
-
-  capacityDiv.appendChild(pcapacity);
-  capacityDiv.appendChild(pcapacityNumber);
-  legMid.appendChild(capacityDiv);
-
-  //Topic Free seats
-  var freeseatsDiv = document.createElement('div');
-  freeseatsDiv.style.textAlign = "center";
-  freeseatsDiv.style.float = "left";
-  freeseatsDiv.style.width = "155px";
-  //topicDiv5.style.border = "solid 2px red";
-  freeseatsDiv.style.marginLeft = "23px";
-  freeseatsDiv.style.height = "20px";
-  freeseatsDiv.id = 'freeseatsDiv';
-  freeseatsDiv.style.marginTop = '10px';
-
-  var pfreeseats = document.createElement('p');
-  pfreeseats.innerHTML = "Lugares livres:";
-  pfreeseats.style.color = "#7a7a7a";
-  pfreeseats.style.fontSize = "17px";
-  pfreeseats.style.fontFamily = "osb";
-  pfreeseats.style.float = "left";
-  pfreeseats.style.marginTop = "0px";
-
-  var pfreeseatsNumber = document.createElement('p');
-  pfreeseatsNumber.innerHTML = lugaresLivres;
-  pfreeseatsNumber.id = "pfreeseatsNumber";
-  pfreeseatsNumber.style.color = "#FFF";
-  carregouFreeSeats = true;
-  pfreeseatsNumber.style.fontSize = "17px";
-  pfreeseatsNumber.style.fontFamily = "osb";
-  pfreeseatsNumber.style.float = "right";
-  pfreeseatsNumber.style.marginTop = "0px";
-
-  freeseatsDiv.appendChild(pfreeseats);
-  freeseatsDiv.appendChild(pfreeseatsNumber);
-  legMid.appendChild(freeseatsDiv);
-
-  var ptrocapresp = document.createElement('p');
-  ptrocapresp.innerHTML = "Ver Planta";
-  ptrocapresp.style.color = "#FFF";
-  ptrocapresp.style.fontSize = "13px";
-  ptrocapresp.style.fontFamily = "osr";
-  ptrocapresp.style.marginTop = "15px";
-  ptrocapresp.id = "ptrocapresp";
-
-  var ptrocaprespImg = document.createElement('img');
-  ptrocaprespImg.id = "ptrocaprespImg";
-  ptrocaprespImg.style.marginTop = "2px";
-
-  var ptrocafs = document.createElement('p');
-  ptrocafs.innerHTML = "FullScreen";
-  ptrocafs.style.color = "#FFF";
-  ptrocafs.style.fontSize = "13px";
-  ptrocafs.style.fontFamily = "osr";
-  ptrocafs.style.marginTop = "15px";
-  ptrocafs.id = "ptrocafs";
-
-  var ptrocafsImg = document.createElement('img');
-  ptrocafsImg.id = "ptrocafsImg";
-  ptrocafsImg.style.marginTop = "-4px";
-
-  legEsq.appendChild(ptrocafs);
-  legEsq.appendChild(ptrocafsImg);
-
-  legDir.appendChild(ptrocapresp);
-  legDir.appendChild(ptrocaprespImg);
-
-  legenda.appendChild(legEsq);
-  legenda.appendChild(legMid);
-  legenda.appendChild(legDir);
-  legDiv.appendChild(legenda);
-  document.body.appendChild(legDiv);
-  document.getElementById("pverPrespImg").src="img/ver.png";
-  document.getElementById("pavailableImg").src="img/Bola_0001_vermelho.png";
-  document.getElementById("pselectedImg").src="img/Bola_0003_verde.png";
-  document.getElementById("pdefecientImg").src="img/Bola_0002_azul.png";
-  document.getElementById("pnotavaImg").src="img/Bola_0000_cinza.png";
-  document.getElementById("ptrocaprespImg").src="img/icon cadeiras.png";
-  document.getElementById("ptrocafsImg").src="img/full-screen-button.png";
-
-
   // create the main selection menu
   var iDiv = document.createElement('div');
   //iDiv.innerHTML = " Cadeiras seleccionadas : ";
@@ -2033,67 +1813,12 @@ function showMenuSelect(){
   divInfo.style.right = '0';
   divInfo.style.top = '170px';
 
-  // create link to show the cinemas
-  var showDivCinemas = document.createElement("a");
-  showDivCinemas.href = "#";
-  showDivCinemas.style.display = "block";
-  showDivCinemas.style.height = '30px';
-  showDivCinemas.style.width = "100%";
-  showDivCinemas.style.paddingTop = "5px";
-  showDivCinemas.id = "showDivCinemas";
-  showDivCinemas.style.color = "#FFFFFF";
-  showDivCinemas.style.backgroundColor = '#151314';
-  showDivCinemas.text = "Escolha o Evento";
-  showDivCinemas.style.fontFamily = "ossb";
-  showDivCinemas.style.textDecoration = "none";
-  showDivCinemas.onclick = function() {
-    $(this).find('i').toggleClass('fa fa-angle-down fa fa-angle-up');
-    if (slidedown == false){
-      if (slidedowndata == true) {
-        $('#iconData').toggleClass('fa fa-angle-down fa fa-angle-up');
-        $('#showDataDiv').slideUp();
-        slidedowndata = false;
-      }
-      if (slidedownsessao == true) {
-        $('#iconSessao').toggleClass('fa fa-angle-down fa fa-angle-up');
-        $('#showSessaoDiv').slideUp();
-        slidedownsessao = false;
-      }
-      $('#showCinemas').slideDown();
-      slidedown = true;
-    }else{
-      $('#showCinemas').slideUp();
-      slidedown = false;
-    }
-  }
-
-  // create icon for link show cinemas
-  var icon = document.createElement("i");
-  icon.className = "fa fa-angle-down";
-  icon.style.float = "right";
-  icon.id = "icon";
-  icon.style.marginRight = "10px";
-  icon.style.marginTop = "4px";
-
-  // create div that contain the list of cinemas
-  var showCinemas = document.createElement("div");
-  showCinemas.style.display = "none";
-  showCinemas.style.height = '115px';
-  showCinemas.style.width = "100%";
-  showCinemas.id = "showCinemas";
-  showCinemas.style.textAlign = "left";
-  showCinemas.style.backgroundColor = "#313131";
-  showCinemas.style.fontFamily = "ossb";
-  showCinemas.style.overflowY = "auto";
-
-  carregarCinemas();
-
   // create red element for display seats
   var bannerSeats = document.createElement("p");
   bannerSeats.id = "movieInfo";
   bannerSeats.innerHTML = "Lugares";
   bannerSeats.style.width = "100%";
-  bannerSeats.style.height = "20px";
+  bannerSeats.style.height = "25px";
   bannerSeats.style.backgroundColor = "#BD2124";
   bannerSeats.style.display = "inline-block";
   bannerSeats.style.fontFamily = "ossb";
@@ -2113,73 +1838,13 @@ function showMenuSelect(){
   selectLugares.style.backgroundColor = "#313131";
   selectLugares.style.overflowY = "auto";
 
-  var btnComprar = document.createElement("a");
-  btnComprar.href = "#";
-  btnComprar.style.backgroundImage = "url('img/btncomprar.png')";
-  btnComprar.style.backgroundRepeat = "no-repeat";
-  btnComprar.style.float = "right";
-  btnComprar.style.marginTop = "17px";
-  btnComprar.style.display = "none";
-  btnComprar.style.height = '30px';
-  btnComprar.style.width = "104px";
-  btnComprar.id = "btnComprar";
-  btnComprar.style.marginRight = "7%";
-  btnComprar.style.textDecoration = "none";
-
-  btnComprar.addEventListener('click', function(e) {
-    var jsonArray = [];
-    var cabecalho =
-    {
-      nome_filme: document.getElementById("movieName").innerHTML,
-      info_filme: document.getElementById("movieInfo").innerHTML,
-      cinema: document.getElementById("showDivCinemas").text,
-      data: document.getElementById("showData").text,
-      sala: document.getElementById("showRoomNumber").text,
-      sessao: document.getElementById("showSessao").className
-    }
-    jsonArray.push(cabecalho);
-    for(var i=0 ; i<selectedChairs.length ; i++){
-      for( var j=0 ; j<cadeirasJSON.length ; j++){
-        if(selectedChairs[i].name == cadeirasJSON[j].nome_procedural){
-          var item =
-          {
-            sessao: "cadeiras"+ n_sessao_select,
-            fila: cadeirasJSON[j].fila,
-            lugar:cadeirasJSON[j].lugar,
-            tipoBilhete:selectedChairs[i].class
-          }
-          jsonArray.push(item);
-        }
-      }
-    }
-    jsonChairs = JSON.stringify(jsonArray);
-    $.ajax({
-      url: 'php/ler_BDUpdateCadeiras.php', //This is the current doc
-      type: "POST",
-      dataType:'json', // add json datatype to get json
-      data: ({dados: jsonChairs}),
-      success: function(data){
-      },
-      error:    function(textStatus,errorThrown){
-        console.log(textStatus);
-        console.log(errorThrown);
-      }
-    });
-    document.cookie="dados=" + jsonChairs;
-    document.location.href = "resultados.php";
-  },false);
-
   divInfoMovie.appendChild(logoCinema);
   divInfoMovie.appendChild(movieInfo);
   iDiv.appendChild(divInfoMovie);
   iDiv.appendChild(divInfo);
-  divInfo.appendChild(showDivCinemas);
-  showDivCinemas.appendChild(icon);
-  divInfo.appendChild(showCinemas);
 
   divInfo.appendChild(bannerSeats);
   divInfo.appendChild(selectLugares);
-  divInfo.appendChild(btnComprar);
   document.body.appendChild(iDiv);
   document.getElementById("logoCinema").src="img/p4p.png";
 
@@ -2189,15 +1854,6 @@ function showMenuSelect(){
   },false);
 
   $('#menuSelect').bind('mouseleave', "*", function(e){
-    mouseIsOnMenu = false;
-  },false);
-
-  $('#legenda').bind('mouseenter' ,"*", function(e){
-    mouseIsOnMenu = true;
-    controls.lookSpeed = 0;
-  },false);
-
-  $('#legenda').bind('mouseleave', "*", function(e){
     mouseIsOnMenu = false;
   },false);
 }
@@ -2444,11 +2100,12 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 // Here we access the DB and load the chair occupation info
 //
 
-function carregarJSONBDInitial() {
+function carregarJSONBDInitial(id) {
   $.ajax({
     url: 'php/ler_BDCinema.php', //This is the current doc
     type: "POST",
     dataType:'json',
+    data:({tbid:id}),
     success: function(data){
       cadeirasJSON = data;
       loadScene();
@@ -2783,7 +2440,7 @@ function onMouseDown(e) {
           }
           if (primeiravez == true){
             if (document.getElementById("splashelp").style.left == "0px"){
-              $("#splashelp").animate({"left": '-=450px'});
+              $("#splashelp").animate({"left": '-=600px'});
               clickhelpbt = false;
             }
 
