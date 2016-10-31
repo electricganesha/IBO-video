@@ -81,8 +81,6 @@ var texturaCadeiraHighlight = loader.load('models/Cinema_Motta/Cadeira_Nova/Base
 
 var texturaCadeiraOcupada = loader.load('models/Cinema_Motta/Cadeira_Nova/cadeira_Tex_ocupada.jpg');
 
-var texturaCadeiraDeficiente = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Diffuse_azul_small.jpg');
-
 var texturaCadeiraNormalMap = loader.load('models/Cinema_Motta/Cadeira_Nova/BaseCadeira_Normals_small.jpg');
 
 texturaCadeiraNormalMap.minFilter = THREE.LinearFilter;
@@ -100,7 +98,6 @@ textureVideo = new THREE.VideoTexture( video );
 textureVideo.generateMipmaps = false;
 textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
-//textureVideo.format = THREE.RGBFormat;
 
 var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
 var id;
@@ -243,6 +240,9 @@ var num_sessao = "0";
 var deviceOrientationSelectedObject;
 var deviceOrientationSelectedPoint;
 
+var divselconf = document.createElement('div');
+var lastclicked;
+
 // RANDOM
 
 var screenReferenceSphere; // the sphere (invisible) located in the middle of the screen, to lookAt
@@ -259,11 +259,6 @@ var materialcadeiraMobileHighlight = new THREE.MeshBasicMaterial( {
 // create the material
 var materialcadeiraMobile = new THREE.MeshBasicMaterial( {
   map: texturaCadeira
-});
-
-// create the material
-var materialcadeiraDeficienteMobile = new THREE.MeshBasicMaterial( {
-  map: texturaCadeiraDeficiente,
 });
 
 // create the material
@@ -354,7 +349,7 @@ container.appendChild(element);
 // Load the initial scenes
 
 if(firstTimeRunning){
-  carregarJSONBDInitial(0);
+  carregarJSONBDInitial('cadeiras');
   firstTimeRunning = false;
 }
 
@@ -393,6 +388,280 @@ var rtParameters = {
 
 var rtWidth  = window.innerWidth / 2;
 var rtHeight = window.innerHeight / 2;
+
+
+var primeiravezconf = true;
+
+function getconf(){
+  console.log("actualizei");
+  if(!primeiravezconf){
+    $('.conferencia').remove();
+  }
+  primeiravezconf = false;
+  $.ajax({
+    url: 'php/carregaconferencias.php', //This is the current doc
+    type: "POST",
+    dataType:'json',
+    async: false,
+    success: function(data){
+      if(data == null){
+        $('.avisosemconf').remove();
+        var conftitle = document.createElement('p');
+        conftitle.innerHTML = "No conference is available";
+        conftitle.className = "avisosemconf";
+        conftitle.style.fontFamily = "osr";
+        conftitle.style.fontSize = "13px";
+        conftitle.style.margin = "auto";
+        conftitle.style.marginTop = "30px";
+        conftitle.style.width = "100%";
+        conftitle.style.color = "white";
+        conftitle.style.height = "30px";
+        conftitle.style.marginBottom = "10px";
+
+        divselconf.appendChild(conftitle);
+      }else{
+        for (var i=0; i < data.length; i++){
+          //If is even number
+            if (data[i].estado == "live"){
+              var idconf = data[i].id_conferencia;
+              var divconf = document.createElement('div');
+              divconf.style.width = "100%";
+              divconf.style.float = "left";
+              divconf.style.height = "50px";
+              divconf.style.cursor = "pointer";
+              divconf.className = "conferencia";
+              divconf.style.marginTop = "10px";
+              divconf.title = "live";
+              divconf.id = data[i].id_conferencia;
+              if(lastclicked == data[i].id_conferencia){
+                  divconf.style.border = "solid 1px #bd2124";
+              }
+
+              var divnpeople = document.createElement('div');
+              divnpeople.innerHTML = "<i class='glyphicon glyphicon-user'></i> " + data[i].n_pessoas;
+              divnpeople.style.fontSize = "10px";
+              divnpeople.style.float = "right";
+              divnpeople.style.width = "35px";
+              divnpeople.className = "npeople";
+              divnpeople.style.height = "100%";
+              divnpeople.style.paddingTop = "15px";
+              divconf.appendChild(divnpeople);
+
+              var divconfinfo = document.createElement('div');
+              divconfinfo.style.fontSize = "11px";
+              divconfinfo.style.float = "right";
+              divconfinfo.style.width = "85px";
+              divconfinfo.className = "npeople";
+              divconfinfo.style.height = "100%";
+              divconf.appendChild(divconfinfo);
+
+              var divconfinfodata = document.createElement('div');
+              divconfinfodata.innerHTML = data[i].dia;
+              divconfinfodata.style.fontSize = "11px";
+              divconfinfodata.style.width = "100%";
+              divconfinfodata.style.height = "46%";
+              divconfinfodata.className = "confdata";
+              divconfinfo.style.paddingTop = "7px";
+              divconfinfo.appendChild(divconfinfodata);
+
+              var divconftime = document.createElement('div');
+              divconftime.innerHTML = data[i].hour;
+              divconftime.style.fontSize = "11px";
+              divconftime.style.width = "100%";
+              divconftime.style.height = "49%";
+              divconfinfo.appendChild(divconftime);
+
+              var imglive = document.createElement('img');
+              imglive.style.width = "20px";
+              imglive.id = "liveimg";
+              imglive.className = "Blink";
+              imglive.style.float = "left";
+              imglive.style.marginTop = "15px";
+              imglive.style.marginLeft = "15px";
+              imglive.src="img/live.png";
+              divconf.appendChild(imglive);
+
+              var pnome = document.createElement('p');
+              pnome.innerHTML = data[i].nome;
+              pnome.style.fontSize = "16px";
+              pnome.style.padding =  "0";
+              pnome.style.margin =  "0";
+              pnome.style.marginTop =  "5px";
+              pnome.style.width = "200px";
+              pnome.style.marginLeft = "50px";
+              //pnome.style.border = "solid 1px blue";
+              pnome.style.textAlign = "left";
+              divconf.appendChild(pnome);
+
+              var pby = document.createElement('p');
+              pby.innerHTML = "by " + data[i].orador;
+              pby.style.fontSize = "10px";
+              pby.style.padding =  "0";
+              pby.style.margin =  "0";
+              pby.style.width = "200px";
+              pby.style.marginLeft = "50px";
+              //pby.style.border = "solid 1px blue";
+              pby.style.textAlign = "left";
+              divconf.appendChild(pby);
+
+
+              divselconf.appendChild(divconf);
+            }else{
+              var divconf = document.createElement('div');
+              divconf.style.width = "49%";
+              divconf.id = data[i].id_conferencia;
+              divconf.style.float = "left";
+              divconf.style.height = "50px";
+              divconf.style.cursor = "pointer";
+              divconf.className = "conferencia";
+              divconf.style.marginTop = "10px";
+              divconf.title = "offline";
+              if(lastclicked == data[i].id_conferencia){
+                  divconf.style.border = "solid 1px #bd2124";
+              }
+
+              if(data[i].dia != ""){
+                var divdataconf = document.createElement('div');
+                divdataconf.innerHTML = data[i].dia;
+                divdataconf.style.fontSize = "12px";
+                divdataconf.style.float = "right";
+                divdataconf.style.width = "120px";
+                divdataconf.className = "npeople";
+                divdataconf.style.height = "100%";
+                divdataconf.style.paddingTop = "15px";
+                divconf.appendChild(divdataconf);
+              }
+
+              var imgconf = document.createElement('img');
+              imgconf.style.width = "20px";
+              imgconf.style.float = "left";
+              imgconf.style.marginTop = "15px";
+              imgconf.style.marginLeft = "15px";
+              imgconf.src="img/playconf.png";
+              divconf.appendChild(imgconf);
+
+              var pnome = document.createElement('p');
+              pnome.innerHTML = data[i].nome;
+              pnome.style.fontSize = "15px";
+              pnome.style.padding =  "0";
+              pnome.style.margin =  "0";
+              pnome.style.marginTop =  "5px";
+              pnome.style.width = "200px";
+              pnome.style.marginLeft = "50px";
+              //pnome.style.border = "solid 1px blue";
+              pnome.style.textAlign = "left";
+              divconf.appendChild(pnome);
+
+              var pby = document.createElement('p');
+              pby.innerHTML = "by " + data[i].orador;
+              pby.style.fontSize = "10px";
+              pby.style.padding =  "0";
+              pby.style.margin =  "0";
+              pby.style.width = "200px";
+              pby.style.marginLeft = "50px";
+              //pby.style.border = "solid 1px blue";
+              pby.style.textAlign = "left";
+              divconf.appendChild(pby);
+
+              divselconf.appendChild(divconf);
+            }
+          $("#" + data[i].id_conferencia).on("click", function(){
+            for (var j=0; j<data.length; j ++){
+              document.getElementById(data[j].id_conferencia).style.border = "solid 1px #5d5d5d";
+            }
+            document.getElementById(this.id).style.border = "solid 1px #bd2124";
+            lastclicked = this.id;
+
+            if(this.title == 'live'){
+              $('#textScreen').animate({left: '-600px'}, function() {
+                $('#formulariocli').show();
+                $("#nome_cli").focus();
+                $('#textScreen').hide();
+              });
+            }else{
+              $.ajax({
+                url: 'php/getvideourl.php',
+                dataType: "text",
+                data:({id: this.id}),
+                success:function(data){
+                  video.src = data;
+                  $('#formulariocli').hide();
+                  clearInterval(timerconf);
+                  $("#loadedScreen").fadeOut("slow");
+                  insideHelp = false;
+                  $("#splashelp").animate({"left": '+=60px'});
+                  $("#legEsq").animate({"left": '+=60px'});
+                  $("#legDir").animate({"left": '+=60px'});
+                  setTimeout(function(){
+                    legEsq.style.animation = "coloranim 1.5s 2";
+                    legEsq.style.webkitAnimation = "coloranim 1.5s 2";
+                  }, 2000);
+                  setTimeout(function(){
+                    legDir.style.animation = "coloranim 1.5s 2";
+                    legDir.style.webkitAnimation = "coloranim 1.5s 2";
+                  }, 4500);
+                  setTimeout(function(){
+                    splashelpbt.style.animation = "coloranimbt 1.5s 2";
+                    splashelpbt.style.webkitAnimation = "coloranimbt 1.5s 2";
+                  }, 7000);
+
+                  isLoading = false;
+                  firstTimeInit = false;
+                  $('#splashelp').bind('mouseenter' ,"*", function(e){
+                    mouseIsOnMenu = true;
+                    controls.lookSpeed = 0;
+                  },false);
+
+                  $('#splashelp').bind('mouseleave', "*", function(e){
+                    mouseIsOnMenu = false;
+                  },false);
+
+                  $('#legDir').bind('mouseenter' ,"*", function(e){
+                    mouseIsOnMenu = true;
+                    controls.lookSpeed = 0;
+                  },false);
+
+                  $('#legDir').bind('mouseleave', "*", function(e){
+                    mouseIsOnMenu = false;
+                  },false);
+
+                  $('#legEsq').bind('mouseenter' ,"*", function(e){
+                    mouseIsOnMenu = true;
+                    controls.lookSpeed = 0;
+                  },false);
+
+                  $('#legEsq').bind('mouseleave', "*", function(e){
+                    mouseIsOnMenu = false;
+                  },false);
+                },
+                error:function(textStatus,errorThrown){
+                  console.log(textStatus);
+                  console.log(errorThrown);
+                }
+              });
+            }
+          });
+
+          $("#" + data[i].id_conferencia).on("mouseover", function(){
+              document.getElementById(this.id).style.border = "solid 1px #bd2124";
+          });
+
+          $("#" + data[i].id_conferencia).on("mouseout", function(){
+            if(lastclicked != this.id){
+              document.getElementById(this.id).style.border = "solid 1px #5d5d5d";
+            }
+          });
+        }
+      }
+    },
+    error:    function(textStatus,errorThrown){
+      console.log(textStatus);
+      console.log(errorThrown);
+    }
+  });
+}
+
+timerconf = setInterval(function(){getconf();}, 15000);
 
 //
 // This method shows the loading scene, while the items are not loaded
@@ -1543,7 +1812,7 @@ function init() {
   statsFPS.domElement.style.left = '0px';
   statsFPS.domElement.style.top = '0px';
 
-  //document.body.appendChild( statsFPS.domElement );
+  document.body.appendChild( statsFPS.domElement );
 
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 15 );
 
@@ -1612,98 +1881,97 @@ function init() {
     divMain.style.fontFamily = "osb";
     divMain.style.position = "absolute";
     divMain.id = 'textScreen';
-    divMain.style.top = '50%';
-    divMain.style.transform = "translateY(-50%)";
+    divMain.style.marginTop = '40px'
 
     var divtexto1 = document.createElement('div');
-    divtexto1.style.borderBottom = "solid 1px #1bbc9b";
-    divtexto1.style.width = "60%";
+    divtexto1.style.borderBottom = "solid 1px #5d5d5d";
+    divtexto1.style.width = "80%";
     divtexto1.style.height = "30px";
     divtexto1.style.margin = "auto";
 
     var textowelcome = document.createElement('p');
-    textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
+    textowelcome.innerHTML = "Welcome to <b><span style='color:#bd2124'>PLAY 4 POVERTY</span></b>";
     textowelcome.style.fontFamily = "osr";
-    textowelcome.style.fontSize = "18px";
+    textowelcome.style.fontSize = "19px";
 
     var textoespaco = document.createElement('p');
     textoespaco.innerHTML = "<br>";
     textoespaco.style.fontFamily = "osr";
 
     var textoapre = document.createElement('p');
-    textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
+    textoapre.innerHTML = "P4P Virtual Conference Room";
     textoapre.style.fontFamily = "osr";
-    textoapre.style.fontSize = "11px";
+    textoapre.style.fontSize = "13px";
 
-    var divleft = document.createElement('div');
-    divleft.style.borderRight = "solid 1px #1bbc9b";
-    divleft.style.width = "49%";
-    divleft.style.float = "left";
-    divleft.style.height = "110px";
-    divleft.style.marginTop = "3%";
+    var divMainConf = document.createElement('div');
+    divMainConf.style.color = "white";
+    divMainConf.style.cursor = "default";
+    divMainConf.style.width = '100%';
+    divMainConf.style.textAlign = "center";
+    divMainConf.style.fontFamily = "osb";
+    //divMainConf.style.border = "solid 1px yellow";
+    divMainConf.style.height = "520px";
+    divMainConf.style.marginRight = "10px";
 
-    var divlefttext = document.createElement('p');
-    divlefttext.innerHTML = "Navegar";
-    divlefttext.style.fontFamily = "osr";
-    divlefttext.style.fontSize = "11px";
-    divlefttext.style.color = "#1bbc9b";
+    divselconf.style.color = "white";
+    divselconf.style.cursor = "default";
+    divselconf.style.width = '95%';
+    divselconf.style.textAlign = "center";
+    divselconf.style.fontFamily = "osb";
+    //divselconf.style.border = "solid 1px yellow";
+    divselconf.style.margin = 'auto';
+    divselconf.style.height = '450px';
 
-    var divleftimg = document.createElement('img');
-    divleftimg.id = "divleftimg";
-    divleftimg.style.width = "60px";
-    divleftimg.style.marginTop = "5px";
 
-    var divmid = document.createElement('div');
-    divmid.style.width = "49%";
-    divmid.style.float = "left";
-    divmid.style.height = "110px";
-    divmid.style.marginTop = "3%";
+    var divnome = document.createElement('div');
+    divnome.style.width = '100%';
+    divnome.id = "formulariocli";
+    divnome.style.margin = "auto";
+    divnome.style.top = "150px";
+    divnome.style.position ="absolute";
+    divnome.style.textAlign="center";
 
-    var divmidtext = document.createElement('p');
-    divmidtext.innerHTML = "Zoom";
-    divmidtext.style.fontFamily = "osr";
-    divmidtext.style.fontSize = "11px";
-    divmidtext.style.color = "#1bbc9b";
+    var divrow = document.createElement('div');
+    divrow.className = 'row';
 
-    var divmidimg = document.createElement('img');
-    divmidimg.id = "divmidimg";
-    divmidimg.style.width = "60px";
-    divmidimg.style.marginTop = "10px";
+    var divcolmd61 = document.createElement('div');
+    divcolmd61.className = 'col-xs-7';
+    divcolmd61.style.textAlign = 'right'
 
-    var divright = document.createElement('div');
-    divright.style.borderRight = "solid 1px #1bbc9b";
-    divright.style.width = "49%";
-    divright.style.float = "left";
-    divright.style.height = "110px";
-    divright.style.marginTop = "3%";
+    var ptextonome = document.createElement('p');
+    ptextonome.innerHTML = 'Insert your name';
+    ptextonome.style.textAlign = 'right';
 
-    var divrighttext = document.createElement('p');
-    divrighttext.innerHTML = "Selecione os seus lugares";
-    divrighttext.style.fontFamily = "osr";
-    divrighttext.style.fontSize = "11px";
-    divrighttext.style.color = "#1bbc9b";
+    var divnomeinput = document.createElement('input');
+    divnomeinput.id = "nome_cli";
+    divnomeinput.setAttribute('type','text');
+    divnomeinput.setAttribute('placeholder','Insert your name');
+    divnomeinput.style.border= "solid 1px #bd2124";
+    divnomeinput.style.width= "200px";
+    divnomeinput.style.textAlign= "center";
+    divnomeinput.style.height= "40px";
+    divnomeinput.style.backgroundColor = "transparent";
+    divnomeinput.style.color = "white";
+    divnomeinput.style.fontSize = "18px";
+    divnomeinput.style.outline = "none";
+    divnomeinput.style.fontFamily = "ossb";
 
-    var divrightimg = document.createElement('img');
-    divrightimg.id = "divrightimg";
-    divrightimg.style.width = "60px";
-    divrightimg.style.marginTop = "10px";
+    var divcolmd62 = document.createElement('div');
+    divcolmd62.className = 'col-xs-5';
+    divcolmd62.style.textAlign = 'left';
 
-    var diveye = document.createElement('div');
-    diveye.style.width = "49%";
-    diveye.style.float = "left";
-    diveye.style.height = "110px";
-    diveye.style.marginTop = "3%";
+    var divnomebutton = document.createElement('input');
+    divnomebutton.className = "btentrar";
+    divnomebutton.setAttribute('type','button');
+    divnomebutton.setAttribute('value','Join');
+    divnomebutton.style.border= "transparent";
+    divnomebutton.style.backgroundColor = "transparent";
+    divnomebutton.style.fontSize = "20px";
+    divnomebutton.style.outline = "none";
+    divnomebutton.style.fontFamily = "ossb";
+    divnomebutton.style.marginLeft = "30px";
 
-    var diveyetext = document.createElement('p');
-    diveyetext.innerHTML = "Ver perspectiva do lugar";
-    diveyetext.style.fontFamily = "osr";
-    diveyetext.style.fontSize = "11px";
-    diveyetext.style.color = "#1bbc9b";
 
-    var diveyeimg = document.createElement('img');
-    diveyeimg.id = "diveyeimg";
-    diveyeimg.style.width = "60px";
-    diveyeimg.style.marginTop = "10px";
   }else{
     // create the main selection menu
     var iDiv = document.createElement('div');
@@ -1827,30 +2095,32 @@ function init() {
   divMain.appendChild(divtexto1);
   divMain.appendChild(textoapre);
 
-  divMain.appendChild(divleft);
-  divleft.appendChild(divlefttext);
-  divleft.appendChild(divleftimg);
+  divMainConf.appendChild(divselconf);
+  divnome.appendChild(ptextonome)
+  divnome.appendChild(divrow);
+  divrow.appendChild(divcolmd61);
+  divcolmd61.appendChild(divnomeinput);
+  divrow.appendChild(divcolmd62);
+  divcolmd62.appendChild(divnomebutton);
 
-  divMain.appendChild(divmid);
-  divmid.appendChild(divmidtext);
-  divmid.appendChild(divmidimg);
-
-  divMain.appendChild(divright);
-  divright.appendChild(divrighttext);
-  divright.appendChild(divrightimg);
-
-  divMain.appendChild(diveye);
-  diveye.appendChild(diveyetext);
-  diveye.appendChild(diveyeimg);
+  divMain.appendChild(divMainConf);
+  iDiv.appendChild(divnome);
   iDiv.appendChild(divMain);
   document.body.appendChild(iDiv);
+  getconf();
+  $('#formulariocli').hide();
+  $('.btentrar').hide();
 
-  document.getElementById("divleftimg").src="img/mobile_navigate.png";
-  document.getElementById("divmidimg").src="img/mobile_zoom.png";
-  document.getElementById("divrightimg").src="img/mobile_click.png";
-  document.getElementById("diveyeimg").src="img/mobile_eye.png";
+  $('#nome_cli').keyup(function(){
+      var value = $(this).val();
+      if (value.length > 0) {
+          $('.btentrar').show();
+      } else {
+          $('.btentrar').hide();
+      }
+  });
 
-  $("#loadedScreen" ).click(function() {
+  /*$("#loadedScreen" ).click(function() {
     isLoadingInfo = false;
     $("#loadedScreen").fadeOut("slow");
 
@@ -1860,7 +2130,7 @@ function init() {
     fullscreen();
     insideHelp = false;
     $("#LegDiv").animate({bottom: "+=80px"});
-  });
+  });*/
   isLoading = false;
   firstTimeInit = false;
 }
@@ -2123,12 +2393,11 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
 
   singleGeometryNormal = new THREE.Geometry();
   singleGeometryOcupadas = new THREE.Geometry();
-  singleGeometryDeficiente = new THREE.Geometry();
+
 
   var materials = [];
 
   materials.push(materialcadeiraMobile);
-  materials.push(materialcadeiraDeficienteMobile);
   materials.push(materialcadeiraOcupadaMobile);
 
 
@@ -2178,11 +2447,6 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
         newObject.estado = "OCUPADA";
         singleGeometryOcupadas.merge(newObject.geometry, newObject.matrix, 2);
       }
-      else if(cadeiraCorrente.estado == "DEFICIENTE")
-      {
-        newObject.estado = "DEFICIENTE";
-        singleGeometryDeficiente.merge(newObject.geometry, newObject.matrix, 1);
-      }
       else
       {
         newObject.estado = "LIVRE";
@@ -2200,26 +2464,20 @@ function populateCadeirasInstances(mesh, normalsArray, bufferGeometry) {
   var meshSGOcupadas = new THREE.Mesh(singleGeometryOcupadas, new THREE.MeshFaceMaterial(materials));
   meshSGOcupadas.name = "singleGeometryOcupadas";
   mainScene.add(meshSGOcupadas);
-
-  var meshSGDeficiente = new THREE.Mesh(singleGeometryDeficiente, new THREE.MeshFaceMaterial(materials));
-  meshSGDeficiente.name = "singleGeometryDeficiente";
-  mainScene.add(meshSGDeficiente);
 }
 
 //
 // Here we access the DB and load the chair occupation info
 //
 
-function carregarJSONBDInitial(num_sessao) {
-
+function carregarJSONBDInitial(id) {
   $.ajax({
     url: 'php/ler_BDCinema.php', //This is the current doc
     type: "POST",
-    dataType:'json', // add json datatype to get json
-    data: ({sessao: "cadeiras"+num_sessao}),
+    dataType:'json',
+    data:({tbid:id}),
     success: function(data){
       cadeirasJSON = data;
-      console.log("JSON Loaded Correctly from DB Initial cadeiras " + num_sessao);
       loadScene();
     },
     error:    function(textStatus,errorThrown){
