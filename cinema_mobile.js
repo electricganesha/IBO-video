@@ -92,12 +92,14 @@ var texturaBraco = loader.load('models/Cinema_Motta/Braco_Novo/BracoCadeira_Diff
 var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
 
 var video = document.getElementById( 'video' );
+var audio = document.getElementById('audio');
 var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
 
 textureVideo = new THREE.VideoTexture( video );
 textureVideo.generateMipmaps = false;
 textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
+textureVideo.format = THREE.RGBFormat;
 
 // BOOLEANS
 
@@ -206,78 +208,6 @@ var materialcadeiraOcupadaMobile = new THREE.MeshBasicMaterial( {
   map: texturaCadeiraOcupada,
 });
 
-// Create a new audio context.
-var sound = {};
-var ctx = new AudioContext();
-
-function loadWebAudio()
-{
-  // Detect if the audio context is supported.
-  window.AudioContext = (
-    window.AudioContext ||
-    window.webkitAudioContext ||
-    null
-  );
-
-  if (!AudioContext) {
-    throw new Error("AudioContext not supported!");
-  }
-
-  // Create an object with a sound source and a volume control.
-  sound.source = ctx.createBufferSource();
-  sound.volume = ctx.createGain();
-
-  // Load a sound file using an ArrayBuffer XMLHttpRequest.
-  var request = new XMLHttpRequest();
-  request.open("GET", "video/pushshowreel.mp3", true);
-  request.responseType = "arraybuffer";
-  request.onload = function(e) {
-
-    // Create a buffer from the response ArrayBuffer.
-    ctx.decodeAudioData(this.response, function onSuccess(buffer) {
-      sound.buffer = buffer;
-
-      // Make the sound source use the buffer and start playing it.
-      sound.source.buffer = sound.buffer;
-    }, function onFailure() {
-      alert("Decoding the audio buffer failed");
-    });
-  };
-  request.send();
-
-  sound.panner = ctx.createPanner();
-
-  sound.source.connect(sound.panner);
-  sound.panner.connect(ctx.destination);
-
-  sound.panner.panningModel = 'equalpower';
-  sound.panner.refDistance = 0.1;
-  sound.panner.maxDistance = 10000;
-  sound.panner.rolloffFactor = 1;
-  sound.panner.coneInnerAngle = 0;
-  sound.panner.coneOuterAngle = 45;
-  sound.panner.coneOuterGain = 1;
-
-  var p = new THREE.Vector3();
-  p.setFromMatrixPosition(screenReferenceSphere.matrixWorld);
-
-  // And copy the position over to the sound of the object.
-  sound.panner.setPosition(p.x, p.y, p.z);
-
-  var vec = new THREE.Vector3(0,0,1);
-  var m = screenReferenceSphere.matrixWorld;
-
-  // Save the translation column and zero it.
-  var mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
-  m.elements[12] = m.elements[13] = m.elements[14] = 0;
-
-  // Multiply the 0,0,1 vector by the world matrix and normalize the result.
-  vec.applyProjection(m);
-  vec.normalize();
-
-  sound.panner.setOrientation(vec.x, vec.y, vec.z);
-}
-
 // STRUCTURAL / DOM / RENDERER
 
 renderer = new THREE.WebGLRenderer({ precision: "highp", antialias:true });
@@ -336,6 +266,9 @@ function getconf(){
   console.log("actualizei");
   if(!primeiravezconf){
     $('.conferencia').remove();
+    if ($('.avisosemconf') != null){
+        $('.avisosemconf').remove();
+    }
   }
   primeiravezconf = false;
   $.ajax({
@@ -505,7 +438,7 @@ function getconf(){
 
               divselconf.appendChild(divconf);
             }
-          $("#" + data[i].id_conferencia).on("click", function(){
+          $("#" + data[i].id_conferencia).on('click', function(){
             for (var j=0; j<data.length; j ++){
               document.getElementById(data[j].id_conferencia).style.border = "solid 1px #5d5d5d";
             }
@@ -513,7 +446,8 @@ function getconf(){
             lastclicked = this.id;
 
             if(this.title == 'live'){
-              $('#textScreen').animate({left: '-600px'}, function() {
+              var largura = window.innerWidth;
+              $('#textScreen').animate({left: '-' + largura + 'px'}, function() {
                 $('#formulariocli').show();
                 $("#nome_cli").focus();
                 $('#textScreen').hide();
@@ -524,25 +458,25 @@ function getconf(){
                 dataType: "text",
                 data:({id: this.id}),
                 success:function(data){
-                  video.src = data;
+                  var source = document.createElement('source');
+                  source.src = data;
+                  source.type = "video/mp4";
+                  video.appendChild(source);
                   $('#formulariocli').hide();
                   clearInterval(timerconf);
-
                   isLoadingInfo = false;
                   $("#loadedScreen").fadeOut("slow");
-
-                  video.play();
-                  video.pause();
-
                   fullscreen();
                   insideHelp = false;
-                  $("#LegDiv").animate({bottom: "+=80px"});
+                  $("#LegDiv").animate({bottom: "+=75px"});
                 },
                 error:function(textStatus,errorThrown){
                   console.log(textStatus);
                   console.log(errorThrown);
                 }
               });
+              video.play();
+              video.pause();
             }
           });
 
@@ -1548,6 +1482,9 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
             // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
             if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
             {
+              if(selectedChairs.length >= 1){
+                removeCadeira(selectedChairs[0], false);
+              }
               // calculate intersected object centroid
               obj.geometry.computeBoundingBox();
 
@@ -2017,7 +1954,7 @@ function init() {
     $("#loadedScreen").fadeOut("slow");
     fullscreen();
     insideHelp = false;
-    $("#LegDiv").animate({bottom: "+=80px"});
+    $("#LegDiv").animate({bottom: "+=75px"});
 
     var peer = new Peer(document.getElementById('nome_cli').value,{host: 'push.serveftp.com', port: 9000, path: '/'});
     //var peer = new Peer($('#divnomeinput').value,{key: '1yy04g33loqd7vi'});
@@ -2036,6 +1973,7 @@ function init() {
       data:({id:lastclicked}),
       success:function(data){
         id = data;
+        console.log(id);
         var conn = peer.connect(id);
         conn.on('open', function() {
           $.ajax({
@@ -2111,20 +2049,21 @@ function showMenuSelect(){
   // create main legenda for cinema
   var legDiv = document.createElement('div');
   legDiv.style.width = '100%';
-  legDiv.style.height = '80px';
+  legDiv.style.height = '75px';
   legDiv.style.position = "absolute";
   legDiv.id = 'LegDiv';
-  legDiv.style.bottom = '-80px';
+  legDiv.style.bottom = '-75px';
   // create sub main legenda for cinema
 
   var legEsq = document.createElement('div');
   legEsq.style.width = '40px';
   legEsq.style.float = "left";
   legEsq.style.textAlign = "center";
-  legEsq.style.height = '40px';
+  legEsq.style.height = '35px';
   legEsq.style.marginTop = '40px';
-  legEsq.style.background = '#1cbb9b';
-  legEsq.style.borderRadius = "5px";
+  legEsq.style.background = '#bd2124';
+  legEsq.style.borderTopLeftRadius = "5px";
+  legEsq.style.borderTopRightRadius = "5px";
   legEsq.id = 'legEsq';
   legEsq.style.display = 'block';
   legEsq.onclick = function() {
@@ -2137,15 +2076,14 @@ function showMenuSelect(){
   var ptrocavr = document.createElement('p');
   ptrocavr.innerHTML = "VR";
   ptrocavr.style.color = "#FFF";
-  ptrocavr.style.fontSize = "12px";
+  ptrocavr.style.fontSize = "10px";
   ptrocavr.style.fontFamily = "osr";
   ptrocavr.id = "ptrocavr";
-  ptrocavr.style.height = '5px';
+  ptrocavr.style.height = '0px';
   ptrocavr.style.marginTop = "3px";
 
   var ptrocavrImg = document.createElement('img');
   ptrocavrImg.id = "ptrocavrImg";
-  ptrocavrImg.style.marginTop = "-30px";
   ptrocavrImg.style.width = "25px";
 
   legEsq.appendChild(ptrocavr);
@@ -2158,8 +2096,9 @@ function showMenuSelect(){
   legDir.style.textAlign = "center";
   legDir.style.height = '40px';
   legDir.style.marginTop = '40px';
-  legDir.style.background = '#1cbb9b';
-  legDir.style.borderRadius = "5px";
+  legDir.style.background = '#bd2124';
+  legDir.style.borderTopLeftRadius = "5px";
+  legDir.style.borderTopRightRadius = "5px";
   legDir.id = 'legDir';
   legDir.style.display = "block";
   legDir.onclick = function() {
@@ -2172,7 +2111,7 @@ function showMenuSelect(){
   var ptrocapresp = document.createElement('p');
   ptrocapresp.innerHTML = "Planta";
   ptrocapresp.style.color = "#FFF";
-  ptrocapresp.style.fontSize = "12px";
+  ptrocapresp.style.fontSize = "10px";
   ptrocapresp.style.fontFamily = "osr";
   ptrocapresp.style.height = '4px';
   ptrocapresp.style.marginTop = "3px";
@@ -2180,8 +2119,7 @@ function showMenuSelect(){
 
   var ptrocaprespImg = document.createElement('img');
   ptrocaprespImg.id = "ptrocaprespImg";
-  ptrocaprespImg.style.marginTop = "-45px";
-  ptrocaprespImg.style.width = "37px";
+  ptrocaprespImg.style.width = "25px";
 
   legDir.appendChild(ptrocapresp);
   legDir.appendChild(ptrocaprespImg);
@@ -2303,8 +2241,6 @@ function loadSala() {
 
     //screenReferenceSphere.position.set(screenReferenceSphere.position.x, screenReferenceSphere.position.y, screenReferenceSphere.position.z);
     screenReferenceSphere.updateMatrixWorld();
-
-    loadWebAudio();
 
   } );
 
@@ -2650,6 +2586,9 @@ function onMouseDown(e) {
             // if chair is not selected yet && chair is not occupied && intersected object is not a sprite
             if(($.inArray(obj, selectedChairs)=="-1") && (obj.estado != "OCUPADA") && !spriteFound && !mouseIsOnMenu && !mouseIsOutOfDocument && insideHelp == false)
             {
+              if(selectedChairs.length >= 1){
+                removeCadeira(selectedChairs[0], false);
+              }
               // calculate intersected object centroid
               obj.geometry.computeBoundingBox();
 
@@ -2746,9 +2685,7 @@ function onMouseDown(e) {
     sittingDown = false;
     setupTweenOverview();
 
-    sound.source.stop();
     video.pause();
-    loadWebAudio();
 
     if(!isVR){
       for(var i=0; i<spriteEyeArray.length ; i++)
@@ -2813,38 +2750,6 @@ function update(dt) {
 //
 function animate() {
 
-  if(!isVR)
-  {
-  // Get the camera position.
-  //camera.position.set(newX, newY, newZ);
-  camera.updateMatrixWorld();
-  var p = new THREE.Vector3();
-  p.setFromMatrixPosition(camera.matrixWorld);
-
-  // And copy the position over to the listener.
-  ctx.listener.setPosition(p.x, p.y, p.z);
-
-  var vector = new THREE.Vector3(0, 0, -1);
-  vector.applyEuler(camera.rotation, camera.rotation.order);
-  ctx.listener.setOrientation(vector.x,vector.y,vector.z,0,1,0);
-
-  }
-  else
-  {
-    // Get the camera position.
-    //camera.position.set(newX, newY, newZ);
-    camera.updateMatrixWorld();
-    var p = new THREE.Vector3();
-    p.setFromMatrixPosition(camera.matrixWorld);
-
-    // And copy the position over to the listener.
-    ctx.listener.setPosition(p.x, p.y, p.z);
-
-    var cameraRotation = new THREE.Euler(camera.getWorldDirection().x,camera.getWorldDirection().y,camera.getWorldDirection().z);
-
-    ctx.listener.setOrientation(cameraRotation.x,cameraRotation.y,cameraRotation.z,0,1,0);
-  }
-
   requestAnimationFrame(animate);
   // if we are rendering the loading scene
   if(isLoading)
@@ -2855,12 +2760,6 @@ function animate() {
   // if we are rendering the main scene
   else
   {
-
-    for(var i=0; i<spriteEyeArray.length; i++)
-    {
-      spriteEyeArray[i].position.x += 0.002*Math.sin(clock.getElapsedTime() * 3);
-      spriteEyeArray[i].position.z += 0.0005*Math.cos(clock.getElapsedTime() * 3);
-    }
 
     renderer.render( mainScene, camera );
 
@@ -2904,7 +2803,6 @@ function changePerspective(x, y, z,obj) {
   || navigator.userAgent.match(/BlackBerry/i)
   || navigator.userAgent.match(/Windows Phone/i)){
     setTimeout(function(){ video.play(); }, 3000);
-    setTimeout(function(){ sound.source.start(); }, 4300);
   }
 
   sittingDown = true;
