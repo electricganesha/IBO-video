@@ -99,66 +99,6 @@ textureVideo.generateMipmaps = false;
 textureVideo.minFilter = THREE.LinearFilter;
 textureVideo.magFilter = THREE.LinearFilter;
 
-var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
-var id;
-$.ajax({
-  url: 'php/get_id.php',
-  dataType: "text",
-  success:function(data){
-    id = data;
-    console.log(id);
-    var conn = peer.connect(id);
-    conn.on('open', function() {
-      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-      if (navigator.getUserMedia) {
-        navigator.getUserMedia({video: false, audio: true}, function(stream) {
-          var call = peer.call(id, stream);
-          call.on('stream', function(remoteStream) {
-            video.src = window.URL.createObjectURL(remoteStream);
-            audio.src = window.URL.createObjectURL(remoteStream);
-            audio.onloadedmetadata = function(e){
-                audio.play();
-            }
-          });
-        }, function() {
-          var call = peer.calladmin(id, options);
-          call.on('stream', function(remoteStream) {
-            video.src = window.URL.createObjectURL(remoteStream);
-            audio.src = window.URL.createObjectURL(remoteStream);
-            audio.onloadedmetadata = function(e){
-                audio.play();
-            }
-          });
-        });
-      } if (navigator.mozGetUserMedia) {
-        navigator.mediaDevices.getUserMedia({video: false, audio: true}, function(stream) {
-          var call = peer.call(id, stream);
-          call.on('stream', function(remoteStream) {
-            video.src = window.URL.createObjectURL(remoteStream);
-            audio.src = window.URL.createObjectURL(remoteStream);
-            audio.onloadedmetadata = function(e){
-                audio.play();
-            }
-          });
-        }, function() {
-          var call = peer.calladmin(id, options);
-          call.on('stream', function(remoteStream) {
-            video.src = window.URL.createObjectURL(remoteStream);
-            audio.src = window.URL.createObjectURL(remoteStream);
-            audio.onloadedmetadata = function(e){
-                audio.play();
-            }
-          });
-        });
-      };
-    });
-  },
-  error:function(textStatus,errorThrown){
-    console.log(textStatus);
-    console.log(errorThrown);
-  }
-});
-
 // BOOLEANS
 
 var sittingDown = false; //if the user has clicked on a chair (e.g. is sitting down)
@@ -508,14 +448,14 @@ function getconf(){
               divselconf.appendChild(divconf);
             }else{
               var divconf = document.createElement('div');
-              divconf.style.width = "49%";
-              divconf.id = data[i].id_conferencia;
+              divconf.style.width = "100%";
               divconf.style.float = "left";
               divconf.style.height = "50px";
               divconf.style.cursor = "pointer";
               divconf.className = "conferencia";
               divconf.style.marginTop = "10px";
               divconf.title = "offline";
+              divconf.id = data[i].id_conferencia;
               if(lastclicked == data[i].id_conferencia){
                   divconf.style.border = "solid 1px #bd2124";
               }
@@ -587,52 +527,16 @@ function getconf(){
                   video.src = data;
                   $('#formulariocli').hide();
                   clearInterval(timerconf);
+
+                  isLoadingInfo = false;
                   $("#loadedScreen").fadeOut("slow");
+
+                  video.play();
+                  video.pause();
+
+                  fullscreen();
                   insideHelp = false;
-                  $("#splashelp").animate({"left": '+=60px'});
-                  $("#legEsq").animate({"left": '+=60px'});
-                  $("#legDir").animate({"left": '+=60px'});
-                  setTimeout(function(){
-                    legEsq.style.animation = "coloranim 1.5s 2";
-                    legEsq.style.webkitAnimation = "coloranim 1.5s 2";
-                  }, 2000);
-                  setTimeout(function(){
-                    legDir.style.animation = "coloranim 1.5s 2";
-                    legDir.style.webkitAnimation = "coloranim 1.5s 2";
-                  }, 4500);
-                  setTimeout(function(){
-                    splashelpbt.style.animation = "coloranimbt 1.5s 2";
-                    splashelpbt.style.webkitAnimation = "coloranimbt 1.5s 2";
-                  }, 7000);
-
-                  isLoading = false;
-                  firstTimeInit = false;
-                  $('#splashelp').bind('mouseenter' ,"*", function(e){
-                    mouseIsOnMenu = true;
-                    controls.lookSpeed = 0;
-                  },false);
-
-                  $('#splashelp').bind('mouseleave', "*", function(e){
-                    mouseIsOnMenu = false;
-                  },false);
-
-                  $('#legDir').bind('mouseenter' ,"*", function(e){
-                    mouseIsOnMenu = true;
-                    controls.lookSpeed = 0;
-                  },false);
-
-                  $('#legDir').bind('mouseleave', "*", function(e){
-                    mouseIsOnMenu = false;
-                  },false);
-
-                  $('#legEsq').bind('mouseenter' ,"*", function(e){
-                    mouseIsOnMenu = true;
-                    controls.lookSpeed = 0;
-                  },false);
-
-                  $('#legEsq').bind('mouseleave', "*", function(e){
-                    mouseIsOnMenu = false;
-                  },false);
+                  $("#LegDiv").animate({bottom: "+=80px"});
                 },
                 error:function(textStatus,errorThrown){
                   console.log(textStatus);
@@ -1927,25 +1831,20 @@ function init() {
     divnome.style.width = '100%';
     divnome.id = "formulariocli";
     divnome.style.margin = "auto";
-    divnome.style.top = "150px";
+    divnome.style.top = "100px";
     divnome.style.position ="absolute";
     divnome.style.textAlign="center";
 
-    var divrow = document.createElement('div');
-    divrow.className = 'row';
-
-    var divcolmd61 = document.createElement('div');
-    divcolmd61.className = 'col-xs-7';
-    divcolmd61.style.textAlign = 'right'
-
     var ptextonome = document.createElement('p');
     ptextonome.innerHTML = 'Insert your name';
-    ptextonome.style.textAlign = 'right';
+    ptextonome.style.textAlign = 'center';
+    ptextonome.style.color = "white";
+    ptextonome.style.fontFamily = "osb";
+    ptextonome.style.fontSize = "20px";
 
     var divnomeinput = document.createElement('input');
     divnomeinput.id = "nome_cli";
     divnomeinput.setAttribute('type','text');
-    divnomeinput.setAttribute('placeholder','Insert your name');
     divnomeinput.style.border= "solid 1px #bd2124";
     divnomeinput.style.width= "200px";
     divnomeinput.style.textAlign= "center";
@@ -1955,10 +1854,6 @@ function init() {
     divnomeinput.style.fontSize = "18px";
     divnomeinput.style.outline = "none";
     divnomeinput.style.fontFamily = "ossb";
-
-    var divcolmd62 = document.createElement('div');
-    divcolmd62.className = 'col-xs-5';
-    divcolmd62.style.textAlign = 'left';
 
     var divnomebutton = document.createElement('input');
     divnomebutton.className = "btentrar";
@@ -1970,8 +1865,6 @@ function init() {
     divnomebutton.style.outline = "none";
     divnomebutton.style.fontFamily = "ossb";
     divnomebutton.style.marginLeft = "30px";
-
-
   }else{
     // create the main selection menu
     var iDiv = document.createElement('div');
@@ -2096,12 +1989,9 @@ function init() {
   divMain.appendChild(textoapre);
 
   divMainConf.appendChild(divselconf);
-  divnome.appendChild(ptextonome)
-  divnome.appendChild(divrow);
-  divrow.appendChild(divcolmd61);
-  divcolmd61.appendChild(divnomeinput);
-  divrow.appendChild(divcolmd62);
-  divcolmd62.appendChild(divnomebutton);
+  divnome.appendChild(ptextonome);
+  divnome.appendChild(divnomeinput);
+  divnome.appendChild(divnomebutton);
 
   divMain.appendChild(divMainConf);
   iDiv.appendChild(divnome);
@@ -2119,18 +2009,96 @@ function init() {
           $('.btentrar').hide();
       }
   });
+  document.getElementById('nome_cli').focus();
+  $(".btentrar" ).click(function() {
+    clearInterval(timerconf);
 
-  /*$("#loadedScreen" ).click(function() {
     isLoadingInfo = false;
     $("#loadedScreen").fadeOut("slow");
-
-    video.play();
-    video.pause();
-
     fullscreen();
     insideHelp = false;
     $("#LegDiv").animate({bottom: "+=80px"});
-  });*/
+
+    var peer = new Peer(document.getElementById('nome_cli').value,{host: 'push.serveftp.com', port: 9000, path: '/'});
+    //var peer = new Peer($('#divnomeinput').value,{key: '1yy04g33loqd7vi'});
+    var options = {
+      'constraints': {
+        'mandatory': {
+            'OfferToReceiveAudio': true,
+            'OfferToReceiveVideo': true
+        }
+      }
+    }
+    var id;
+    $.ajax({
+      url: 'php/get_id.php',
+      dataType: "text",
+      data:({id:lastclicked}),
+      success:function(data){
+        id = data;
+        var conn = peer.connect(id);
+        conn.on('open', function() {
+          $.ajax({
+            url: 'php/updatecounter.php',
+            dataType: "text",
+            data:({id:lastclicked, estado:"entrou"}),
+            success:function(data){
+            },
+            error:function(textStatus,errorThrown){
+              console.log(textStatus);
+              console.log(errorThrown);
+            }
+          });
+          var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+          if (navigator.getUserMedia) {
+            navigator.getUserMedia({video: false, audio: true}, function(stream) {
+              var call = peer.call(id, stream, options);
+              call.on('stream', function(remoteStream) {
+                video.src = window.URL.createObjectURL(remoteStream);
+                audio.src = window.URL.createObjectURL(remoteStream);
+                audio.onloadedmetadata = function(e){
+                    audio.play();
+                }
+              });
+            }, function() {
+              var call = peer.calladmin(id, options);
+              call.on('stream', function(remoteStream) {
+                video.src = window.URL.createObjectURL(remoteStream);
+                audio.src = window.URL.createObjectURL(remoteStream);
+                audio.onloadedmetadata = function(e){
+                    audio.play();
+                }
+              });
+            });
+          } if (navigator.mozGetUserMedia) {
+            navigator.mediaDevices.getUserMedia({video: false, audio: true}, function(stream) {
+              var call = peer.call(id, stream, options);
+              call.on('stream', function(remoteStream) {
+                video.src = window.URL.createObjectURL(remoteStream);
+                audio.src = window.URL.createObjectURL(remoteStream);
+                audio.onloadedmetadata = function(e){
+                    audio.play();
+                }
+              });
+            }, function() {
+              var call = peer.calladmin(id, options);
+              call.on('stream', function(remoteStream) {
+                video.src = window.URL.createObjectURL(remoteStream);
+                audio.src = window.URL.createObjectURL(remoteStream);
+                audio.onloadedmetadata = function(e){
+                    audio.play();
+                }
+              });
+            });
+          };
+        });
+      },
+      error:function(textStatus,errorThrown){
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+  });
   isLoading = false;
   firstTimeInit = false;
 }
