@@ -1,0 +1,181 @@
+@font-face {
+    font-family: osb;
+    src: url(../fonts/OpenSans-Bold.ttf);
+}
+@font-face {
+    font-family: osr;
+    src: url(../fonts/OpenSans-Regular.ttf);
+}
+@font-face {
+    font-family: ossb;
+    src: url(../fonts/OpenSans-Semibold.ttf);
+}
+@font-face {
+    font-family: osl;
+    src: url(../fonts/OpenSans-Light.ttf);
+}
+
+body {
+background-color:black;
+margin: 0;
+overflow-x:hidden;
+overflow-y:hidden;
+color:white;
+font-family:osr;
+}
+
+a
+{
+  color:white;
+}
+
+a:hover
+{
+  color:grey;
+}
+
+#p4pLogo
+{
+  width:100%;
+}
+
+#speakerImg
+{
+  margin:auto;
+  float:left;
+  width:256px;
+}
+
+#assistantImg
+{
+  margin:auto;
+  float:right;
+  width:256px;
+}
+
+#paragraphSpeaker
+{
+  margin:auto;
+  float:left;
+  width:256px;
+  text-align:center;
+  margin-top:10px;
+  font-size:24px;
+}
+
+#paragraphAssistant
+{
+  margin:auto;
+  float:right;
+  width:256px;
+  text-align:center;
+  margin-top:10px;
+  font-size:24px;
+}
+
+
+#paragraphRow{
+  color:white;
+  margin-top:20px;
+  font-size:24px;
+}
+
+#paragraphAreYou
+{
+  text-align:center;
+  color:white;
+  font-size:24px;
+}
+
+#mainTitle
+{
+  border-bottom:2px solid #BD2124;
+  padding-top:30px;
+  padding-bottom:30px;
+  text-align:center;
+}
+
+#imagesRow
+{
+  margin-top:5%;
+}
+
+#imagesContainer
+{
+  margin-top:2.5%;
+  width:45%;
+}
+
+
+@media screen and (min-width: 1px) and (max-width: 480px) {
+
+  #speakerImg
+  {
+    margin:auto;
+    float:left;
+    width:128px;
+  }
+
+  #assistantImg
+  {
+    margin:auto;
+    float:right;
+    width:128px;
+  }
+
+  #paragraphSpeaker
+  {
+    margin:auto;
+    float:left;
+    width:100%;
+    text-align:center;
+    margin-top:10px;
+    margin-bottom:10px;
+    font-size:16px;
+  }
+
+  #paragraphAssistant
+  {
+    margin:auto;
+    float:right;
+    width:100%;
+    margin-top:10px;
+    text-align:center;
+    font-size:16px;
+  }
+
+  #paragraphRow{
+    color:white;
+    margin-top:20px;
+    font-size:12px;
+  }
+
+  #paragraphAreYou
+  {
+    text-align:center;
+    color:white;
+    font-size:18px;
+  }
+
+  #mainTitle
+  {
+      border-bottom:2px solid #BD2124;
+      padding-top:10px;
+      padding-bottom:30px;
+      text-align:center;
+      font-size:24px;
+  }
+
+  #imagesRow
+  {
+    width:100%;
+    margin-top:15%;
+  }
+
+  #imagesContainer
+  {
+    margin-top:2.5%;
+    width:100%;
+  }
+
+}
