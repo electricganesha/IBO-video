@@ -131,6 +131,16 @@ body
   margin-left: 50px;
 }
 
+#mainStructure
+{
+  width:100%;
+  padding-top:10px;
+  display:none;
+  font-size:14px;
+  margin-bottom:20px;
+  height:90%;
+}
+
 #yourNameColumn
 {
   text-align:right;
@@ -191,7 +201,7 @@ body
 .sliderButton
 {
   color:#BD2124;
-  display:block;
+  display:none;
   position:absolute;
 }
 
@@ -272,6 +282,7 @@ body
   {
     clear:both;
     position:relative;
+    z-index:999;
   }
 
   #poweredByPUSH
