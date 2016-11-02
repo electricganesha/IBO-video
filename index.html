@@ -25,7 +25,8 @@
         <div id="imagesContainer" class="container">
           <p id="paragraphAreYou"> Are you a ... ? </p>
           <div id="imagesRow" class="row">
-            <div class="col-md-6 col-xs-6" style="width:50%;">
+            <div class="col-md-6 col-xs-6" style="width:50%; text-align:center;">
+              <p id="warning" style= "display: none;">Please connect a webcam in order to host a conference</p>
               <a href="admin.html"><img id="speakerImg" src="img/speaker.png"></img></a>
               <a href="admin.html"><p id="paragraphSpeaker"> - Speaker - </p></a>
             </div>
@@ -39,18 +40,83 @@
 
       <script>
 
-        $('#speakerImg').mouseover(function()
-        {
-          $('#speakerImg').attr('src',"img/speaker-grey.png");
-          $('#paragraphSpeaker').css('color',"grey");
-        });
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+      if (navigator.getUserMedia) {
+        navigator.getUserMedia({video: false, audio: true}, function(stream) {
+          $('#speakerImg').mouseover(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker-grey.png");
+            $('#paragraphSpeaker').css('color',"grey");
+          });
 
-        $('#speakerImg').mouseout(function()
-        {
-          $('#speakerImg').attr('src',"img/speaker.png");
-          $('#paragraphSpeaker').css('color',"white");
-        });
+          $('#speakerImg').mouseout(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker.png");
+            $('#paragraphSpeaker').css('color',"white");
+          });
 
+          $('#paragraphSpeaker').mouseover(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker-grey.png");
+            $('#paragraphSpeaker').css('color',"grey");
+          });
+
+          $('#paragraphSpeaker').mouseout(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker.png");
+            $('#paragraphSpeaker').css('color',"white");
+          });
+        }, function() {
+          var warning = document.getElementById('warning');
+          warning.style.position = "absolute";
+          warning.style.width = "60%";
+          warning.style.marginTop = "100px";
+          warning.style.display = "block";
+          warning.style.pointerEvents = "none";
+          $('#speakerImg').attr('src',"img/speaker-disable.png");
+          $('#speakerImg').css('pointer-events',"none");
+          $('#paragraphSpeaker').css('color',"#2b2b2b");
+          $('#paragraphSpeaker').css('pointer-events',"none");
+        });
+      } if (navigator.mozGetUserMedia) {
+        navigator.mediaDevices.getUserMedia({video: false, audio: true}, function(stream) {
+          $('#speakerImg').mouseover(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker-grey.png");
+            $('#paragraphSpeaker').css('color',"grey");
+          });
+
+          $('#speakerImg').mouseout(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker.png");
+            $('#paragraphSpeaker').css('color',"white");
+          });
+
+          $('#paragraphSpeaker').mouseover(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker-grey.png");
+            $('#paragraphSpeaker').css('color',"grey");
+          });
+
+          $('#paragraphSpeaker').mouseout(function()
+          {
+            $('#speakerImg').attr('src',"img/speaker.png");
+            $('#paragraphSpeaker').css('color',"white");
+          });
+
+        }, function() {
+          var warning = document.getElementById('warning');
+          warning.style.position = "absolute";
+          warning.style.width = "60%";
+          warning.style.marginTop = "100px";
+          warning.style.display = "block";
+          warning.style.cursor = "not-allowed";
+          $('#speakerImg').attr('src',"img/speaker-disable.png");
+          $('#speakerImg').css('pointer-events',"none");
+          $('#paragraphSpeaker').css('color',"#2b2b2b");
+          $('#paragraphSpeaker').css('pointer-events',"none");
+        });
+      };
         $('#assistantImg').mouseover(function()
         {
           $('#assistantImg').attr('src',"img/attendee-grey.png");
@@ -61,18 +127,6 @@
         {
           $('#assistantImg').attr('src',"img/attendee.png");
           $('#paragraphAssistant').css('color',"white");
-        });
-
-        $('#paragraphSpeaker').mouseover(function()
-        {
-          $('#speakerImg').attr('src',"img/speaker-grey.png");
-          $('#paragraphSpeaker').css('color',"grey");
-        });
-
-        $('#paragraphSpeaker').mouseout(function()
-        {
-          $('#speakerImg').attr('src',"img/speaker.png");
-          $('#paragraphSpeaker').css('color',"white");
         });
 
         $('#paragraphAssistant').mouseover(function()
@@ -86,7 +140,5 @@
           $('#assistantImg').attr('src',"img/attendee.png");
           $('#paragraphAssistant').css('color',"white");
         });
-
-
       </script>
 </html>

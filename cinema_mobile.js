@@ -305,6 +305,7 @@ function getconf(){
               divconf.className = "conferencia";
               divconf.style.marginTop = "10px";
               divconf.title = "live";
+              divconf.style.zIndex = "10";
               divconf.id = data[i].id_conferencia;
               if(lastclicked == data[i].id_conferencia){
                   divconf.style.border = "solid 1px #bd2124";
@@ -388,6 +389,7 @@ function getconf(){
               divconf.className = "conferencia";
               divconf.style.marginTop = "10px";
               divconf.title = "offline";
+              divconf.style.zIndex = "10";
               divconf.id = data[i].id_conferencia;
               if(lastclicked == data[i].id_conferencia){
                   divconf.style.border = "solid 1px #bd2124";
@@ -1744,33 +1746,31 @@ function init() {
     textoapre.style.fontFamily = "osr";
     textoapre.style.fontSize = "13px";
 
-    var divMainConf = document.createElement('div');
-    divMainConf.style.color = "white";
-    divMainConf.style.cursor = "default";
-    divMainConf.style.width = '100%';
-    divMainConf.style.textAlign = "center";
-    divMainConf.style.fontFamily = "osb";
-    //divMainConf.style.border = "solid 1px yellow";
-    divMainConf.style.height = "520px";
-    divMainConf.style.marginRight = "10px";
-
     divselconf.style.color = "white";
     divselconf.style.cursor = "default";
     divselconf.style.width = '95%';
-    divselconf.style.textAlign = "center";
     divselconf.style.fontFamily = "osb";
     //divselconf.style.border = "solid 1px yellow";
     divselconf.style.margin = 'auto';
-    divselconf.style.height = '450px';
+    divselconf.style.zIndex = '20';
+    divselconf.style.overflow = 'scroll';
 
+    var ptextoback = document.createElement('p');
+    ptextoback.innerHTML = '< BACK';
+    ptextoback.style.textAlign = 'center';
+    ptextoback.style.color = "white";
+    ptextoback.style.fontFamily = "osb";
+    ptextoback.style.fontSize = "20px";
+    ptextoback.style.color= "#bd2124";
+    ptextoback.id = "linkback";
 
     var divnome = document.createElement('div');
     divnome.style.width = '100%';
     divnome.id = "formulariocli";
     divnome.style.margin = "auto";
-    divnome.style.top = "100px";
     divnome.style.position ="absolute";
     divnome.style.textAlign="center";
+    divnome.style.top = "20px";
 
     var ptextonome = document.createElement('p');
     ptextonome.innerHTML = 'Insert your name';
@@ -1778,6 +1778,7 @@ function init() {
     ptextonome.style.color = "white";
     ptextonome.style.fontFamily = "osb";
     ptextonome.style.fontSize = "20px";
+    ptextonome.style.marginTop = "60px";
 
     var divnomeinput = document.createElement('input');
     divnomeinput.id = "nome_cli";
@@ -1925,12 +1926,12 @@ function init() {
   divMain.appendChild(divtexto1);
   divMain.appendChild(textoapre);
 
-  divMainConf.appendChild(divselconf);
+  divnome.appendChild(ptextoback);
   divnome.appendChild(ptextonome);
   divnome.appendChild(divnomeinput);
   divnome.appendChild(divnomebutton);
 
-  divMain.appendChild(divMainConf);
+  divMain.appendChild(divselconf);
   iDiv.appendChild(divnome);
   iDiv.appendChild(divMain);
   document.body.appendChild(iDiv);
@@ -1945,6 +1946,13 @@ function init() {
       } else {
           $('.btentrar').hide();
       }
+  });
+  $("#linkback" ).click(function() {
+    var largura = window.innerWidth;
+    $('#textScreen').animate({left:'0px'}, function() {
+      $('#formulariocli').hide();
+      $('#textScreen').show();
+    });
   });
   document.getElementById('nome_cli').focus();
   $(".btentrar" ).click(function() {
