@@ -371,9 +371,12 @@ function fullscreen() {
 var primeiravezconf = true;
 
 function getconf(){
-  console.log("actualizei")
+  console.log("actualizei");
   if(!primeiravezconf){
     $('.conferencia').remove();
+    if ($('.avisosemconf') != null){
+        $('.avisosemconf').remove();
+    }
   }
   primeiravezconf = false;
   $.ajax({

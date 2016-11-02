@@ -92,11 +92,12 @@
 
     if (detectmob()){
       document.write('<video id="video" style="display:none"><\/video>');
+      document.write('<audio id="audio" style="display:none"></audio>');
       document.write("<script src='cinema_mobile.js'><\/script>");
     }else{
       document.write('<video id="video" style="display:none"><\/video>');
       document.write('<audio id="audio" style="display:none"></audio>');
-      document.write("<script src='cinema.js'><\/script>");
+      document.write("<script src='cinema_mobile.js'><\/script>");
     }
 
     </script>
