@@ -106,8 +106,20 @@ a:hover
   width:45%;
 }
 
+#footer
+{
+  position:absolute;
+  right:5px;
+  margin-right:5px;
+}
 
-@media screen and (min-width: 1px) and (max-width: 480px) {
+#poweredByPUSHImage
+{
+  width:150px;
+}
+
+
+@media screen and (max-width: 480px) {
 
   #speakerImg
   {
@@ -176,6 +188,24 @@ a:hover
   {
     margin-top:2.5%;
     width:100%;
+  }
+
+  #footer
+  {
+    position:absolute;
+    right:0px;
+  }
+
+  #poweredByPUSHImage
+  {
+    position:absolute;
+    bottom:0px;
+    margin-left:35%;
+  }
+
+  #poweredByPUSHImage
+  {
+    width:100px !important;
   }
 
 }
