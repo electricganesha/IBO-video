@@ -19,6 +19,10 @@ window.onload = function() {
     slideout.toggle();
   });
 
+  document.querySelector('.js-slideout-toggle').addEventListener('touchstart', function() {
+    slideout.toggle();
+  });
+
   document.querySelector('.menu').addEventListener('click', function(eve) {
     if (eve.target.nodeName === 'A') { slideout.close(); }
   });
@@ -143,7 +147,12 @@ function startConference()
 
             $("#usersConnectedText").fadeIn("slow");
 
-            $('#sliderButton').fadeIn("slow");
+            if(detectmob())
+              $('#sliderButton').fadeIn("slow");
+
+            $('#mainStructure').fadeIn("slow");
+
+            $('#menu').fadeIn("fast");
 
             openNav();
 
@@ -331,3 +340,19 @@ window.onbeforeunload = function(e) {
   callDB(current_id,"disconnected","","","");
   return dialogText;
 };
+
+function detectmob() {
+ if( navigator.userAgent.match(/Android/i)
+ || navigator.userAgent.match(/webOS/i)
+ || navigator.userAgent.match(/iPhone/i)
+ || navigator.userAgent.match(/iPad/i)
+ || navigator.userAgent.match(/iPod/i)
+ || navigator.userAgent.match(/BlackBerry/i)
+ || navigator.userAgent.match(/Windows Phone/i)
+ ){
+    return true;
+  }
+ else {
+    return false;
+  }
+}
