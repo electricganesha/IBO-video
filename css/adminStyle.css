@@ -173,7 +173,7 @@ body
 }
 
 /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
-#main {
+#mainContainer {
   transition: margin-left .5s;
   padding: 20px;
 }
@@ -188,9 +188,16 @@ body
   display:none;
 }
 
+.sliderButton
+{
+  color:#BD2124;
+  display:block;
+  position:absolute;
+}
+
 @media screen and (min-width: 1px) and (max-width: 480px) {
 
-  #main
+  #mainContainer
   {
     padding-bottom:0px;
   }
@@ -286,7 +293,7 @@ body
     min-height: 100%;
     width: auto;
     height: auto;
-    z-index: 100;
+    z-index: 0;
     transform: translateX(-50%) translateY(-50%);
   }
 
@@ -304,4 +311,39 @@ body
     border-bottom-right-radius: 25px;
     border-bottom-left-radius:25px;
   }
+
+  .sliderButton
+  {
+    color:#BD2124 !important;
+    display:block;
+    position:absolute;
+    border:1px solid red !important;
+  }
+
+  .slideout-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+  width: 256px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: none;
+  }
+
+  .slideout-panel {
+  position: relative;
+  z-index: 1;
+  }
+
+  .slideout-open,
+  .slideout-open body,
+  .slideout-open .slideout-panel {
+  overflow: hidden;
+  }
+
+  .slideout-open .slideout-menu {
+  display: block;
 }

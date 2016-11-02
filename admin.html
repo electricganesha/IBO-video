@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/font-awesome.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="css/adminStyle.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/slideout/0.1.12/slideout.min.js"></script>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/jquery-ui.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -15,12 +16,21 @@
     <script src="js/adminConference.js"></script>
   </head>
   <body>
-    <div id="sideMenuUsers" class="sidenav">
-      <div id="ligacoes" style="text-align:center; width:90%; margin-left:10px; border-bottom:1px solid black; padding:10px;"></div>
-      <br>
-      <div style="margin-left:10px;" id="users"></div>
-    </div>
-    <div id="main" class="container" style="width:100%;">
+
+    <nav id="menu" class="menu" style="background-color:#BD2124;">
+      <div id="sideMenuUsers" class="sidenav" style="width:100%;">
+        <div id="ligacoes" style="display:block; text-align:center; width:100%; margin-left:10px; border-bottom:1px solid black; padding:10px;"></div>
+        <br>
+        <div style="margin-left:10px;" id="users"></div>
+      </div>
+    </nav>
+
+<main id="main" style="background-color:black;">
+  <header class="panel-header" style="position:absolute;">
+    <button id="sliderButton" class="btn js-slideout-toggle" style="z-index:999; position:absolute; margin-top:50vh; display:none; background-color:#BD2124; border:0px; border-bottom-right-radius:25px; border-top-right-radius:25px;"> <span class="glyphicon glyphicon-user" style="margin-right:5px;"></span> <div style="display:inline; color:rgba(255,255,255,0.25);">></div>
+    </button>
+  </header>
+    <div id="mainContainer" class="container" style="width:100%;">
       <div class="row" id="mainRow">
         <img id="mainImage" style="margin-top:10px; margin-bottom:10px;" src="img/p4p.png"></img><h1 id="mainTitle" style="margin-left:10px; border-bottom:2px solid #BD2124; padding-bottom:30px;"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room - Admin</h1>
         <div id="login">
@@ -57,5 +67,6 @@
     <div id="footer">
       <a id="poweredByPUSH" href="https://www.pushvfx.com"><img id="poweredByPUSHImage" width="150px" src="img/Push_Logo_transparente.png"></img></a>
     </div>
+    </main>
   </body>
 </html>
