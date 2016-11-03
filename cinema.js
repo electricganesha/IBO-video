@@ -1245,7 +1245,7 @@ function init() {
   divMainConf.style.fontFamily = "osb";
   //divMainConf.style.border = "solid 1px yellow";
   divMainConf.style.float = 'right';
-  divMainConf.style.height = "520px";
+  divMainConf.style.height = (screen.height - 300) + 'px';
   divMainConf.style.marginRight = "10px";
 
   divselconf.style.color = "white";
@@ -1255,14 +1255,15 @@ function init() {
   divselconf.style.fontFamily = "osb";
   //divselconf.style.border = "solid 1px yellow";
   divselconf.style.margin = 'auto';
-  divselconf.style.height = '450px';
+  divselconf.style.height = (screen.height - 550) + 'px';
+  divselconf.style.overflowY = 'auto';
 
 
   var divnome = document.createElement('div');
   divnome.style.width = '40%';
   divnome.id = "formulariocli";
-  divnome.style.marginTop = "20px";
   divnome.style.margin = "auto";
+  divnome.style.marginTop = "50px";
 
   var divrow = document.createElement('div');
   divrow.className = 'row';
@@ -1427,7 +1428,8 @@ function init() {
   diveyeh.appendChild(diveyetexth);
   diveyeh.appendChild(diveyeimgh);
 
-  divselconf.appendChild(conftitle);
+  divMainConf.appendChild(conftitle);
+
   divMainConf.appendChild(divselconf);
 
   divMainConf.appendChild(divnome);
