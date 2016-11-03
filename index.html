@@ -4,7 +4,7 @@
   <head>
     <meta charset=utf-8>
     <title>P4P - Conference Room</title>
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
     <link rel="stylesheet" href="css/font-awesome.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/indexStyle.css">
@@ -14,31 +14,41 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       </head>
       <body>
-        <div id="mainContainer">
-        <div class="container" style="padding-top:5%; ">
-          <div class="row" style="margin:auto; width:25%;">
-            <img id="p4pLogo" src="img/p4p.png"></img>
+        <div id="mainContainer" class="container" style="width:100%;">
+          <div class="row" style="margin:auto; width:100%; height:20%;">
+            <img id="p4pLogo" class="img-responsive" src="img/p4p.png" style="margin:auto; height:90%;"></img>
           </div>
-          <div class="row">
+          <div class="row" style="height:10%; ">
             <h1 id="mainTitle"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room</h1>
           </div>
-        </div>
-        <div id="imagesContainer" class="container">
-          <p id="paragraphAreYou"> Are you a ... ? </p>
-          <div id="imagesRow" class="row">
-            <div class="col-md-6 col-xs-6" style="width:50%;">
-              <a href="admin.html"><img id="speakerImg" src="img/speaker.png"></img></a>
+          <div class="row" style="height:20%; ">
+            <p id="paragraphAreYou" style="margin-top:5%;"> Are you a ... ? </p>
+          </div>
+          <div id="imagesRow" class="row" style="height:50%; padding:3%;">
+            <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:45%;  float:left;">
+              <div class="row" style="height:85%;">
+              <a href="admin.html"><img id="speakerImg" class="img-responsive" style="height:100%; margin:auto;" src="img/speaker.png"></img></a>
+            </div>
+            <div class="row" style="height:15%; text-align:center;">
               <a href="admin.html"><p id="paragraphSpeaker"> - Speaker - </p></a>
             </div>
-            <div class="col-md-6 col-xs-6" style="width:50%;" >
-              <a href="ibo.html"><img id="assistantImg" src="img/attendee.png"></img></a>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:10%;" >
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:45%;" >
+              <div class="row" style="height:85%;">
+              <a href="ibo.html"><img id="assistantImg"  class="img-responsive" style="height:100%; margin:auto;" src="img/attendee.png"></img></a>
+            </div>
+            <div class="row" style="height:15%;">
               <a href="ibo.html"><p id="paragraphAssistant">- Attendee -</p></a>
             </div>
+            </div>
           </div>
-        </div>
       </div>
-        <div id="footer">
-          <a id="poweredByPUSH" href="https://www.pushvfx.com"><img id="poweredByPUSHImage" src="img/Push_Logo_transparente.png"></img></a>
+        <div id="footer" class="row" style="margin:0px; width:100%;">
+          <div class="col-md-12 col-sm-12 col-xs-12" style=" width:100%;">
+            <a href="https://www.pushvfx.com"><img id="poweredByPUSHImage" src="img/Push_Logo_transparente.png"></img></a>
+          </div>
         </div>
       </body>
 
@@ -92,16 +102,6 @@
           $('#paragraphAssistant').css('color',"white");
         });
 
-        var totalDeviceHeight = window.innerHeight;
-        var footerHeight = $('#poweredByPUSHImage').height();
-
-        var mainDiv = totalDeviceHeight - footerHeight;
-
-        console.log(mainDiv);
-
-        $('#mainContainer').css("height",mainDiv+"px");
-        $('#footer').css("height",footerHeight+"px");
-
         if(detectmob())
         {
           $('#poweredByPUSHImage').css("width","100px");
@@ -111,6 +111,18 @@
         }
         else
           $('#poweredByPUSHImage').css("width","150px");
+
+        var totalDeviceHeight = window.innerHeight;
+        var footerHeight = $('#poweredByPUSHImage').height();
+
+        var mainDiv = totalDeviceHeight - footerHeight;
+
+        console.log(mainDiv);
+
+        console.log(window.innerWidth);
+
+        $('#mainContainer').css("height",mainDiv+"px");
+        $('#footer').css("height",footerHeight+"px");
 
           function detectmob() {
            if( navigator.userAgent.match(/Android/i)
@@ -127,6 +139,15 @@
               return false;
             }
           }
+
+          window.onorientationchange = function() {
+        var orientation = window.orientation;
+            switch(orientation) {
+                case 0:
+                case 90:
+                case -90: window.location.reload();
+                break; }
+    };
 
       </script>
 </html>

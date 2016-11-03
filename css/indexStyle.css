@@ -15,13 +15,17 @@
     src: url(../fonts/OpenSans-Light.ttf);
 }
 
+*
+{
+  margin:0px;
+  padding:0px;
+}
+
 body {
 background-color:black;
-margin: 0;
-overflow-x:hidden;
-overflow-y:hidden;
 color:white;
 font-family:osr;
+overflow:hidden;
 }
 
 a
@@ -34,50 +38,12 @@ a:hover
   color:grey;
 }
 
-#p4pLogo
+#mainTitle
 {
-  width:100%;
-}
-
-#speakerImg
-{
-  margin:auto;
-  float:left;
-  width:256px;
-}
-
-#assistantImg
-{
-  margin:auto;
-  float:right;
-  width:256px;
-}
-
-#paragraphSpeaker
-{
-  margin:auto;
-  float:left;
-  width:256px;
   text-align:center;
-  margin-top:10px;
-  font-size:24px;
-}
-
-#paragraphAssistant
-{
-  margin:auto;
-  float:right;
-  width:256px;
-  text-align:center;
-  margin-top:10px;
-  font-size:24px;
-}
-
-
-#paragraphRow{
-  color:white;
-  margin-top:20px;
-  font-size:24px;
+  font-size:2vw !important;
+  padding-bottom:10px;
+  border-bottom: 2px solid #BD2124;
 }
 
 #paragraphAreYou
@@ -87,125 +53,79 @@ a:hover
   font-size:24px;
 }
 
-#mainTitle
+#paragraphSpeaker
 {
-  border-bottom:2px solid #BD2124;
-  padding-top:30px;
-  padding-bottom:30px;
   text-align:center;
+  font-size:24px;
 }
 
-#imagesRow
+#paragraphAssistant
 {
-  margin-top:5%;
-}
-
-#imagesContainer
-{
-  margin-top:2.5%;
-  width:45%;
-}
-
-#footer
-{
-  position:absolute;
-  right:5px;
-  margin-right:5px;
+  text-align:center;
+  font-size:24px;
 }
 
 #poweredByPUSHImage
 {
-  width:150px;
+  float:right;
 }
-
 
 @media screen and (max-width: 480px) {
 
-  #speakerImg
+  #mainTitle
   {
-    margin:auto;
-    float:left;
-    width:128px;
-  }
-
-  #assistantImg
-  {
-    margin:auto;
-    float:right;
-    width:128px;
-  }
-
-  #paragraphSpeaker
-  {
-    margin:auto;
-    float:left;
-    width:100%;
-    text-align:center;
-    margin-top:10px;
-    margin-bottom:10px;
-    font-size:16px;
-  }
-
-  #paragraphAssistant
-  {
-    margin:auto;
-    float:right;
-    width:100%;
-    margin-top:10px;
-    text-align:center;
-    font-size:16px;
-  }
-
-  #paragraphRow{
-    color:white;
-    margin-top:20px;
-    font-size:12px;
+    font-size:6vw !important;
   }
 
   #paragraphAreYou
   {
-    text-align:center;
-    color:white;
-    font-size:18px;
+    font-size:4vw !important;
   }
+
+  #paragraphSpeaker
+  {
+    font-size:4vw !important;
+  }
+
+  #paragraphAssistant
+  {
+    font-size:4vw !important;
+  }
+
+  #poweredByPUSHImage
+  {
+    float:none;
+    margin-left:35%;
+  }
+}
+
+@media screen and (max-width: 640px) and (orientation : landscape) {
 
   #mainTitle
   {
-      border-bottom:2px solid #BD2124;
-      padding-top:10px;
-      padding-bottom:30px;
-      text-align:center;
-      font-size:24px;
+    font-size:4vw !important;
   }
 
-  #imagesRow
+  #paragraphAreYou
   {
-    width:100%;
-    margin-top:15%;
+    padding-top:50px;
+    font-size:2vw !important;
   }
 
-  #imagesContainer
+  #paragraphSpeaker
   {
-    margin-top:2.5%;
-    width:100%;
+    font-size:2vw !important;
   }
 
-  #footer
+  #paragraphAssistant
   {
-    position:absolute;
-    right:0px;
+    font-size:2vw !important;
   }
 
   #poweredByPUSHImage
   {
-    position:absolute;
-    bottom:0px;
-    margin-left:35%;
-  }
-
-  #poweredByPUSHImage
-  {
-    width:100px !important;
+    float:none;
+    margin-left:40%;
   }
 
 }
