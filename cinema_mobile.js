@@ -1315,7 +1315,7 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
     }
 		if ( scope.enabled === false ) { return; }
 
-		event.preventDefault();
+		//event.preventDefault();
 		event.stopPropagation();
 
 		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
@@ -1636,9 +1636,9 @@ THREE.OrbitControls = function ( object, domElement, localElement ) {
 
 	this.domElement.addEventListener( 'keydown', onKeyDown, false );
 
-	this.localElement.addEventListener( 'touchstart', touchstart, false );
-	this.domElement.addEventListener( 'touchend', touchend, false );
-	this.domElement.addEventListener( 'touchmove', touchmove, false );
+	this.localElement.addEventListener( 'touchstart', touchstart, {passive: true} );
+	this.domElement.addEventListener( 'touchend', touchend, {passive: true} );
+	this.domElement.addEventListener( 'touchmove', touchmove, {passive: true} );
 
 };
 
@@ -1647,11 +1647,11 @@ THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype )
 function init() {
 
   // 0: fps, 1: ms, 2: mb
-  statsFPS.setMode( 0 );
+  //statsFPS.setMode( 0 );
 
-  statsFPS.domElement.style.position = 'absolute';
-  statsFPS.domElement.style.left = '0px';
-  statsFPS.domElement.style.top = '0px';
+  //statsFPS.domElement.style.position = 'absolute';
+  //statsFPS.domElement.style.left = '0px';
+  //statsFPS.domElement.style.top = '0px';
 
   document.body.appendChild( statsFPS.domElement );
 
@@ -1743,34 +1743,32 @@ function init() {
     textoapre.innerHTML = "P4P Virtual Conference Room";
     textoapre.style.fontFamily = "osr";
     textoapre.style.fontSize = "13px";
-
-    var divMainConf = document.createElement('div');
-    divMainConf.style.color = "white";
-    divMainConf.style.cursor = "default";
-    divMainConf.style.width = '100%';
-    divMainConf.style.textAlign = "center";
-    divMainConf.style.fontFamily = "osb";
-    //divMainConf.style.border = "solid 1px yellow";
-    divMainConf.style.height = "520px";
-    divMainConf.style.marginRight = "10px";
-
     divselconf.style.color = "white";
     divselconf.style.cursor = "default";
     divselconf.style.width = '95%';
-    divselconf.style.textAlign = "center";
     divselconf.style.fontFamily = "osb";
-    //divselconf.style.border = "solid 1px yellow";
     divselconf.style.margin = 'auto';
-    divselconf.style.height = '450px';
+    divselconf.style.overflowY = 'scroll';
+    divselconf.style.position = 'relative';
+    divselconf.style.height = (screen.height - 180) + 'px';
+    divselconf.id ="listconferencias";
 
+    var ptextoback = document.createElement('p');
+    ptextoback.innerHTML = '< BACK';
+    ptextoback.style.textAlign = 'center';
+    ptextoback.style.color = "white";
+    ptextoback.style.fontFamily = "osb";
+    ptextoback.style.fontSize = "20px";
+    ptextoback.style.color= "#bd2124";
+    ptextoback.id = "linkback";
 
     var divnome = document.createElement('div');
     divnome.style.width = '100%';
     divnome.id = "formulariocli";
     divnome.style.margin = "auto";
-    divnome.style.top = "100px";
     divnome.style.position ="absolute";
     divnome.style.textAlign="center";
+    divnome.style.top = "20px";
 
     var ptextonome = document.createElement('p');
     ptextonome.innerHTML = 'Insert your name';
@@ -1778,6 +1776,7 @@ function init() {
     ptextonome.style.color = "white";
     ptextonome.style.fontFamily = "osb";
     ptextonome.style.fontSize = "20px";
+    ptextonome.style.marginTop = "60px";
 
     var divnomeinput = document.createElement('input');
     divnomeinput.id = "nome_cli";
@@ -1809,6 +1808,7 @@ function init() {
     iDiv.style.cursor = "pointer";
     iDiv.style.textAlign = "center";
     iDiv.style.height = '100%';
+    iDiv.style.backgroundColor= "rgba(0, 0, 0, 0.8)";
     iDiv.style.position = "absolute";
     iDiv.id = 'loadedScreen';
     iDiv.style.top = '0';
@@ -1816,107 +1816,91 @@ function init() {
 
     var divMain = document.createElement('div');
     divMain.style.color = "white";
-    divMain.style.backgroundColor= "rgba(0, 0, 0, 0.8)";
     divMain.style.cursor = "pointer";
     divMain.style.width = '100%';
     divMain.style.textAlign = "center";
     divMain.style.fontFamily = "osb";
-    divMain.style.height = '100%';
     divMain.style.position = "absolute";
     divMain.id = 'textScreen';
-    divMain.style.top = '50%';
-    divMain.style.transform = "translateY(-50%)";
+    divMain.style.marginTop = '40px'
 
     var divtexto1 = document.createElement('div');
-    divtexto1.style.borderBottom = "solid 1px #1bbc9b";
-    divtexto1.style.width = "40%";
+    divtexto1.style.borderBottom = "solid 1px #5d5d5d";
+    divtexto1.style.width = "80%";
     divtexto1.style.height = "30px";
     divtexto1.style.margin = "auto";
 
     var textowelcome = document.createElement('p');
-    textowelcome.innerHTML = "Bem Vindo ao <b>IBO</b>";
+    textowelcome.innerHTML = "Welcome to <b><span style='color:#bd2124'>PLAY 4 POVERTY</span></b>";
     textowelcome.style.fontFamily = "osr";
-    textowelcome.style.fontSize = "18px";
+    textowelcome.style.fontSize = "19px";
 
     var textoespaco = document.createElement('p');
     textoespaco.innerHTML = "<br>";
     textoespaco.style.fontFamily = "osr";
 
     var textoapre = document.createElement('p');
-    textoapre.innerHTML = "Uma experiência interactiva da PUSH Interactive";
+    textoapre.innerHTML = "P4P Virtual Conference Room";
     textoapre.style.fontFamily = "osr";
-    textoapre.style.fontSize = "11px";
+    textoapre.style.fontSize = "13px";
+    divselconf.style.color = "white";
+    divselconf.style.cursor = "default";
+    divselconf.style.width = '95%';
+    divselconf.style.fontFamily = "osb";
+    divselconf.style.margin = 'auto';
+    divselconf.style.overflowY = 'scroll';
+    divselconf.style.position = 'relative';
+    divselconf.style.height = (screen.height - 180) + 'px';
+    divselconf.id ="listconferencias";
 
-    var divleft = document.createElement('div');
-    divleft.style.borderRight = "solid 1px #1bbc9b";
-    divleft.style.width = "24%";
-    divleft.style.float = "left";
-    divleft.style.height = "130px";
-    divleft.style.marginTop = "3%";
+    var ptextoback = document.createElement('p');
+    ptextoback.innerHTML = '< BACK';
+    ptextoback.style.textAlign = 'center';
+    ptextoback.style.color = "white";
+    ptextoback.style.fontFamily = "osb";
+    ptextoback.style.fontSize = "20px";
+    ptextoback.style.color= "#bd2124";
+    ptextoback.id = "linkback";
 
-    var divlefttext = document.createElement('p');
-    divlefttext.innerHTML = "Navegar";
-    divlefttext.style.fontFamily = "osr";
-    divlefttext.style.fontSize = "11px";
-    divlefttext.style.color = "#1bbc9b";
+    var divnome = document.createElement('div');
+    divnome.style.width = '100%';
+    divnome.id = "formulariocli";
+    divnome.style.margin = "auto";
+    divnome.style.position ="absolute";
+    divnome.style.textAlign="center";
+    divnome.style.top = "20px";
 
-    var divleftimg = document.createElement('img');
-    divleftimg.id = "divleftimg";
-    divleftimg.style.width = "60px";
-    divleftimg.style.marginTop = "5px";
+    var ptextonome = document.createElement('p');
+    ptextonome.innerHTML = 'Insert your name';
+    ptextonome.style.textAlign = 'center';
+    ptextonome.style.color = "white";
+    ptextonome.style.fontFamily = "osb";
+    ptextonome.style.fontSize = "20px";
+    ptextonome.style.marginTop = "60px";
 
-    var divmid = document.createElement('div');
-    divmid.style.borderRight = "solid 1px #1bbc9b";
-    divmid.style.width = "25%";
-    divmid.style.float = "left";
-    divmid.style.height = "130px";
-    divmid.style.marginTop = "3%";
+    var divnomeinput = document.createElement('input');
+    divnomeinput.id = "nome_cli";
+    divnomeinput.setAttribute('type','text');
+    divnomeinput.style.border= "solid 1px #bd2124";
+    divnomeinput.style.width= "200px";
+    divnomeinput.style.textAlign= "center";
+    divnomeinput.style.height= "40px";
+    divnomeinput.style.backgroundColor = "transparent";
+    divnomeinput.style.color = "white";
+    divnomeinput.style.fontSize = "18px";
+    divnomeinput.style.outline = "none";
+    divnomeinput.style.fontFamily = "ossb";
 
-    var divmidtext = document.createElement('p');
-    divmidtext.innerHTML = "Zoom";
-    divmidtext.style.fontFamily = "osr";
-    divmidtext.style.fontSize = "11px";
-    divmidtext.style.color = "#1bbc9b";
-
-    var divmidimg = document.createElement('img');
-    divmidimg.id = "divmidimg";
-    divmidimg.style.width = "60px";
-    divmidimg.style.marginTop = "10px";
-
-    var divright = document.createElement('div');
-    divright.style.borderRight = "solid 1px #1bbc9b";
-    divright.style.width = "24%";
-    divright.style.float = "left";
-    divright.style.height = "130px";
-    divright.style.marginTop = "3%";
-
-    var divrighttext = document.createElement('p');
-    divrighttext.innerHTML = "Selecione os seus lugares";
-    divrighttext.style.fontFamily = "osr";
-    divrighttext.style.fontSize = "11px";
-    divrighttext.style.color = "#1bbc9b";
-
-    var divrightimg = document.createElement('img');
-    divrightimg.id = "divrightimg";
-    divrightimg.style.width = "60px";
-    divrightimg.style.marginTop = "10px";
-
-    var diveye = document.createElement('div');
-    diveye.style.width = "24%";
-    diveye.style.float = "left";
-    diveye.style.height = "130px";
-    diveye.style.marginTop = "3%";
-
-    var diveyetext = document.createElement('p');
-    diveyetext.innerHTML = "Ver perspectiva do lugar";
-    diveyetext.style.fontFamily = "osr";
-    diveyetext.style.fontSize = "11px";
-    diveyetext.style.color = "#1bbc9b";
-
-    var diveyeimg = document.createElement('img');
-    diveyeimg.id = "diveyeimg";
-    diveyeimg.style.width = "60px";
-    diveyeimg.style.marginTop = "10px";
+    var divnomebutton = document.createElement('input');
+    divnomebutton.className = "btentrar";
+    divnomebutton.setAttribute('type','button');
+    divnomebutton.setAttribute('value','Join');
+    divnomebutton.style.border= "transparent";
+    divnomebutton.style.backgroundColor = "transparent";
+    divnomebutton.style.fontSize = "20px";
+    divnomebutton.style.outline = "none";
+    divnomebutton.style.fontFamily = "ossb";
+    divnomebutton.style.marginLeft = "30px";
 
   }
 
@@ -1925,12 +1909,12 @@ function init() {
   divMain.appendChild(divtexto1);
   divMain.appendChild(textoapre);
 
-  divMainConf.appendChild(divselconf);
+  divnome.appendChild(ptextoback);
   divnome.appendChild(ptextonome);
   divnome.appendChild(divnomeinput);
   divnome.appendChild(divnomebutton);
 
-  divMain.appendChild(divMainConf);
+  divMain.appendChild(divselconf);
   iDiv.appendChild(divnome);
   iDiv.appendChild(divMain);
   document.body.appendChild(iDiv);
@@ -1946,6 +1930,14 @@ function init() {
           $('.btentrar').hide();
       }
   });
+  $("#linkback" ).click(function() {
+    var largura = window.innerWidth;
+    $('#textScreen').animate({left:'0px'}, function() {
+      $('#formulariocli').hide();
+      $('#textScreen').show();
+    });
+  });
+
   document.getElementById('nome_cli').focus();
   $(".btentrar" ).click(function() {
     clearInterval(timerconf);
@@ -2039,7 +2031,16 @@ function init() {
   });
   isLoading = false;
   firstTimeInit = false;
-}
+  window.onorientationchange = function() {
+    var orientation = window.orientation;
+      switch(orientation) {
+          case 0:document.getElementById('listconferencias').style.height = (screen.height - 180) + 'px';
+          case 90:document.getElementById('listconferencias').style.height = (screen.height - 180) + 'px';
+          case -90:document.getElementById('listconferencias').style.height = (screen.height - 180) + 'px';
+          break;
+      }
+    };
+  }
 
 //
 // create a show the selection menu
