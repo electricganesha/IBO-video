@@ -36,6 +36,7 @@ a
 a:hover
 {
   color:grey;
+  text-decoration:none;
 }
 
 #mainTitle

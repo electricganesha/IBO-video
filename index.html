@@ -1,13 +1,164 @@
+<!DOCTYPE html>
+<html>
 
+  <head>
+    <meta charset=utf-8>
+    <title>P4P - Conference Room</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="stylesheet" href="css/font-awesome.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/indexStyle.css">
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+      </head>
+      <body>
+        <div id="mainContainer" class="container" style="width:100%;">
+          <div class="row" style="margin:auto; width:100%; height:20%;">
+            <img id="p4pLogo" class="img-responsive" src="img/p4p.png" style="margin:auto; height:90%;"></img>
+          </div>
+          <div class="row" style="height:10%; ">
+            <h1 id="mainTitle"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room</h1>
+          </div>
           <div class="row" style="height:20%; ">
             <p id="paragraphAreYou" style="margin-top:5%;"> Are you a ... ? </p>
           </div>
           <div id="imagesRow" class="row" style="height:50%; padding:3%;">
             <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:45%;  float:left;">
               <div class="row" style="height:85%;">
-              <a href="admin.html"><img id="speakerImg" class="img-responsive" style="height:100%; margin:auto;" src="img/speaker.png"></img></a>
+              <p id="warning" style= "display: none;">Please connect a webcam in order to host a conference</p>
+              <a class="linkadmin" href="admin.html"><img id="speakerImg" class="img-responsive" style="height:100%; margin:auto;" src="img/speaker.png"></img></a>
             </div>
             <div class="row" style="height:15%; text-align:center;">
+              <a class="linkadmin" href="admin.html"><p id="paragraphSpeaker"> - Speaker - </p></a>
+            </div>
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:10%;" >
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:45%;" >
+              <div class="row" style="height:85%;">
+              <a href="ibo.html"><img id="assistantImg"  class="img-responsive" style="height:100%; margin:auto;" src="img/attendee.png"></img></a>
+            </div>
+            <div class="row" style="height:15%;">
+              <a href="ibo.html"><p id="paragraphAssistant">- Attendee -</p></a>
+            </div>
+            </div>
+          </div>
+      </div>
+        <div id="footer" class="row" style="margin:0px; width:100%;">
+          <div class="col-md-12 col-sm-12 col-xs-12" style=" width:100%;">
+            <a href="https://www.pushvfx.com"><img id="poweredByPUSHImage" src="img/Push_Logo_transparente.png"></img></a>
+          </div>
+        </div>
+      </body>
+
+      <script>
+      var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        if (navigator.getUserMedia) {
+          navigator.getUserMedia({video: false, audio: true}, function(stream) {
+            $('#speakerImg').mouseover(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker-grey.png");
+              $('#paragraphSpeaker').css('color',"grey");
+            });
+
+            $('#speakerImg').mouseout(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker.png");
+              $('#paragraphSpeaker').css('color',"white");
+            });
+
+            $('#paragraphSpeaker').mouseover(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker-grey.png");
+              $('#paragraphSpeaker').css('color',"grey");
+            });
+
+            $('#paragraphSpeaker').mouseout(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker.png");
+              $('#paragraphSpeaker').css('color',"white");
+            });
+          }, function() {
+            var warning = document.getElementById('warning');
+            warning.style.position = "absolute";
+            warning.style.width = "100%";
+            warning.style.textAlign = "center";
+            warning.style.marginTop = "130px";
+            warning.style.display = "block";
+            warning.style.pointerEvents = "none";
+            $('#speakerImg').attr('src',"img/speaker-disable.png");
+            $('#speakerImg').css('pointer-events',"none");
+            $('#paragraphSpeaker').css('color',"#2b2b2b");
+            $('#paragraphSpeaker').css('pointer-events',"none");
+            $('.linkadmin').attr("href", "javascript:void(0)")
+            $('.linkadmin').attr("disabled", "disabled");
+          });
+        } if (navigator.mozGetUserMedia) {
+          navigator.mediaDevices.getUserMedia({video: false, audio: true}, function(stream) {
+            $('#speakerImg').mouseover(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker-grey.png");
+              $('#paragraphSpeaker').css('color',"grey");
+            });
+
+            $('#speakerImg').mouseout(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker.png");
+              $('#paragraphSpeaker').css('color',"white");
+            });
+
+            $('#paragraphSpeaker').mouseover(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker-grey.png");
+              $('#paragraphSpeaker').css('color',"grey");
+            });
+
+            $('#paragraphSpeaker').mouseout(function()
+            {
+              $('#speakerImg').attr('src',"img/speaker.png");
+              $('#paragraphSpeaker').css('color',"white");
+            });
+
+          }, function() {
+            var warning = document.getElementById('warning');
+            warning.style.position = "absolute";
+            warning.style.width = "100%";
+            warning.style.textAlign = "center";
+            warning.style.marginTop = "130px";
+            warning.style.display = "block";
+            warning.style.cursor = "not-allowed";
+            $('#speakerImg').attr('src',"img/speaker-disable.png");
+            $('#speakerImg').css('pointer-events',"none");
+            $('#paragraphSpeaker').css('color',"#2b2b2b");
+            $('.linkadmin').attr("href", "javascript:void(0)")
+            $('.linkadmin').attr("disabled", "disabled");
+          });
+        };
+        $('#assistantImg').mouseover(function()
+        {
+          $('#assistantImg').attr('src',"img/attendee-grey.png");
+          $('#paragraphAssistant').css('color',"grey");
+        });
+
+        $('#assistantImg').mouseout(function()
+        {
+          $('#assistantImg').attr('src',"img/attendee.png");
+          $('#paragraphAssistant').css('color',"white");
+        });
+
+        $('#paragraphAssistant').mouseover(function()
+        {
+          $('#assistantImg').attr('src',"img/attendee-grey.png");
+          $('#paragraphAssistant').css('color',"grey");
+        });
+
+        $('#paragraphAssistant').mouseout(function()
+        {
+          $('#assistantImg').attr('src',"img/attendee.png");
+          $('#paragraphAssistant').css('color',"white");
+        });
 
         if(detectmob())
         {
@@ -23,10 +174,6 @@
         var footerHeight = $('#poweredByPUSHImage').height();
 
         var mainDiv = totalDeviceHeight - footerHeight;
-
-        console.log(mainDiv);
-
-        console.log(window.innerWidth);
 
         $('#mainContainer').css("height",mainDiv+"px");
         $('#footer').css("height",footerHeight+"px");
@@ -55,3 +202,6 @@
                 case -90: window.location.reload();
                 break; }
     };
+
+      </script>
+</html>
