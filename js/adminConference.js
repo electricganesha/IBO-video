@@ -334,7 +334,7 @@ function callDB(id,state,speakerFirstName,speakerLastName,conferenceRoomName)
 
 }
 
-window.onbeforeunload = function(e) {
+window.onunload = function(e) {
   var dialogText = 'Dialog text here';
   e.returnValue = dialogText;
   callDB(current_id,"disconnected","","","");
