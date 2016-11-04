@@ -3,6 +3,8 @@ var peerStatusWaitingIsActive = true;
 var speakerQueue = [];
 var connectedUsers = [];
 
+var amIStreaming = false;
+
 window.onload = function() {
 
   // slideout.js
@@ -42,6 +44,8 @@ window.onload = function() {
 
 
   console.log(window.innerHeight);
+  console.log(window.innerWidth);
+  console.log($( window ).width());
   console.log($('#poweredByPUSHImage').height());
 
   var totalDeviceHeight = window.innerHeight;
@@ -72,6 +76,8 @@ function startConf()
   if($('#loginInputFirstName').val() != 0 && $('#loginInputLastName').val() != 0 && $('#loginInputConfName').val() != 0)
   {
     $("#login").fadeOut(200);
+    $('#loginRow').fadeOut(200);
+    //$('#loginRow').remove();
     $("#mainStructure").fadeIn(200);
 
     startConference();
@@ -148,7 +154,10 @@ function startConference()
             $("#usersConnectedText").fadeIn("slow");
 
             if(detectmob())
+            {
               $('#sliderButton').fadeIn("slow");
+              amIStreaming = true;
+            }
 
             $('#mainStructure').fadeIn("slow");
 
@@ -333,6 +342,53 @@ function callDB(id,state,speakerFirstName,speakerLastName,conferenceRoomName)
   });
 
 }
+
+window.onorientationchange = function() {
+var orientation = window.orientation;
+  switch(orientation) {
+      case 0:
+      if(!amIStreaming)
+        window.location.reload();
+      else
+      {
+        var totalDeviceHeight = screen.height;
+        var footerHeight = $('#poweredByPUSHImage').height();
+
+        var mainDiv = totalDeviceHeight - footerHeight;
+
+        $('#mainContainer').css("height",mainDiv+"px");
+        $('#footer').css("height",footerHeight+"px");
+      }
+      break;
+      case 90:
+      if(!amIStreaming)
+        window.location.reload();
+      else
+      {
+        var totalDeviceHeight = screen.height;
+        var footerHeight = $('#poweredByPUSHImage').height();
+
+        var mainDiv = totalDeviceHeight - footerHeight;
+
+        $('#mainContainer').css("height",mainDiv+"px");
+        $('#footer').css("height",footerHeight+"px");
+      }
+      break;
+      case -90:
+        if(!amIStreaming)
+          window.location.reload();
+        else
+        {
+          var totalDeviceHeight = screen.height;
+          var footerHeight = $('#poweredByPUSHImage').height();
+
+          var mainDiv = totalDeviceHeight - footerHeight;
+
+          $('#mainContainer').css("height",mainDiv+"px");
+          $('#footer').css("height",footerHeight+"px");
+        }
+      break; }
+};
 
 window.onunload = function(e) {
   var dialogText = 'Dialog text here';

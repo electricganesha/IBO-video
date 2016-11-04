@@ -20,6 +20,7 @@ body
   background-color: black;
   color:white;
   font-family:'osb';
+  overflow:hidden;
 }
 
 #mainRow
@@ -28,6 +29,20 @@ body
   width:100%;
   margin:auto;
   text-align:center;
+}
+
+#rowFirstLastName
+{
+  margin-top:2px;
+  margin:auto;
+  width:100%;
+}
+
+#rowConferenceName
+{
+  margin-top:2px;
+  margin:auto;
+  width:100%;
 }
 
 .loginConfInput
@@ -45,6 +60,14 @@ body
   width:208px;
   height:30px;
   margin-left:5px;
+}
+
+#loginRow
+{
+  height:60%;
+  margin:0px;
+  margin-top:20px;
+  width:100%;
 }
 
 #loginConfButton:hover
@@ -205,7 +228,18 @@ body
   position:absolute;
 }
 
+#mainTitleRow
+{
+  height:10%;
+  margin-top:30px;
+}
+
 @media screen and (min-width: 1px) and (max-width: 480px) {
+
+  h1
+  {
+    font-size:4vw;
+  }
 
   #mainContainer
   {
@@ -225,7 +259,27 @@ body
 
   #mainTitle
   {
-    font-size:18px;
+    font-size:4vw;
+  }
+
+  #rowFirstLastName
+  {
+    margin-top:0px;
+    width:75% !important;
+  }
+
+  #loginRow
+  {
+    height:60%;
+    margin:0px;
+    margin-top:0px;
+    width:100%;
+  }
+
+  #rowConferenceName
+  {
+    margin-top:0px;
+    width:75% !important;
   }
 
   #yourNameColumn
@@ -263,7 +317,7 @@ body
 
   #formErrorMessageDiv
   {
-    margin-top:-11%;
+    margin-top:0px;
     position:relative;
     font-size:14px;
   }
@@ -357,4 +411,208 @@ body
 
   .slideout-open .slideout-menu {
   display: block;
+}
+}
+
+@media screen and (min-width: 481px) and (max-width: 640px) {
+
+  h1
+  {
+    font-size:3vw !important;
+  }
+
+  #login
+  {
+    width:100%;
+  }
+
+  #rowFirstLastName
+  {
+    margin-top:0px;
+    width:49% !important;
+    height:100%;
+    display:inline-block;
+  }
+
+  #loginInputLastName
+  {
+    bottom:-30px !important;
+  }
+
+  #rowConferenceName
+  {
+    margin-top:0px !important;
+    margin-bottom:10px !important;
+    height:100%;
+    width:50% !important;
+    display:inline-block;
+  }
+
+  #conferenceNameColumn
+  {
+    margin-top:0px !important;
+  }
+
+  #mainTitleRow
+  {
+    height:10%;
+    margin-top:10px;
+  }
+
+  #mainContainer
+  {
+    padding-bottom:0px;
+  }
+
+  #mainRow
+  {
+    background-color:black;
+    margin:0px;
+  }
+
+  #mainImage
+  {
+    width:50%;
+  }
+
+  #yourNameColumn
+  {
+    text-align:left;
+    width:100%;
+    margin-bottom:5px;
+  }
+
+  #mainTitle
+  {
+    font-size:3vw !important;
+  }
+
+  #conferenceNameColumn
+  {
+    text-align:left;
+    width:100%;
+    margin-top:10px;
+    margin-bottom:5px;
+  }
+
+  #loginConfButton
+  {
+    background-color: #BD2124;
+    width:208px;
+    height:30px;
+    margin-top:20px;
+    margin-left:0px;
+  }
+
+  #login
+  {
+    margin:auto;
+    width:60%;
+    text-align:left;
+    margin-top:0px;
+    height:100%;
+  }
+
+  #formErrorMessageDiv
+  {
+    margin-top:-10px;
+    position:relative;
+    font-size:14px;
+  }
+
+  #mainStructure
+  {
+    width:100%;
+    padding-top:10px;
+    display:none;
+    font-size:14px;
+    margin-bottom:20px;
+    height:90%;
+    margin-top:0px;
+  }
+
+  #footer
+  {
+    clear:both;
+    position:relative;
+    z-index:999;
+    width:100%;
+  }
+
+  #poweredByPUSH
+  {
+    position:absolute;
+  }
+
+  #poweredByPUSH img
+  {
+    bottom:0px;
+    right:5px;
+    position:absolute;
+    width:100px;
+  }
+
+  #video
+  {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: 0;
+    transform: translateX(-50%) translateY(-50%);
+  }
+
+  .mainStructureVideo
+  {
+    position:absolute;
+    background-color:rgba(0,0,0,0.5);
+    top:0px;
+    width:90% !important;
+    padding-top:5px;
+    display:none;
+    font-size:10px !important;
+    height:70px !important;
+    z-index: 99999;
+    border-bottom-right-radius: 25px;
+    border-bottom-left-radius:25px;
+  }
+
+  .sliderButton
+  {
+    color:#BD2124 !important;
+    display:block;
+    position:absolute;
+    border:1px solid red !important;
+  }
+
+  .slideout-menu {
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 0;
+  width: 256px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: none;
+  }
+
+  .slideout-panel {
+  position: relative;
+  z-index: 1;
+  }
+
+  .slideout-open,
+  .slideout-open body,
+  .slideout-open .slideout-panel {
+  overflow: hidden;
+  }
+
+  .slideout-open .slideout-menu {
+  display: block;
+}
 }
