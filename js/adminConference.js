@@ -390,7 +390,7 @@ var orientation = window.orientation;
       break; }
 };
 
-window.onunload = function(e) {
+window.onbeforeunload = function(e) {
   var dialogText = 'Dialog text here';
   e.returnValue = dialogText;
   callDB(current_id,"disconnected","","","");
