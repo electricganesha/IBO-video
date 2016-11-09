@@ -225,7 +225,7 @@ var materialcadeiraOcupada = new THREE.MeshPhongMaterial( {
 // STRUCTURAL / DOM / RENDERER
 
 renderer = new THREE.WebGLRenderer({ precision: "lowp", antialias:true });
-renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setSize(window.innerWidth, window.innerHeight );
 element = renderer.domElement;
 container = document.body;
 container.appendChild(element);
@@ -465,11 +465,11 @@ function getconf(){
 
               var pnome = document.createElement('p');
               pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "16px";
+              pnome.style.fontSize = "15px";
               pnome.style.padding =  "0";
               pnome.style.margin =  "0";
               pnome.style.marginTop =  "5px";
-              pnome.style.width = "200px";
+              pnome.style.width = "55%";
               pnome.style.marginLeft = "50px";
               //pnome.style.border = "solid 1px blue";
               pnome.style.textAlign = "left";
@@ -608,11 +608,11 @@ function getconf(){
 
               var pnome = document.createElement('p');
               pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "16px";
+              pnome.style.fontSize = "15px";
               pnome.style.padding =  "0";
               pnome.style.margin =  "0";
               pnome.style.marginTop =  "5px";
-              pnome.style.width = "200px";
+              pnome.style.width = "55%";
               pnome.style.marginLeft = "50px";
               //pnome.style.border = "solid 1px blue";
               pnome.style.textAlign = "left";
@@ -667,11 +667,11 @@ function getconf(){
 
               var pnome = document.createElement('p');
               pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "16px";
+              pnome.style.fontSize = "15px";
               pnome.style.padding =  "0";
               pnome.style.margin =  "0";
               pnome.style.marginTop =  "5px";
-              pnome.style.width = "200px";
+              pnome.style.width = "55%";
               pnome.style.marginLeft = "50px";
               //pnome.style.border = "solid 1px blue";
               pnome.style.textAlign = "left";
@@ -753,11 +753,11 @@ function getconf(){
 
               var pnome = document.createElement('p');
               pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "16px";
+              pnome.style.fontSize = "15px";
               pnome.style.padding =  "0";
               pnome.style.margin =  "0";
               pnome.style.marginTop =  "5px";
-              pnome.style.width = "180px";
+              pnome.style.width = "55%";
               pnome.style.marginLeft = "50px";
               //pnome.style.border = "solid 1px blue";
               pnome.style.textAlign = "left";
@@ -812,11 +812,11 @@ function getconf(){
 
               var pnome = document.createElement('p');
               pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "16px";
+              pnome.style.fontSize = "15px";
               pnome.style.padding =  "0";
               pnome.style.margin =  "0";
               pnome.style.marginTop =  "5px";
-              pnome.style.width = "200px";
+              pnome.style.width = "55%";
               pnome.style.marginLeft = "50px";
               //pnome.style.border = "solid 1px blue";
               pnome.style.textAlign = "left";
@@ -1243,9 +1243,9 @@ function init() {
   divMainConf.style.width = '59%';
   divMainConf.style.textAlign = "center";
   divMainConf.style.fontFamily = "osb";
-  //divMainConf.style.border = "solid 1px yellow";
+  //divMainConf.style.border = "solid 1px blue";
   divMainConf.style.float = 'right';
-  divMainConf.style.height = (screen.height - 300) + 'px';
+  divMainConf.style.height = '80%';
   divMainConf.style.marginRight = "10px";
 
   divselconf.style.color = "white";
@@ -1255,7 +1255,7 @@ function init() {
   divselconf.style.fontFamily = "osb";
   //divselconf.style.border = "solid 1px yellow";
   divselconf.style.margin = 'auto';
-  divselconf.style.height = (screen.height - 550) + 'px';
+  divselconf.style.height = '80%';
   divselconf.style.overflowY = 'auto';
 
 
@@ -1263,7 +1263,7 @@ function init() {
   divnome.style.width = '40%';
   divnome.id = "formulariocli";
   divnome.style.margin = "auto";
-  divnome.style.marginTop = "50px";
+  divnome.style.marginTop = "15px";
 
   var divrow = document.createElement('div');
   divrow.className = 'row';

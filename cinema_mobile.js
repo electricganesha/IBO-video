@@ -466,7 +466,6 @@ function getconf(){
                   clearInterval(timerconf);
                   isLoadingInfo = false;
                   $("#loadedScreen").fadeOut("slow");
-                  fullscreen();
                   insideHelp = false;
                   $("#LegDiv").animate({bottom: "+=75px"});
                 },
@@ -475,6 +474,7 @@ function getconf(){
                   console.log(errorThrown);
                 }
               });
+              fullscreen();
               video.play();
               video.pause();
             }
