@@ -78,8 +78,6 @@ var eyeTexture = loader.load('models/Cinema_Motta/eye-icon.png');
 var video = document.getElementById( 'video' );
 var audio = document.getElementById('audio');
 
-var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
-
 textureVideo = new THREE.VideoTexture( video );
 textureVideo.generateMipmaps = false;
 textureVideo.minFilter = THREE.LinearFilter;
@@ -177,6 +175,9 @@ var clickhelpbt = false;
 var conf;
 var divselconf = document.createElement('div');
 var lastclicked;
+var peer;
+var options
+var id;
 
 var deviceOrientationSelectedObject;
 var deviceOrientationSelectedPoint;
@@ -1496,9 +1497,9 @@ function init() {
       splashelpbt.style.webkitAnimation = "coloranimbt 1.5s 2";
     }, 7000);
 
-    var peer = new Peer(document.getElementById('nome_cli').value,{host: 'push.serveftp.com', port: 9000, path: '/'});
+    peer = new Peer(document.getElementById('nome_cli').value,{host: 'pushvfx.com', port: 9000, path: '/'});
     //var peer = new Peer($('#divnomeinput').value,{key: '1yy04g33loqd7vi'});
-    var options = {
+    options = {
       'constraints': {
         'mandatory': {
             'OfferToReceiveAudio': true,
@@ -1506,69 +1507,12 @@ function init() {
         }
       }
     }
-    var id;
     $.ajax({
       url: 'php/get_id.php',
       dataType: "text",
       data:({id:lastclicked}),
       success:function(data){
-        id = data;
-        var conn = peer.connect(id);
-        conn.on('open', function() {
-          $.ajax({
-            url: 'php/updatecounter.php',
-            dataType: "text",
-            data:({id:lastclicked, estado:"entrou"}),
-            success:function(data){
-            },
-            error:function(textStatus,errorThrown){
-              console.log(textStatus);
-              console.log(errorThrown);
-            }
-          });
-          var getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-          if (navigator.getUserMedia) {
-            navigator.getUserMedia({video: false, audio: true}, function(stream) {
-              var call = peer.call(id, stream, options);
-              call.on('stream', function(remoteStream) {
-                video.src = window.URL.createObjectURL(remoteStream);
-                audio.src = window.URL.createObjectURL(remoteStream);
-                audio.onloadedmetadata = function(e){
-                    audio.play();
-                }
-              });
-            }, function() {
-              var call = peer.calladmin(id, options);
-              call.on('stream', function(remoteStream) {
-                video.src = window.URL.createObjectURL(remoteStream);
-                audio.src = window.URL.createObjectURL(remoteStream);
-                audio.onloadedmetadata = function(e){
-                    audio.play();
-                }
-              });
-            });
-          } if (navigator.mozGetUserMedia) {
-            navigator.mediaDevices.getUserMedia({video: false, audio: true}, function(stream) {
-              var call = peer.call(id, stream, options);
-              call.on('stream', function(remoteStream) {
-                video.src = window.URL.createObjectURL(remoteStream);
-                audio.src = window.URL.createObjectURL(remoteStream);
-                audio.onloadedmetadata = function(e){
-                    audio.play();
-                }
-              });
-            }, function() {
-              var call = peer.calladmin(id, options);
-              call.on('stream', function(remoteStream) {
-                video.src = window.URL.createObjectURL(remoteStream);
-                audio.src = window.URL.createObjectURL(remoteStream);
-                audio.onloadedmetadata = function(e){
-                    audio.play();
-                }
-              });
-            });
-          };
-        });
+        connpeer(data);
       },
       error:function(textStatus,errorThrown){
         console.log(textStatus);
@@ -1605,6 +1549,46 @@ function init() {
     mouseIsOnMenu = false;
   },false);
 }
+function connpeer(id){
+  var conn = peer.connect(id);
+  conn.on('open', function() {
+    $.ajax({
+      url: 'php/updatecounter.php',
+      dataType: "text",
+      data:({id:lastclicked, estado:"entrou"}),
+      success:function(data){
+      },
+      error:function(textStatus,errorThrown){
+        console.log(textStatus);
+        console.log(errorThrown);
+      }
+    });
+    navigator.getUserMedia({video: false, audio: true}, function(stream) {
+      var call = peer.call(id, stream, options);
+      call.on('stream', function(remoteStream) {
+        video.srcObject = remoteStream;
+        audio.srcObject = remoteStream;
+        //video.src = window.URL.createObjectURL(remoteStream);
+        //audio.src = window.URL.createObjectURL(remoteStream);
+        audio.onloadedmetadata = function(e){
+            audio.play();
+        }
+      });
+    }, function() {
+      var call = peer.calladmin(id, options);
+      call.on('stream', function(remoteStream) {
+        video.srcObject = remoteStream;
+        audio.srcObject = remoteStream;
+        //video.src = window.URL.createObjectURL(remoteStream);
+        //audio.src = window.URL.createObjectURL(remoteStream);
+        audio.onloadedmetadata = function(e){
+            audio.play();
+        }
+      });
+    });
+  });
+}
+
 
 //
 // create a show the selection menu

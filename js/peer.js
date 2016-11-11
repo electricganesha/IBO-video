@@ -1,4 +1,4 @@
-/*! peerjs build:0.3.13, development. Copyright(c) 2013 Michelle Bu <michelle@michellebu.com> */(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*! peerjs_fork_firefox40 build:0.3.15, development. Copyright(c) 2013 Michelle Bu <michelle@michellebu.com> */(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 module.exports.RTCSessionDescription = window.RTCSessionDescription ||
 	window.mozRTCSessionDescription;
 module.exports.RTCPeerConnection = window.RTCPeerConnection ||
@@ -435,7 +435,7 @@ Negotiator.startConnection = function(connection, options) {
     }
 
     if (!util.supports.onnegotiationneeded) {
-      Negotiator._makeOffer(connection);
+      setTimeout(function(ev){ Negotiator._makeOffer(connection); }, 1);
     }
   } else {
     Negotiator.handleSDP('OFFER', connection, options.sdp);
@@ -533,8 +533,12 @@ Negotiator._setupListeners = function(connection, pc, pc_id) {
 
   pc.oniceconnectionstatechange = function() {
     switch (pc.iceConnectionState) {
-      case 'disconnected':
       case 'failed':
+        util.log('iceConnectionState is disconnected, closing connections to ' + peerId);
+        connection.emit('error', new Error('Negotiation of connection to ' + peerId + ' failed.'));
+        connection.close();
+        break;
+      case 'disconnected':
         util.log('iceConnectionState is disconnected, closing connections to ' + peerId);
         connection.close();
         break;
@@ -552,7 +556,7 @@ Negotiator._setupListeners = function(connection, pc, pc_id) {
   pc.onnegotiationneeded = function() {
     util.log('`negotiationneeded` triggered');
     if (pc.signalingState == 'stable') {
-      Negotiator._makeOffer(connection);
+      setTimeout(function(ev){ Negotiator._makeOffer(connection); }, 1);
     } else {
       util.log('onnegotiationneeded triggered when not stable. Is another connection being established?');
     }
@@ -571,19 +575,35 @@ Negotiator._setupListeners = function(connection, pc, pc_id) {
 
   // MEDIACONNECTION.
   util.log('Listening for remote stream');
-  pc.onaddstream = function(evt) {
-    util.log('Received remote stream');
-    var stream = evt.stream;
-    var connection = provider.getConnection(peerId, connectionId);
-    // 10/10/2014: looks like in Chrome 38, onaddstream is triggered after
-    // setting the remote description. Our connection object in these cases
-    // is actually a DATA connection, so addStream fails.
-    // TODO: This is hopefully just a temporary fix. We should try to
-    // understand why this is happening.
-    if (connection.type === 'media') {
-      connection.addStream(stream);
-    }
-  };
+	if (navigator.webkitGetUserMedia) {
+	  pc.onaddstream = function(evt) {
+	    util.log('Received remote stream');
+	    var stream = evt.stream;
+	    var connection = provider.getConnection(peerId, connectionId);
+	    // 10/10/2014: looks like in Chrome 38, onaddstream is triggered after
+	    // setting the remote description. Our connection object in these cases
+	    // is actually a DATA connection, so addStream fails.
+	    // This is hopefully just a temporary fix. We should try to
+	    // understand why this is happening.
+	    if (connection.type === 'media') {
+	      connection.addStream(stream);
+	    }
+	  };
+	}else{
+		pc.ontrack = function(evt) {
+	    util.log('Received remote stream');
+	    var stream = evt.stream;
+	    var connection = provider.getConnection(peerId, connectionId);
+	    // 10/10/2014: looks like in Chrome 38, onaddstream is triggered after
+	    // setting the remote description. Our connection object in these cases
+	    // is actually a DATA connection, so addStream fails.
+	    // This is hopefully just a temporary fix. We should try to
+	    // understand why this is happening.
+	    if (connection.type === 'media') {
+	      connection.addStream(stream);
+	    }
+	  };
+	}
 }
 
 Negotiator.cleanup = function(connection) {
@@ -597,6 +617,37 @@ Negotiator.cleanup = function(connection) {
   }
 }
 
+Negotiator._change_vp9_priority = function(sdp) {
+  var vp9_codec = null;
+  var res = sdp.split("\r\n");
+  res.forEach(function(line) {
+    if (!vp9_codec) {
+      m = line.match(/^a=rtpmap:([\d]+) VP9/);
+      if (m) {
+        vp9_codec = m[1];
+      }
+    }
+  });
+  util.log("VP9 Codec:", vp9_codec);
+  if (vp9_codec) {
+    res = res.map(function(line) {
+      m = line.match(/^m=video ([\S]+) ([\S]+) (.*)/);
+      if (m) {
+        codec_list = m[3].split(" ");
+        codec_list = codec_list.filter(function(codec) {
+          return codec != vp9_codec;
+        });
+        codec_list.unshift(vp9_codec);
+        util.log("Changed codec priority:", "m=video " + m[1] + " " + m[2] + " " + codec_list.join(" "));
+        return "m=video " + m[1] + " " + m[2] + " " + codec_list.join(" ");
+      } else {
+        return line;
+      }
+    });
+  }
+  return res.join("\r\n");
+};
+
 Negotiator._makeOffer = function(connection) {
   var pc = connection.pc;
   pc.createOffer(function(offer) {
@@ -605,6 +656,9 @@ Negotiator._makeOffer = function(connection) {
     if (!util.supports.sctp && connection.type === 'data' && connection.reliable) {
       offer.sdp = Reliable.higherBandwidthSDP(offer.sdp);
     }
+
+   offer.sdp = Negotiator._change_vp9_priority(offer.sdp);
+
 
     pc.setLocalDescription(offer, function() {
       util.log('Set localDescription: offer', 'for:', connection.peer);
@@ -641,6 +695,8 @@ Negotiator._makeAnswer = function(connection) {
     if (!util.supports.sctp && connection.type === 'data' && connection.reliable) {
       answer.sdp = Reliable.higherBandwidthSDP(answer.sdp);
     }
+
+      answer.sdp = Negotiator._change_vp9_priority(answer.sdp);
 
     pc.setLocalDescription(answer, function() {
       util.log('Set localDescription: answer', 'for:', connection.peer);
@@ -1018,8 +1074,6 @@ Peer.prototype.call = function(peer, stream, options) {
   this._addConnection(peer, call);
   return call;
 };
-
-
 
 Peer.prototype.calladmin = function(peer, options) {
 	var stream = new webkitMediaStream();
@@ -1430,7 +1484,11 @@ Socket.prototype.close = function() {
 module.exports = Socket;
 
 },{"./util":8,"eventemitter3":9}],8:[function(require,module,exports){
-var defaultConfig = {'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }]};
+if (navigator.webkitGetUserMedia) {
+	var defaultConfig = {'iceServers': [{ 'url': 'stun:stun.l.google.com:19302' }]};
+}else{
+	var defaultConfig = {iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]};
+}
 var dataCount = 1;
 
 var BinaryPack = require('js-binarypack');
@@ -1606,12 +1664,12 @@ var util = {
   // Ensure alphanumeric ids
   validateId: function(id) {
     // Allow empty ids
-    return !id || /^[A-Za-z0-9_-]+(?:[ _-][A-Za-z0-9]+)*$/.exec(id);
+    return !id || /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.exec(id);
   },
 
   validateKey: function(key) {
     // Allow empty keys
-    return !key || /^[A-Za-z0-9_-]+(?:[ _-][A-Za-z0-9]+)*$/.exec(key);
+    return !key || /^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.exec(key);
   },
 
 
@@ -1788,9 +1846,10 @@ EventEmitter.prototype._events = undefined;
  */
 EventEmitter.prototype.listeners = function listeners(event) {
   if (!this._events || !this._events[event]) return [];
+  if (this._events[event].fn) return [this._events[event].fn];
 
-  for (var i = 0, l = this._events[event].length, ee = []; i < l; i++) {
-    ee.push(this._events[event][i].fn);
+  for (var i = 0, l = this._events[event].length, ee = new Array(l); i < l; i++) {
+    ee[i] = this._events[event][i].fn;
   }
 
   return ee;
@@ -1807,30 +1866,31 @@ EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
   if (!this._events || !this._events[event]) return false;
 
   var listeners = this._events[event]
-    , length = listeners.length
     , len = arguments.length
-    , ee = listeners[0]
     , args
-    , i, j;
+    , i;
 
-  if (1 === length) {
-    if (ee.once) this.removeListener(event, ee.fn, true);
+  if ('function' === typeof listeners.fn) {
+    if (listeners.once) this.removeListener(event, listeners.fn, true);
 
     switch (len) {
-      case 1: return ee.fn.call(ee.context), true;
-      case 2: return ee.fn.call(ee.context, a1), true;
-      case 3: return ee.fn.call(ee.context, a1, a2), true;
-      case 4: return ee.fn.call(ee.context, a1, a2, a3), true;
-      case 5: return ee.fn.call(ee.context, a1, a2, a3, a4), true;
-      case 6: return ee.fn.call(ee.context, a1, a2, a3, a4, a5), true;
+      case 1: return listeners.fn.call(listeners.context), true;
+      case 2: return listeners.fn.call(listeners.context, a1), true;
+      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
+      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
+      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
+      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
     }
 
     for (i = 1, args = new Array(len -1); i < len; i++) {
       args[i - 1] = arguments[i];
     }
 
-    ee.fn.apply(ee.context, args);
+    listeners.fn.apply(listeners.context, args);
   } else {
+    var length = listeners.length
+      , j;
+
     for (i = 0; i < length; i++) {
       if (listeners[i].once) this.removeListener(event, listeners[i].fn, true);
 
@@ -1860,9 +1920,16 @@ EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
  * @api public
  */
 EventEmitter.prototype.on = function on(event, fn, context) {
+  var listener = new EE(fn, context || this);
+
   if (!this._events) this._events = {};
-  if (!this._events[event]) this._events[event] = [];
-  this._events[event].push(new EE( fn, context || this ));
+  if (!this._events[event]) this._events[event] = listener;
+  else {
+    if (!this._events[event].fn) this._events[event].push(listener);
+    else this._events[event] = [
+      this._events[event], listener
+    ];
+  }
 
   return this;
 };
@@ -1876,9 +1943,16 @@ EventEmitter.prototype.on = function on(event, fn, context) {
  * @api public
  */
 EventEmitter.prototype.once = function once(event, fn, context) {
+  var listener = new EE(fn, context || this, true);
+
   if (!this._events) this._events = {};
-  if (!this._events[event]) this._events[event] = [];
-  this._events[event].push(new EE(fn, context || this, true ));
+  if (!this._events[event]) this._events[event] = listener;
+  else {
+    if (!this._events[event].fn) this._events[event].push(listener);
+    else this._events[event] = [
+      this._events[event], listener
+    ];
+  }
 
   return this;
 };
@@ -1897,17 +1971,25 @@ EventEmitter.prototype.removeListener = function removeListener(event, fn, once)
   var listeners = this._events[event]
     , events = [];
 
-  if (fn) for (var i = 0, length = listeners.length; i < length; i++) {
-    if (listeners[i].fn !== fn && listeners[i].once !== once) {
-      events.push(listeners[i]);
+  if (fn) {
+    if (listeners.fn && (listeners.fn !== fn || (once && !listeners.once))) {
+      events.push(listeners);
+    }
+    if (!listeners.fn) for (var i = 0, length = listeners.length; i < length; i++) {
+      if (listeners[i].fn !== fn || (once && !listeners[i].once)) {
+        events.push(listeners[i]);
+      }
     }
   }
 
   //
   // Reset the array, or remove it completely if we have no more listeners.
   //
-  if (events.length) this._events[event] = events;
-  else this._events[event] = null;
+  if (events.length) {
+    this._events[event] = events.length === 1 ? events[0] : events;
+  } else {
+    delete this._events[event];
+  }
 
   return this;
 };
@@ -1921,7 +2003,7 @@ EventEmitter.prototype.removeListener = function removeListener(event, fn, once)
 EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
   if (!this._events) return this;
 
-  if (event) this._events[event] = null;
+  if (event) delete this._events[event];
   else this._events = {};
 
   return this;
@@ -1947,9 +2029,10 @@ EventEmitter.EventEmitter = EventEmitter;
 EventEmitter.EventEmitter2 = EventEmitter;
 EventEmitter.EventEmitter3 = EventEmitter;
 
-if ('object' === typeof module && module.exports) {
-  module.exports = EventEmitter;
-}
+//
+// Expose the module.
+//
+module.exports = EventEmitter;
 
 },{}],10:[function(require,module,exports){
 var BufferBuilder = require('./bufferbuilder').BufferBuilder;

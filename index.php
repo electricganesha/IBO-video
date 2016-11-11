@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset=utf-8>
     <title>P4P - Conference Room</title>
@@ -28,10 +27,11 @@
       <body>
         <?php
           if (isset($_POST['entrar'])){
-            $password = $_POST['pass'];
-            session_start();
-            $_SESSION['entrou'] = 'true';
-            header('location: menu.php');
+            if($_POST['pass'] == 'p4p'){
+              session_start();
+              $_SESSION['entrou'] = 'true';
+              header('location: ibo.php');
+            }
           }
         ?>
         <div id="mainContainer" class="container" style="width:100%;">

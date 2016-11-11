@@ -1,6 +1,11 @@
+<?php
+session_start();
+if($_SESSION['entrou'] == "") {
+  header("location: index.php");
+}else{
+?>
 <!DOCTYPE html>
 <html>
-
   <head>
     <meta charset=utf-8>
     <title>P4P - Conference Room</title>
@@ -70,9 +75,10 @@
     </style>
   </head>
   <body>
+    <script src="js/peer.js"></script>
     <script src="js/jquery-2.1.4.min.js"></script>
     <script src="js/jquery-ui.js"></script>
-    <script src="js/peer.js"></script>
+
     <script>
     function detectmob() {
       if( navigator.userAgent.match(/Android/i)
@@ -83,23 +89,22 @@
       || navigator.userAgent.match(/BlackBerry/i)
       || navigator.userAgent.match(/Windows Phone/i)){
         return true;
+        }
+        else{
+          return false;
+        }
       }
-      else{
-        return false;
+
+      if (detectmob()){
+        document.write('<video id="video" style="display:none"><\/video>');
+        document.write('<audio id="audio" style="display:none"></audio>');
+        document.write("<script src='cinema_mobile.js'><\/script>");
+      }else{
+        document.write('<video id="video" style="display:none"><\/video>');
+        document.write('<audio id="audio" style="display:none"></audio>');
+        document.write("<script src='cinema.js'><\/script>");
       }
-    }
-
-    if (detectmob()){
-      document.write('<video id="video" style="display:none"><\/video>');
-      document.write('<audio id="audio" style="display:none"></audio>');
-      document.write("<script src='cinema_mobile.js'><\/script>");
-    }else{
-      document.write('<video id="video" style="display:none"><\/video>');
-      document.write('<audio id="audio" style="display:none"></audio>');
-      document.write("<script src='cinema.js'><\/script>");
-    }
-
     </script>
   </body>
-
 </html>
+<?php } ?>

@@ -1,3 +1,9 @@
+<?php
+session_start();
+if($_SESSION['entrou'] == "") {
+  header("location: index.php");
+}else{
+?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +22,6 @@
   <script src="js/adminConference.js"></script>
 </head>
 <body>
-
   <nav id="menu" class="menu" style="background-color:#BD2124; display:none; ">
     <div id="sideMenuUsers" class="sidenav" style="width:100%;">
       <div id="ligacoes" style="display:block; text-align:center; width:100%; margin-left:10px; border-bottom:1px solid black; padding:10px;"></div>
@@ -39,27 +44,27 @@
           <h1 style="width:70%; margin:auto; border-bottom:2px solid #BD2124; padding-bottom:1%;"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room - Speaker</h1>
         </div>
         <div class="row" id="loginRow">
-        <div id="login" style="width:100%;">
-          <div class="row" id="rowFirstLastName" style="width:50%; margin:auto; margin-bottom:10px;">
-            <div class="col-md-6 col-sm-6 col-xs-6" id="yourNameColumn" >
-              <small> Your name : </small> &nbsp;
+          <div id="login" style="width:100%;">
+            <div class="row" id="rowFirstLastName" style="width:50%; margin:auto; margin-bottom:10px;">
+              <div class="col-md-6 col-sm-6 col-xs-6" id="yourNameColumn" >
+                <small> Your name : </small> &nbsp;
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-6">
+                <input id="loginInputFirstName" class="loginConfInput" type="text" placeholder="First Name"></input>&nbsp;<input id="loginInputLastName" class="loginConfInput" type="text" placeholder="Last Name"></input>
+              </div>
             </div>
-            <div class="col-md-6 col-sm-6 col-xs-6">
-              <input id="loginInputFirstName" class="loginConfInput" type="text" placeholder="First Name"></input>&nbsp;<input id="loginInputLastName" class="loginConfInput" type="text" placeholder="Last Name"></input>
+            <div class="row" id="rowConferenceName" style="width:50%; margin:auto;">
+              <div class="col-md-6 col-sm-6 col-xs-6" id="conferenceNameColumn">
+                <small style="width:100%;"> Conference/Room name : </small> &nbsp;
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-6">
+                <input id="loginInputConfName" class="loginConfInput" type="text" placeholder="Conference/Room Name"></input><button type="button" id="loginConfButton" onclick="startConf()" class='btn'> Start </button>
+              </div>
             </div>
-          </div>
-          <div class="row" id="rowConferenceName" style="width:50%; margin:auto;">
-            <div class="col-md-6 col-sm-6 col-xs-6" id="conferenceNameColumn">
-              <small style="width:100%;"> Conference/Room name : </small> &nbsp;
+            <br>
+            <div class="row" id="errorRow">
+              <div id="formErrorMessageDiv" style="display:none;"><p style="display:inline;"> Please specify a </p> <p id="formErrorMessage" style="display:inline; color:#BD2124;"> </p> <p style="display:inline;"> in order to continue. </p></div>
             </div>
-            <div class="col-md-6 col-sm-6 col-xs-6">
-              <input id="loginInputConfName" class="loginConfInput" type="text" placeholder="Conference/Room Name"></input><button type="button" id="loginConfButton" onclick="startConf()" class='btn'> Start </button>
-            </div>
-          </div>
-          <br>
-          <div class="row" id="errorRow">
-            <div id="formErrorMessageDiv" style="display:none;"><p style="display:inline;"> Please specify a </p> <p id="formErrorMessage" style="display:inline; color:#BD2124;"> </p> <p style="display:inline;"> in order to continue. </p></div>
-          </div>
         </div>
       </div>
         <div id="mainStructure">
@@ -77,3 +82,4 @@
   </main>
 </body>
 </html>
+<?php } ?>

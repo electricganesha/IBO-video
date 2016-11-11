@@ -1,3 +1,9 @@
+<?php
+session_start();
+if($_SESSION['entrou'] == "") {
+  header("location: index.php");
+}else{
+?>
 <!DOCTYPE html>
 <html>
 
@@ -28,20 +34,20 @@
             <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:45%;  float:left;">
               <div class="row" style="height:85%;">
               <p id="warning" style= "display: none;">Please connect a webcam in order to host a conference</p>
-              <a class="linkadmin" href="admin.html"><img id="speakerImg" class="img-responsive" style="height:100%; margin:auto;" src="img/speaker.png"></img></a>
+              <a class="linkadmin" href="admin.php"><img id="speakerImg" class="img-responsive" style="height:100%; margin:auto;" src="img/speaker.png"></img></a>
             </div>
             <div class="row" style="height:15%; text-align:center;">
-              <a class="linkadmin" href="admin.html"><p id="paragraphSpeaker"> - Speaker - </p></a>
+              <a class="linkadmin" href="admin.php"><p id="paragraphSpeaker"> - Speaker - </p></a>
             </div>
             </div>
             <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:10%;" >
             </div>
             <div class="col-md-4 col-sm-4 col-xs-4" style="height:100%; width:45%;" >
               <div class="row" style="height:85%;">
-              <a href="ibo.html"><img id="assistantImg"  class="img-responsive" style="height:100%; margin:auto;" src="img/attendee.png"></img></a>
+              <a href="ibo.php"><img id="assistantImg"  class="img-responsive" style="height:100%; margin:auto;" src="img/attendee.png"></img></a>
             </div>
             <div class="row" style="height:15%;">
-              <a href="ibo.html"><p id="paragraphAssistant">- Attendee -</p></a>
+              <a href="ibo.php"><p id="paragraphAssistant">- Attendee -</p></a>
             </div>
             </div>
           </div>
@@ -195,13 +201,14 @@
           }
 
           window.onorientationchange = function() {
-        var orientation = window.orientation;
-            switch(orientation) {
-                case 0:
-                case 90:
-                case -90: window.location.reload();
-                break; }
-    };
+            var orientation = window.orientation;
+                switch(orientation) {
+                    case 0:
+                    case 90:
+                    case -90: window.location.reload();
+                    break; }
+            };
 
       </script>
 </html>
+<?php } ?>
