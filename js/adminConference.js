@@ -44,12 +44,6 @@ window.onload = function() {
     }
    });
 
-
-  console.log(window.innerHeight);
-  console.log(window.innerWidth);
-  console.log($( window ).width());
-  console.log($('#poweredByPUSHImage').height());
-
   var totalDeviceHeight = window.innerHeight;
   var footerHeight = $('#poweredByPUSHImage').height();
 
@@ -107,7 +101,8 @@ function startConference()
   var video = document.getElementById( 'video' );
   video.style.display = "inline-block";
 
-  var peer = new Peer({host: 'pushvfx.com', port: 9000, path: '/'});
+  //var peer = new Peer('peerHost',{host: 'pushvfx.com', port: 55127, path: '/', debug:true});
+  var peer = new Peer({host: 'pushvfx.com', port: 55127, path: '/', debug:true, config: {'iceServers': [{ url: 'stun:stun.l.google.com:19302' },{ url: 'turn:numb.viagenie.ca', username: 'ricardoadspinto@gmail.com', credential: 'Pushvfx_1409' }]}});
   //var peer = new Peer({key: '1yy04g33loqd7vi'});
   peer.on('open', function(id) {
     console.log('My peer ID is: ' + id);
@@ -125,12 +120,26 @@ function startConference()
     localStorage.setItem("id", id);
 
     callDB(id,"new",speakerFirstName,speakerLastName,conferenceRoomName);
-    navigator.getUserMedia({video: true, audio: true}, function(stream) {
-      mediastream = stream;
-      video.srcObject = mediastream;
-    }, function(err) {
-      console.log('Failed to get local stream' ,err);
-    });
+      navigator.getUserMedia = navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia;
+
+      if (navigator.webkitGetUserMedia) {
+        navigator.getUserMedia({video: true, audio: true}, function(stream) {
+          mediastream = stream;
+          video.srcObject = stream;
+        }, function(err) {
+          console.log('Failed to get local stream' ,err);
+        });
+      } else if (navigator.mozGetUserMedia){
+        navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(function(stream) {
+          mediastream = stream;
+          video.srcObject = stream;
+        })
+        .catch(function(err) { console.log(err.name + ": " + err.message); });
+      }else {
+         console.log("getUserMedia not supported");
+      }
   });
 
 
@@ -145,7 +154,6 @@ function startConference()
            * On Open Connection - PEERJS
            */
           conn.on('open', function() {
-            console.log("connection open");
 
             peerStatusWaitingIsActive = false;
 

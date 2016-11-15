@@ -27,10 +27,10 @@
       <body>
         <?php
           if (isset($_POST['entrar'])){
-            if($_POST['pass'] == 'p4p'){
+            if($_POST['pass'] == '17112016'){
               session_start();
               $_SESSION['entrou'] = 'true';
-              header('location: ibo.php');
+              header('location: menu.php');
             }
           }
         ?>

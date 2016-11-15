@@ -406,89 +406,91 @@ function getconf(){
           //If is even number
           if( i == 0){
             if (data[i].estado == "live"){
-              var idconf = data[i].id_conferencia;
-              var divconf = document.createElement('div');
-              divconf.style.width = "49%";
-              divconf.style.float = "left";
-              divconf.style.height = "50px";
-              divconf.style.cursor = "pointer";
-              divconf.className = "conferencia";
-              divconf.style.marginTop = "10px";
-              divconf.title = "live";
-              divconf.id = data[i].id_conferencia;
-              if(lastclicked == data[i].id_conferencia){
-                  divconf.style.border = "solid 1px #bd2124";
+              if(navigator.webkitGetUserMedia){
+                var idconf = data[i].id_conferencia;
+                var divconf = document.createElement('div');
+                divconf.style.width = "49%";
+                divconf.style.float = "left";
+                divconf.style.height = "50px";
+                divconf.style.cursor = "pointer";
+                divconf.className = "conferencia";
+                divconf.style.marginTop = "10px";
+                divconf.title = "live";
+                divconf.id = data[i].id_conferencia;
+                if(lastclicked == data[i].id_conferencia){
+                    divconf.style.border = "solid 1px #bd2124";
+                }
+
+                var divnpeople = document.createElement('div');
+                divnpeople.innerHTML = "<i class='glyphicon glyphicon-user'></i> " + data[i].n_pessoas;
+                divnpeople.style.fontSize = "10px";
+                divnpeople.style.float = "right";
+                divnpeople.style.width = "35px";
+                divnpeople.className = "npeople";
+                divnpeople.style.height = "100%";
+                divnpeople.style.paddingTop = "15px";
+                divconf.appendChild(divnpeople);
+
+                var divconfinfo = document.createElement('div');
+                divconfinfo.style.fontSize = "11px";
+                divconfinfo.style.float = "right";
+                divconfinfo.style.width = "85px";
+                divconfinfo.className = "npeople";
+                divconfinfo.style.height = "100%";
+                divconf.appendChild(divconfinfo);
+
+                var divconfinfodata = document.createElement('div');
+                divconfinfodata.innerHTML = data[i].dia;
+                divconfinfodata.style.fontSize = "11px";
+                divconfinfodata.style.width = "100%";
+                divconfinfodata.style.height = "46%";
+                divconfinfodata.className = "confdata";
+                divconfinfo.style.paddingTop = "7px";
+                divconfinfo.appendChild(divconfinfodata);
+
+                var divconftime = document.createElement('div');
+                divconftime.innerHTML = data[i].hour;
+                divconftime.style.fontSize = "11px";
+                divconftime.style.width = "100%";
+                divconftime.style.height = "49%";
+                divconfinfo.appendChild(divconftime);
+
+                var imglive = document.createElement('img');
+                imglive.style.width = "20px";
+                imglive.id = "liveimg";
+                imglive.className = "Blink";
+                imglive.style.float = "left";
+                imglive.style.marginTop = "15px";
+                imglive.style.marginLeft = "15px";
+                imglive.src="img/live.png";
+                divconf.appendChild(imglive);
+
+                var pnome = document.createElement('p');
+                pnome.innerHTML = data[i].nome;
+                pnome.style.fontSize = "15px";
+                pnome.style.padding =  "0";
+                pnome.style.margin =  "0";
+                pnome.style.marginTop =  "5px";
+                pnome.style.width = "55%";
+                pnome.style.marginLeft = "50px";
+                //pnome.style.border = "solid 1px blue";
+                pnome.style.textAlign = "left";
+                divconf.appendChild(pnome);
+
+                var pby = document.createElement('p');
+                pby.innerHTML = "by " + data[i].orador;
+                pby.style.fontSize = "10px";
+                pby.style.padding =  "0";
+                pby.style.margin =  "0";
+                pby.style.width = "200px";
+                pby.style.marginLeft = "50px";
+                //pby.style.border = "solid 1px blue";
+                pby.style.textAlign = "left";
+                divconf.appendChild(pby);
+
+
+                divselconf.appendChild(divconf);
               }
-
-              var divnpeople = document.createElement('div');
-              divnpeople.innerHTML = "<i class='glyphicon glyphicon-user'></i> " + data[i].n_pessoas;
-              divnpeople.style.fontSize = "10px";
-              divnpeople.style.float = "right";
-              divnpeople.style.width = "35px";
-              divnpeople.className = "npeople";
-              divnpeople.style.height = "100%";
-              divnpeople.style.paddingTop = "15px";
-              divconf.appendChild(divnpeople);
-
-              var divconfinfo = document.createElement('div');
-              divconfinfo.style.fontSize = "11px";
-              divconfinfo.style.float = "right";
-              divconfinfo.style.width = "85px";
-              divconfinfo.className = "npeople";
-              divconfinfo.style.height = "100%";
-              divconf.appendChild(divconfinfo);
-
-              var divconfinfodata = document.createElement('div');
-              divconfinfodata.innerHTML = data[i].dia;
-              divconfinfodata.style.fontSize = "11px";
-              divconfinfodata.style.width = "100%";
-              divconfinfodata.style.height = "46%";
-              divconfinfodata.className = "confdata";
-              divconfinfo.style.paddingTop = "7px";
-              divconfinfo.appendChild(divconfinfodata);
-
-              var divconftime = document.createElement('div');
-              divconftime.innerHTML = data[i].hour;
-              divconftime.style.fontSize = "11px";
-              divconftime.style.width = "100%";
-              divconftime.style.height = "49%";
-              divconfinfo.appendChild(divconftime);
-
-              var imglive = document.createElement('img');
-              imglive.style.width = "20px";
-              imglive.id = "liveimg";
-              imglive.className = "Blink";
-              imglive.style.float = "left";
-              imglive.style.marginTop = "15px";
-              imglive.style.marginLeft = "15px";
-              imglive.src="img/live.png";
-              divconf.appendChild(imglive);
-
-              var pnome = document.createElement('p');
-              pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "15px";
-              pnome.style.padding =  "0";
-              pnome.style.margin =  "0";
-              pnome.style.marginTop =  "5px";
-              pnome.style.width = "55%";
-              pnome.style.marginLeft = "50px";
-              //pnome.style.border = "solid 1px blue";
-              pnome.style.textAlign = "left";
-              divconf.appendChild(pnome);
-
-              var pby = document.createElement('p');
-              pby.innerHTML = "by " + data[i].orador;
-              pby.style.fontSize = "10px";
-              pby.style.padding =  "0";
-              pby.style.margin =  "0";
-              pby.style.width = "200px";
-              pby.style.marginLeft = "50px";
-              //pby.style.border = "solid 1px blue";
-              pby.style.textAlign = "left";
-              divconf.appendChild(pby);
-
-
-              divselconf.appendChild(divconf);
             }else{
               var divconf = document.createElement('div');
               divconf.style.width = "49%";
@@ -550,88 +552,90 @@ function getconf(){
             }
           }else if (i % 2 == 0 && i != 0){
             if (data[i].estado == "live"){
-              var divconf = document.createElement('div');
-              divconf.style.width = "49%";
-              divconf.style.float = "left";
-              divconf.style.height = "50px";
-              divconf.style.cursor = "pointer";
-              divconf.className = "conferencia";
-              divconf.style.marginTop = "10px";
-              divconf.title = "live";
-              divconf.id = data[i].id_conferencia;
-              if(lastclicked == data[i].id_conferencia){
-                  divconf.style.border = "solid 1px #bd2124";
+              if(navigator.webkitGetUserMedia){
+                var divconf = document.createElement('div');
+                divconf.style.width = "49%";
+                divconf.style.float = "left";
+                divconf.style.height = "50px";
+                divconf.style.cursor = "pointer";
+                divconf.className = "conferencia";
+                divconf.style.marginTop = "10px";
+                divconf.title = "live";
+                divconf.id = data[i].id_conferencia;
+                if(lastclicked == data[i].id_conferencia){
+                    divconf.style.border = "solid 1px #bd2124";
+                }
+
+                var divnpeople = document.createElement('div');
+                divnpeople.innerHTML = "<i class='glyphicon glyphicon-user'></i> " + data[i].n_pessoas;
+                divnpeople.style.fontSize = "10px";
+                divnpeople.style.float = "right";
+                divnpeople.style.width = "35px";
+                divnpeople.className = "npeople";
+                divnpeople.style.height = "100%";
+                divnpeople.style.paddingTop = "15px";
+                divconf.appendChild(divnpeople);
+
+                var divconfinfo = document.createElement('div');
+                divconfinfo.style.fontSize = "11px";
+                divconfinfo.style.float = "right";
+                divconfinfo.style.width = "85px";
+                divconfinfo.className = "npeople";
+                divconfinfo.style.height = "100%";
+                divconf.appendChild(divconfinfo);
+
+                var divconfinfodata = document.createElement('div');
+                divconfinfodata.innerHTML = data[i].dia;
+                divconfinfodata.style.fontSize = "11px";
+                divconfinfodata.style.width = "100%";
+                divconfinfodata.style.height = "46%";
+                divconfinfodata.className = "confdata";
+                divconfinfo.style.paddingTop = "7px";
+                divconfinfo.appendChild(divconfinfodata);
+
+                var divconftime = document.createElement('div');
+                divconftime.innerHTML = data[i].hour;
+                divconftime.style.fontSize = "11px";
+                divconftime.style.width = "100%";
+                divconftime.style.height = "49%";
+                divconfinfo.appendChild(divconftime);
+
+                var imglive = document.createElement('img');
+                imglive.style.width = "20px";
+                imglive.id = "liveimg";
+                imglive.className = "Blink";
+                imglive.style.float = "left";
+                imglive.style.marginTop = "15px";
+                imglive.style.marginLeft = "15px";
+                imglive.src="img/live.png";
+                divconf.appendChild(imglive);
+
+                var pnome = document.createElement('p');
+                pnome.innerHTML = data[i].nome;
+                pnome.style.fontSize = "15px";
+                pnome.style.padding =  "0";
+                pnome.style.margin =  "0";
+                pnome.style.marginTop =  "5px";
+                pnome.style.width = "55%";
+                pnome.style.marginLeft = "50px";
+                //pnome.style.border = "solid 1px blue";
+                pnome.style.textAlign = "left";
+                divconf.appendChild(pnome);
+
+                var pby = document.createElement('p');
+                pby.innerHTML = "by " + data[i].orador;
+                pby.style.fontSize = "10px";
+                pby.style.padding =  "0";
+                pby.style.margin =  "0";
+                pby.style.width = "200px";
+                pby.style.marginLeft = "50px";
+                //pby.style.border = "solid 1px blue";
+                pby.style.textAlign = "left";
+                divconf.appendChild(pby);
+
+
+                divselconf.appendChild(divconf);
               }
-
-              var divnpeople = document.createElement('div');
-              divnpeople.innerHTML = "<i class='glyphicon glyphicon-user'></i> " + data[i].n_pessoas;
-              divnpeople.style.fontSize = "10px";
-              divnpeople.style.float = "right";
-              divnpeople.style.width = "35px";
-              divnpeople.className = "npeople";
-              divnpeople.style.height = "100%";
-              divnpeople.style.paddingTop = "15px";
-              divconf.appendChild(divnpeople);
-
-              var divconfinfo = document.createElement('div');
-              divconfinfo.style.fontSize = "11px";
-              divconfinfo.style.float = "right";
-              divconfinfo.style.width = "85px";
-              divconfinfo.className = "npeople";
-              divconfinfo.style.height = "100%";
-              divconf.appendChild(divconfinfo);
-
-              var divconfinfodata = document.createElement('div');
-              divconfinfodata.innerHTML = data[i].dia;
-              divconfinfodata.style.fontSize = "11px";
-              divconfinfodata.style.width = "100%";
-              divconfinfodata.style.height = "46%";
-              divconfinfodata.className = "confdata";
-              divconfinfo.style.paddingTop = "7px";
-              divconfinfo.appendChild(divconfinfodata);
-
-              var divconftime = document.createElement('div');
-              divconftime.innerHTML = data[i].hour;
-              divconftime.style.fontSize = "11px";
-              divconftime.style.width = "100%";
-              divconftime.style.height = "49%";
-              divconfinfo.appendChild(divconftime);
-
-              var imglive = document.createElement('img');
-              imglive.style.width = "20px";
-              imglive.id = "liveimg";
-              imglive.className = "Blink";
-              imglive.style.float = "left";
-              imglive.style.marginTop = "15px";
-              imglive.style.marginLeft = "15px";
-              imglive.src="img/live.png";
-              divconf.appendChild(imglive);
-
-              var pnome = document.createElement('p');
-              pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "15px";
-              pnome.style.padding =  "0";
-              pnome.style.margin =  "0";
-              pnome.style.marginTop =  "5px";
-              pnome.style.width = "55%";
-              pnome.style.marginLeft = "50px";
-              //pnome.style.border = "solid 1px blue";
-              pnome.style.textAlign = "left";
-              divconf.appendChild(pnome);
-
-              var pby = document.createElement('p');
-              pby.innerHTML = "by " + data[i].orador;
-              pby.style.fontSize = "10px";
-              pby.style.padding =  "0";
-              pby.style.margin =  "0";
-              pby.style.width = "200px";
-              pby.style.marginLeft = "50px";
-              //pby.style.border = "solid 1px blue";
-              pby.style.textAlign = "left";
-              divconf.appendChild(pby);
-
-
-              divselconf.appendChild(divconf);
             }else{
               var divconf = document.createElement('div');
               divconf.style.width = "49%";
@@ -694,88 +698,90 @@ function getconf(){
             }
           }else if (i % 2 == 1 && i != 0){
             if (data[i].estado == "live"){
-              var divconf = document.createElement('div');
-              divconf.style.width = "49%";
-              divconf.style.float = "left";
-              divconf.style.height = "50px";
-              divconf.style.cursor = "pointer";
-              divconf.className = "conferencia";
-              divconf.style.marginLeft = "10px";
-              divconf.style.marginTop = "10px";
-              divconf.title = "live";
-              divconf.id = data[i].id_conferencia;
-              if(lastclicked == data[i].id_conferencia){
-                  divconf.style.border = "solid 1px #bd2124";
+              if(navigator.webkitGetUserMedia){
+                var divconf = document.createElement('div');
+                divconf.style.width = "49%";
+                divconf.style.float = "left";
+                divconf.style.height = "50px";
+                divconf.style.cursor = "pointer";
+                divconf.className = "conferencia";
+                divconf.style.marginLeft = "10px";
+                divconf.style.marginTop = "10px";
+                divconf.title = "live";
+                divconf.id = data[i].id_conferencia;
+                if(lastclicked == data[i].id_conferencia){
+                    divconf.style.border = "solid 1px #bd2124";
+                }
+
+                var divnpeople = document.createElement('div');
+                divnpeople.innerHTML = "<i class='glyphicon glyphicon-user'></i> " + data[i].n_pessoas;
+                divnpeople.style.fontSize = "10px";
+                divnpeople.style.float = "right";
+                divnpeople.style.width = "35px";
+                divnpeople.className = "npeople";
+                divnpeople.style.height = "100%";
+                divnpeople.style.paddingTop = "15px";
+                divconf.appendChild(divnpeople);
+
+                var divconfinfo = document.createElement('div');
+                divconfinfo.style.fontSize = "11px";
+                divconfinfo.style.float = "right";
+                divconfinfo.style.width = "85px";
+                divconfinfo.className = "npeople";
+                divconfinfo.style.height = "100%";
+                divconf.appendChild(divconfinfo);
+
+                var divconfinfodata = document.createElement('div');
+                divconfinfodata.innerHTML = data[i].dia;
+                divconfinfodata.style.fontSize = "11px";
+                divconfinfodata.style.width = "100%";
+                divconfinfodata.style.height = "46%";
+                divconfinfodata.className = "confdata";
+                divconfinfo.style.paddingTop = "7px";
+                divconfinfo.appendChild(divconfinfodata);
+
+                var divconftime = document.createElement('div');
+                divconftime.innerHTML = data[i].hour;
+                divconftime.style.fontSize = "11px";
+                divconftime.style.width = "100%";
+                divconftime.style.height = "49%";
+                divconfinfo.appendChild(divconftime);
+
+                var imglive = document.createElement('img');
+                imglive.style.width = "20px";
+                imglive.id = "liveimg";
+                imglive.className = "Blink";
+                imglive.style.float = "left";
+                imglive.style.marginTop = "15px";
+                imglive.style.marginLeft = "15px";
+                imglive.src="img/live.png";
+                divconf.appendChild(imglive);
+
+                var pnome = document.createElement('p');
+                pnome.innerHTML = data[i].nome;
+                pnome.style.fontSize = "15px";
+                pnome.style.padding =  "0";
+                pnome.style.margin =  "0";
+                pnome.style.marginTop =  "5px";
+                pnome.style.width = "55%";
+                pnome.style.marginLeft = "50px";
+                //pnome.style.border = "solid 1px blue";
+                pnome.style.textAlign = "left";
+                divconf.appendChild(pnome);
+
+                var pby = document.createElement('p');
+                pby.innerHTML = "by " + data[i].orador;
+                pby.style.fontSize = "10px";
+                pby.style.padding =  "0";
+                pby.style.margin =  "0";
+                pby.style.width = "200px";
+                pby.style.marginLeft = "50px";
+                //pby.style.border = "solid 1px blue";
+                pby.style.textAlign = "left";
+                divconf.appendChild(pby);
+
+                divselconf.appendChild(divconf);
               }
-
-              var divnpeople = document.createElement('div');
-              divnpeople.innerHTML = "<i class='glyphicon glyphicon-user'></i> " + data[i].n_pessoas;
-              divnpeople.style.fontSize = "10px";
-              divnpeople.style.float = "right";
-              divnpeople.style.width = "35px";
-              divnpeople.className = "npeople";
-              divnpeople.style.height = "100%";
-              divnpeople.style.paddingTop = "15px";
-              divconf.appendChild(divnpeople);
-
-              var divconfinfo = document.createElement('div');
-              divconfinfo.style.fontSize = "11px";
-              divconfinfo.style.float = "right";
-              divconfinfo.style.width = "85px";
-              divconfinfo.className = "npeople";
-              divconfinfo.style.height = "100%";
-              divconf.appendChild(divconfinfo);
-
-              var divconfinfodata = document.createElement('div');
-              divconfinfodata.innerHTML = data[i].dia;
-              divconfinfodata.style.fontSize = "11px";
-              divconfinfodata.style.width = "100%";
-              divconfinfodata.style.height = "46%";
-              divconfinfodata.className = "confdata";
-              divconfinfo.style.paddingTop = "7px";
-              divconfinfo.appendChild(divconfinfodata);
-
-              var divconftime = document.createElement('div');
-              divconftime.innerHTML = data[i].hour;
-              divconftime.style.fontSize = "11px";
-              divconftime.style.width = "100%";
-              divconftime.style.height = "49%";
-              divconfinfo.appendChild(divconftime);
-
-              var imglive = document.createElement('img');
-              imglive.style.width = "20px";
-              imglive.id = "liveimg";
-              imglive.className = "Blink";
-              imglive.style.float = "left";
-              imglive.style.marginTop = "15px";
-              imglive.style.marginLeft = "15px";
-              imglive.src="img/live.png";
-              divconf.appendChild(imglive);
-
-              var pnome = document.createElement('p');
-              pnome.innerHTML = data[i].nome;
-              pnome.style.fontSize = "15px";
-              pnome.style.padding =  "0";
-              pnome.style.margin =  "0";
-              pnome.style.marginTop =  "5px";
-              pnome.style.width = "55%";
-              pnome.style.marginLeft = "50px";
-              //pnome.style.border = "solid 1px blue";
-              pnome.style.textAlign = "left";
-              divconf.appendChild(pnome);
-
-              var pby = document.createElement('p');
-              pby.innerHTML = "by " + data[i].orador;
-              pby.style.fontSize = "10px";
-              pby.style.padding =  "0";
-              pby.style.margin =  "0";
-              pby.style.width = "200px";
-              pby.style.marginLeft = "50px";
-              //pby.style.border = "solid 1px blue";
-              pby.style.textAlign = "left";
-              divconf.appendChild(pby);
-
-              divselconf.appendChild(divconf);
             }else{
               var divconf = document.createElement('div');
               divconf.style.width = "49%";
@@ -1025,6 +1031,30 @@ function init() {
   divinfocin.id = 'textScreenhelp';
   divinfocin.style.float = "left";
   divinfocin.style.marginTop = "40px";
+
+  if(!navigator.webkitGetUserMedia){
+    var divwarn = document.createElement('div');
+    divwarn.className = 'alert alert-warning alert-dismissible';
+    divwarn.role = "alert";
+    divwarn.id = "warn";
+
+    var closewarn = document.createElement('button');
+    closewarn.className = 'close';
+    closewarn.dataDismiss = "alert";
+    closewarn.ariaLabel="close";
+    divwarn.appendChild(closewarn);
+
+    var spanwarn = document.createElement('span');
+    spanwarn.ariaHidden = "true";
+    spanwarn.innerHTML = "&times;";
+    closewarn.appendChild(spanwarn);
+
+    var msgwarn = document.createElement('p');
+    msgwarn.innerHTML= "<strong>Warning!</strong> Better check yourself, you're not looking too good.";
+    divwarn.appendChild(msgwarn);
+
+    iDiv.appendChild(divwarn);
+  }
 
   var divtexto1 = document.createElement('div');
   divtexto1.style.borderBottom = "solid 1px #5d5d5d";
@@ -1497,7 +1527,9 @@ function init() {
       splashelpbt.style.webkitAnimation = "coloranimbt 1.5s 2";
     }, 7000);
 
-    peer = new Peer(document.getElementById('nome_cli').value,{host: 'pushvfx.com', port: 9000, path: '/'});
+
+
+    peer = new Peer(document.getElementById('nome_cli').value,{host: 'pushvfx.com', port: 55127, path: '/', debug:true, config: {'iceServers': [{ url: 'stun:stun.l.google.com:19302' },{ url: 'turn:numb.viagenie.ca', username: 'ricardoadspinto@gmail.com', credential: 'Pushvfx_1409' }]}});
     //var peer = new Peer($('#divnomeinput').value,{key: '1yy04g33loqd7vi'});
     options = {
       'constraints': {
@@ -1568,8 +1600,6 @@ function connpeer(id){
       call.on('stream', function(remoteStream) {
         video.srcObject = remoteStream;
         audio.srcObject = remoteStream;
-        //video.src = window.URL.createObjectURL(remoteStream);
-        //audio.src = window.URL.createObjectURL(remoteStream);
         audio.onloadedmetadata = function(e){
             audio.play();
         }
@@ -1579,8 +1609,6 @@ function connpeer(id){
       call.on('stream', function(remoteStream) {
         video.srcObject = remoteStream;
         audio.srcObject = remoteStream;
-        //video.src = window.URL.createObjectURL(remoteStream);
-        //audio.src = window.URL.createObjectURL(remoteStream);
         audio.onloadedmetadata = function(e){
             audio.play();
         }
@@ -1613,7 +1641,7 @@ function showMenuSelect(){
 
   document.body.appendChild(loading_seats);
 
-  function carregarData() {
+  /*function carregarData() {
       $.ajax({
         url: 'php/ler_BDData.php', //This is the current doc
         type: "POST",
@@ -1749,7 +1777,7 @@ function showMenuSelect(){
       }
       showSessaoDiv.appendChild(n_sessao);
     }
-  }
+  }*/
 
   // create the main selection menu
   var iDiv = document.createElement('div');
