@@ -466,7 +466,6 @@ function getconf(){
                   clearInterval(timerconf);
                   isLoadingInfo = false;
                   $("#loadedScreen").fadeOut("slow");
-                  fullscreen();
                   insideHelp = false;
                   $("#LegDiv").animate({bottom: "+=75px"});
                 },
@@ -475,6 +474,7 @@ function getconf(){
                   console.log(errorThrown);
                 }
               });
+              fullscreen();
               video.play();
               video.pause();
             }
@@ -1948,7 +1948,8 @@ function init() {
     insideHelp = false;
     $("#LegDiv").animate({bottom: "+=75px"});
 
-    var peer = new Peer(document.getElementById('nome_cli').value,{host: 'push.serveftp.com', port: 9000, path: '/'});
+    //var peer = new Peer(document.getElementById('nome_cli').value,{host: 'push.serveftp.com', port: 9000, path: '/'});
+    var peer = new Peer(document.getElementById('nome_cli').value,{host: 'pushvfx.com', port: 55127, path: '/', debug:true, config: {'iceServers': [{ url: 'stun:stun.l.google.com:19302' },{ url: 'turn:numb.viagenie.ca', username: 'ricardoadspinto@gmail.com', credential: 'Pushvfx_1409' }]}});
     //var peer = new Peer($('#divnomeinput').value,{key: '1yy04g33loqd7vi'});
     var options = {
       'constraints': {

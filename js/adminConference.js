@@ -5,6 +5,8 @@ var connectedUsers = [];
 
 var amIStreaming = false;
 
+var mediastream = null;
+
 window.onload = function() {
 
   // slideout.js
@@ -41,12 +43,6 @@ window.onload = function() {
       slideout.panel.style.transform = 'translateX(0)';
     }
    });
-
-
-  console.log(window.innerHeight);
-  console.log(window.innerWidth);
-  console.log($( window ).width());
-  console.log($('#poweredByPUSHImage').height());
 
   var totalDeviceHeight = window.innerHeight;
   var footerHeight = $('#poweredByPUSHImage').height();
@@ -103,10 +99,10 @@ function startConference()
   speakerButtonIsActive = true;
 
   var video = document.getElementById( 'video' );
+  video.style.display = "inline-block";
 
-  var hasUserMedia = navigator.webkitGetUserMedia ? true : false;
-
-  var peer = new Peer({host: 'push.serveftp.com', port: 9000, path: '/'});
+  //var peer = new Peer('peerHost',{host: 'pushvfx.com', port: 55127, path: '/', debug:true});
+  var peer = new Peer({host: 'pushvfx.com', port: 55127, path: '/', debug:true, config: {'iceServers': [{ url: 'stun:stun.l.google.com:19302' },{ url: 'turn:numb.viagenie.ca', username: 'ricardoadspinto@gmail.com', credential: 'Pushvfx_1409' }]}});
   //var peer = new Peer({key: '1yy04g33loqd7vi'});
   peer.on('open', function(id) {
     console.log('My peer ID is: ' + id);
@@ -124,7 +120,26 @@ function startConference()
     localStorage.setItem("id", id);
 
     callDB(id,"new",speakerFirstName,speakerLastName,conferenceRoomName);
+      navigator.getUserMedia = navigator.getUserMedia ||
+                         navigator.webkitGetUserMedia ||
+                         navigator.mozGetUserMedia;
 
+      if (navigator.webkitGetUserMedia) {
+        navigator.getUserMedia({video: true, audio: true}, function(stream) {
+          mediastream = stream;
+          video.srcObject = stream;
+        }, function(err) {
+          console.log('Failed to get local stream' ,err);
+        });
+      } else if (navigator.mozGetUserMedia){
+        navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(function(stream) {
+          mediastream = stream;
+          video.srcObject = stream;
+        })
+        .catch(function(err) { console.log(err.name + ": " + err.message); });
+      }else {
+         console.log("getUserMedia not supported");
+      }
   });
 
 
@@ -135,15 +150,10 @@ function startConference()
   peer.on('error', function(err) { console.log("something bad happened. ERROR.");
                                     console.log(err);});
   peer.on('connection', function(conn) {
-    navigator.getUserMedia = ( navigator.getUserMedia    || navigator.webkitGetUserMedia || navigator.mozGetUserMedia ||navigator.msGetUserMedia);
-    if (navigator.getUserMedia) {
-        navigator.getUserMedia({video: true, audio: true}, function(stream) {
-
           /*
            * On Open Connection - PEERJS
            */
           conn.on('open', function() {
-            console.log("connection open");
 
             peerStatusWaitingIsActive = false;
 
@@ -171,7 +181,7 @@ function startConference()
            * On a new call
            */
           peer.on('call', function(call) {
-            call.answer(stream);
+            call.answer(mediastream);
 
             for(key in peer.connections)
             {
@@ -186,7 +196,6 @@ function startConference()
 
                 setTimeout(function(){
 
-                  $('#video').fadeIn(200);
                   $('#mainStructure').toggleClass('mainStructureVideo');
 
                 }, 1500);
@@ -213,12 +222,9 @@ function startConference()
 
             for(key in peer.connections)
             {
-
               var connec = peer.connections[key][0];
-
                 if(peer.connections[key][0].open == false)
                 {
-
                   for(var i=0; i<connectedUsers.length; i++)
                   {
                     var user = JSON.parse(connectedUsers[i]);
@@ -228,7 +234,6 @@ function startConference()
                       connectedUsers.splice(i, 1);
                     }
                   }
-
                 }
                 $.ajax({
                   url: 'php/updatecounter.php',
@@ -244,15 +249,7 @@ function startConference()
                 refreshConnectionLabel(connectedUsers.length);
                 refreshUserList();
             }
-
-          });
-
-          video.srcObject = stream;
-        }, function(err) {
-          console.log('Failed to get local stream' ,err);
         });
-    };
-
   });
 }
 
