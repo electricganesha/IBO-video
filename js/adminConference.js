@@ -186,7 +186,7 @@ function startConference()
             for(key in peer.connections)
             {
 
-              console.log(peer.connections[key][0]);
+                console.log(peer.connections[key][0]);
 
                 peerId = peer.connections[key][0].id;
 
@@ -202,7 +202,7 @@ function startConference()
 
 
 
-                if(!connectedUsers.includes(userJSON))
+                if(!connectedUsers.includes(userJSON) && peer.connections[key][0].open == true)
                 {
                   connectedUsers.push(userJSON);
                 }
@@ -232,20 +232,20 @@ function startConference()
                     if(user["name"] == key)
                     {
                       connectedUsers.splice(i, 1);
+                      $.ajax({
+                        url: 'php/updatecounter.php',
+                        dataType: "text",
+                        data:({id_peer:current_id, estado:"saiu", numero_pessoas: connectedUsers.length, peer_id:peer.connections[key][0].id}),
+                        success:function(data){
+                        },
+                        error:function(textStatus,errorThrown){
+                          console.log(textStatus);
+                          console.log(errorThrown);
+                        }
+                      });
                     }
                   }
                 }
-                $.ajax({
-                  url: 'php/updatecounter.php',
-                  dataType: "text",
-                  data:({id_peer:current_id, estado:"saiu", numero_pessoas: connectedUsers.length}),
-                  success:function(data){
-                  },
-                  error:function(textStatus,errorThrown){
-                    console.log(textStatus);
-                    console.log(errorThrown);
-                  }
-                });
                 refreshConnectionLabel(connectedUsers.length);
                 refreshUserList();
             }

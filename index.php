@@ -13,16 +13,16 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
       </head>
       <style>
-      .btentrar{
-        color : white;
-        -webkit-transition : color 100ms ease-out;
-        -moz-transition : color 100ms ease-out;
-        -o-transition : color 100ms ease-out;
-      }
+        .btentrar{
+          color : white;
+          -webkit-transition : color 100ms ease-out;
+          -moz-transition : color 100ms ease-out;
+          -o-transition : color 100ms ease-out;
+        }
 
-      .btentrar:hover{
-        color: #bd2124;
-      }
+        .btentrar:hover{
+          color: #bd2124;
+        }
       </style>
       <body>
         <?php

@@ -154,6 +154,11 @@ body
   margin-left: 50px;
 }
 
+#sideMenuUsers
+{
+  overflow-y:auto;
+}
+
 #mainStructure
 {
   width:100%;

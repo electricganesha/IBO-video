@@ -1966,14 +1966,14 @@ function init() {
       data:({id:lastclicked}),
       success:function(data){
         id = data;
-        console.log(id);
         var conn = peer.connect(id);
         conn.on('open', function() {
           $.ajax({
             url: 'php/updatecounter.php',
             dataType: "text",
-            data:({id:lastclicked, estado:"entrou"}),
+            data:({id:lastclicked, estado:"entrou", peer_id:peer.connections[id][0].id, nome_user:document.getElementById('nome_cli').value, dispositivo: "Mobile"}),
             success:function(data){
+              console.log(data);
             },
             error:function(textStatus,errorThrown){
               console.log(textStatus);

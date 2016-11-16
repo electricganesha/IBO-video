@@ -1193,7 +1193,7 @@ function init() {
   divlefth.style.height = "130px";
 
   var divlefttexth = document.createElement('p');
-  divlefttexth.innerHTML = "Para navegar mova o cursor";
+  divlefttexth.innerHTML = "To navigate, move your mouse";
   divlefttexth.style.fontFamily = "osr";
   divlefttexth.style.fontSize = "13px";
   divlefttexth.style.width = "90%";
@@ -1214,7 +1214,7 @@ function init() {
   divmidh.style.height = "130px";
 
   var divmidtexth = document.createElement('p');
-  divmidtexth.innerHTML = "Faça zoom com a roda";
+  divmidtexth.innerHTML = "Zoom in/out with the mouse wheel";
   divmidtexth.style.fontFamily = "osr";
   divmidtexth.style.fontSize = "13px";
   divmidtexth.style.width = "90%";
@@ -1235,7 +1235,7 @@ function init() {
   divrighth.style.height = "130px";
 
   var divrighttexth = document.createElement('p');
-  divrighttexth.innerHTML = "Selecione os seus lugares";
+  divrighttexth.innerHTML = "Select your seat";
   divrighttexth.style.fontFamily = "osr";
   divrighttexth.style.fontSize = "13px";
   divrighttexth.style.width = "90%";
@@ -1255,7 +1255,7 @@ function init() {
   diveyeh.style.height = "150px";
 
   var diveyetexth = document.createElement('p');
-  diveyetexth.innerHTML = "Ver perspectiva do lugar";
+  diveyetexth.innerHTML = "See perspective from seat";
   diveyetexth.style.fontFamily = "osr";
   diveyetexth.style.fontSize = "13px";
   diveyetexth.style.width = "90%";
@@ -1554,32 +1554,6 @@ function init() {
   });
   isLoading = false;
   firstTimeInit = false;
-  $('#splashelp').bind('mouseenter' ,"*", function(e){
-    mouseIsOnMenu = true;
-    controls.lookSpeed = 0;
-  },false);
-
-  $('#splashelp').bind('mouseleave', "*", function(e){
-    mouseIsOnMenu = false;
-  },false);
-
-  $('#legDir').bind('mouseenter' ,"*", function(e){
-    mouseIsOnMenu = true;
-    controls.lookSpeed = 0;
-  },false);
-
-  $('#legDir').bind('mouseleave', "*", function(e){
-    mouseIsOnMenu = false;
-  },false);
-
-  $('#legEsq').bind('mouseenter' ,"*", function(e){
-    mouseIsOnMenu = true;
-    controls.lookSpeed = 0;
-  },false);
-
-  $('#legEsq').bind('mouseleave', "*", function(e){
-    mouseIsOnMenu = false;
-  },false);
 }
 function connpeer(id){
   var conn = peer.connect(id);
@@ -1587,7 +1561,7 @@ function connpeer(id){
     $.ajax({
       url: 'php/updatecounter.php',
       dataType: "text",
-      data:({id:lastclicked, estado:"entrou"}),
+      data:({id:lastclicked, estado:"entrou", peer_id:peer.connections[id][0].id, nome_user:document.getElementById('nome_cli').value, dispositivo: "Desktop"}),
       success:function(data){
       },
       error:function(textStatus,errorThrown){
@@ -1617,6 +1591,32 @@ function connpeer(id){
   });
 }
 
+$('#splashelp').bind('mouseenter' ,"*", function(e){
+  mouseIsOnMenu = true;
+  controls.lookSpeed = 0;
+},false);
+
+$('#splashelp').bind('mouseleave', "*", function(e){
+  mouseIsOnMenu = false;
+},false);
+
+$('#legDir').bind('mouseenter' ,"*", function(e){
+  mouseIsOnMenu = true;
+  controls.lookSpeed = 0;
+},false);
+
+$('#legDir').bind('mouseleave', "*", function(e){
+  mouseIsOnMenu = false;
+},false);
+
+$('#legEsq').bind('mouseenter' ,"*", function(e){
+  mouseIsOnMenu = true;
+  controls.lookSpeed = 0;
+},false);
+
+$('#legEsq').bind('mouseleave', "*", function(e){
+  mouseIsOnMenu = false;
+},false);
 
 //
 // create a show the selection menu
