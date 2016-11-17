@@ -30,7 +30,7 @@
             if($_POST['pass'] == '17112016'){
               session_start();
               $_SESSION['entrou'] = 'true';
-              header('location: menu.php');
+              header('location: ibo.php');
             }
           }
         ?>
