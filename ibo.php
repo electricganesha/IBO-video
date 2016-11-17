@@ -98,8 +98,36 @@ if($_SESSION['entrou'] == "") {
         }
 
         :-ms-input-placeholder {
-           text-align: center;  
+           text-align: center;
         }
+
+        #divMainConf
+        {
+          overflow-y:scroll;
+        }
+
+      /* Let's get this party started */
+      #divMainConf::-webkit-scrollbar {
+          width: 8px;
+
+      }
+
+      /* Track */
+      #divMainConf::-webkit-scrollbar-track {
+          -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+          -webkit-border-radius: 10px;
+          border-radius: 10px;
+          background-color:rgba(255,255,255,0.3);
+      }
+
+      /* Handle */
+      #divMainConf::-webkit-scrollbar-thumb {
+          -webkit-border-radius: 10px;
+          border-radius: 10px;
+          background: #bd2124;
+          -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+
+      }
     </style>
   </head>
   <body>

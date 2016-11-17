@@ -406,12 +406,15 @@ function getconf(){
           if (data[i].estado == "live"){
             if(navigator.webkitGetUserMedia){
               var divconf = document.createElement('div');
-              divconf.style.width = "100%";
+              divconf.style.width = "99%";
               divconf.style.float = "left";
               divconf.style.height = "50px";
               divconf.style.cursor = "pointer";
               divconf.className = "conferencia";
-              divconf.style.marginTop = "10px";
+              if(i!=0)
+              {
+                divconf.style.marginTop = "10px";
+              }
               divconf.title = "live";
               divconf.id = data[i].id_conferencia;
               if(lastclicked == data[i].id_conferencia){
@@ -490,12 +493,15 @@ function getconf(){
             }
           }else{
             var divconf = document.createElement('div');
-            divconf.style.width = "100%";
+            divconf.style.width = "99%";
             divconf.style.float = "left";
             divconf.style.height = "50px";
             divconf.style.cursor = "pointer";
             divconf.className = "conferencia";
-            divconf.style.marginTop = "10px";
+            if(i!=0)
+            {
+              divconf.style.marginTop = "10px";
+            }
             divconf.title = "offline";
             divconf.id = data[i].id_conferencia;
             if(lastclicked == data[i].id_conferencia){
@@ -987,10 +993,10 @@ function init() {
   divselconf.style.fontFamily = "osb";
   //divselconf.style.border = "solid 1px yellow";
   divselconf.style.margin = 'auto';
-  divselconf.style.height = '70%';
+  divselconf.style.height = '73%';
   divselconf.style.overflowY = 'auto';
   divselconf.style.marginTop = "20px";
-
+  divselconf.id = "divMainConf";
 
   var divnome = document.createElement('div');
   divnome.style.width = '60%';
