@@ -72,6 +72,34 @@ if($_SESSION['entrou'] == "") {
         }
 
         .conferencia:hover > .npeople { border-left: 1px solid #bd2124; }
+
+        @-webkit-keyframes coloranim {
+            0%     {border-color: #5d5d5d;}
+            50.0%  {border-color:#bd2124;}
+            100.0%  {border-color:#5d5d5d;}
+        }
+
+        @keyframes coloranim {
+            0%     {border-color:#5d5d5d;}
+            50.0%  {border-color:#bd2124;}
+            100.0%  {border-color:#5d5d5d;}
+        }
+
+        ::-webkit-input-placeholder {
+           text-align: center;
+        }
+
+        :-moz-placeholder { /* Firefox 18- */
+           text-align: center;
+        }
+
+        ::-moz-placeholder {  /* Firefox 19+ */
+           text-align: center;
+        }
+
+        :-ms-input-placeholder {
+           text-align: center;  
+        }
     </style>
   </head>
   <body>
