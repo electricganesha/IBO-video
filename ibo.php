@@ -50,7 +50,7 @@ if($_SESSION['entrou'] == "") {
         }
 
         .conferencia:hover{
-           border : 1px solid #bd2124;
+           border : 1px solid #917a57;
         }
 
         .btentrar{
@@ -61,7 +61,7 @@ if($_SESSION['entrou'] == "") {
         }
 
         .btentrar:hover{
-          color: #bd2124;
+          color: #917a57;
         }
 
         .npeople {
@@ -71,17 +71,17 @@ if($_SESSION['entrou'] == "") {
           -o-transition : border-left 400ms ease-out;
         }
 
-        .conferencia:hover > .npeople { border-left: 1px solid #bd2124; }
+        .conferencia:hover > .npeople { border-left: 1px solid #917a57; }
 
         @-webkit-keyframes coloranim {
             0%     {border-color: #5d5d5d;}
-            50.0%  {border-color:#bd2124;}
+            50.0%  {border-color:#917a57;}
             100.0%  {border-color:#5d5d5d;}
         }
 
         @keyframes coloranim {
             0%     {border-color:#5d5d5d;}
-            50.0%  {border-color:#bd2124;}
+            50.0%  {border-color:#917a57;}
             100.0%  {border-color:#5d5d5d;}
         }
 
@@ -124,7 +124,7 @@ if($_SESSION['entrou'] == "") {
       #divMainConf::-webkit-scrollbar-thumb {
           -webkit-border-radius: 10px;
           border-radius: 10px;
-          background: #bd2124;
+          background: #917a57;
           -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 
       }

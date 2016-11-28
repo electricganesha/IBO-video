@@ -48,7 +48,7 @@ body
 .loginConfInput
 {
   background-color: transparent;
-  border:1px solid #BD2124;
+  border:1px solid #917a57;
   outline: none;
   color:white;
   padding:5px;
@@ -56,8 +56,8 @@ body
 
 #loginConfButton
 {
-  background-color: #BD2124;
-  width:208px;
+  background-color: #917a57;
+  width:190px;
   height:30px;
   margin-left:5px;
 }
@@ -124,7 +124,7 @@ body
   z-index: 1; /* Stay on top */
   top: 0;
   left: 0;
-  background-color: #BD2124; /* Black*/
+  background-color: #917a57; /* Black*/
   overflow-x: hidden; /* Disable horizontal scroll */
   padding-top: 60px; /* Place content 60px from the top */
   transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
@@ -218,7 +218,7 @@ body
 
 #video
 {
-  border:3px solid #BD2124;
+  border:3px solid #917a57;
   margin-left:10px;
   margin-top:20px;
   margin-bottom:20px;
@@ -228,7 +228,7 @@ body
 
 .sliderButton
 {
-  color:#BD2124;
+  color:#917a57;
   display:none;
   position:absolute;
 }
@@ -304,7 +304,7 @@ body
 
   #loginConfButton
   {
-    background-color: #BD2124;
+    background-color: #917a57;
     width:208px;
     height:30px;
     margin-top:10px;
@@ -384,7 +384,7 @@ body
 
   .sliderButton
   {
-    color:#BD2124 !important;
+    color:#917a57 !important;
     display:block;
     position:absolute;
     border:1px solid red !important;
@@ -502,7 +502,7 @@ body
 
   #loginConfButton
   {
-    background-color: #BD2124;
+    background-color: #917a57;
     width:208px;
     height:30px;
     margin-top:20px;
@@ -587,7 +587,7 @@ body
 
   .sliderButton
   {
-    color:#BD2124 !important;
+    color:#917a57 !important;
     display:block;
     position:absolute;
     border:1px solid red !important;

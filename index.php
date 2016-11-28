@@ -21,13 +21,13 @@
         }
 
         .btentrar:hover{
-          color: #bd2124;
+          color:  #917a57;
         }
       </style>
       <body>
         <?php
           if (isset($_POST['entrar'])){
-            if($_POST['pass'] == '17112016'){
+            if($_POST['pass'] == 'playroom'){
               session_start();
               $_SESSION['entrou'] = 'true';
               header('location: ibo.php');
@@ -35,16 +35,16 @@
           }
         ?>
         <div id="mainContainer" class="container" style="width:100%;">
-          <div class="row" style="margin:auto; width:100%; height:20%;">
-            <img id="p4pLogo" class="img-responsive" src="img/p4p.png" style="margin:auto; height:90%;"></img>
+          <div class="row" style="margin:auto; width:100%; height:30%; margin-top:10%;">
+            <img id="p4pLogo" class="img-responsive" src="img/P4PLogo.png" style="margin:auto; padding-top:40px; height:100%;"></img>
           </div>
-          <div class="row" style="height:10%; ">
-            <h1 id="mainTitle"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room</h1>
+          <div class="row" style="height:10%; padding-top:40px;  width:30%; margin:auto;">
+            <h1 id="mainTitle"> Virtual <div style="display:inline; color: #917a57;">Conference</div> Room</h1>
           </div>
-          <div class="row" style="position: absolute; width: 100%; top: 50%; height: 70px; margin-top: -50px;">
+          <div class="row" style="position: absolute; width: 100%; top: 50%; height: 70px; margin-top: 6%; ">
             <div class="col-md-12" style="text-align:center;">
               <form method="post" id="form_login">
-                <input type="password" id="pass" name="pass" style="border:solid 1px #bd2124; width: 200px; text-align: center; height: 30px; background-color:transparent; color: white; font-size: 18px; outline: none; font-family: ossb;" placeholder="Password">
+                <input type="password" id="pass" name="pass" style="border:solid 1px  #917a57; width: 200px; text-align: center; height: 30px; background-color:transparent; color: white; font-size: 18px; outline: none; font-family: ossb;" placeholder="Password">
                 <br>
                 <br>
                 <input type="submit" id="entrar" name="entrar" class="btentrar" value="Log In" style=" display: none;border:transparent; background-color:transparent; font-size: 20px; outline: none; font-family: ossb;" placeholder="Password">

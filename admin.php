@@ -22,7 +22,7 @@ if($_SESSION['entrou'] == "") {
   <script src="js/adminConference.js"></script>
 </head>
 <body>
-  <nav id="menu" class="menu" style="background-color:#BD2124; display:none; ">
+  <nav id="menu" class="menu" style="background-color:#917a57; display:none; ">
     <div id="sideMenuUsers" class="sidenav" style="width:100%;">
       <div id="ligacoes" style="display:block; text-align:center; width:100%; margin-left:10px; border-bottom:1px solid black; padding:10px;"></div>
       <br>
@@ -32,16 +32,16 @@ if($_SESSION['entrou'] == "") {
 
   <main id="main" style="background-color:black;">
     <header class="panel-header" style="position:absolute;">
-      <button id="sliderButton" class="btn js-slideout-toggle" style="z-index:999; position:absolute; margin-top:50vh; display:none; background-color:#BD2124; border:0px; border-bottom-right-radius:25px; border-top-right-radius:25px;"> <span class="glyphicon glyphicon-user" style="margin-right:5px;"></span> <div style="display:inline; color:rgba(255,255,255,0.25);">></div>
+      <button id="sliderButton" class="btn js-slideout-toggle" style="z-index:999; position:absolute; margin-top:50vh; display:none; background-color:#917a57; border:0px; border-bottom-right-radius:25px; border-top-right-radius:25px;"> <span class="glyphicon glyphicon-user" style="margin-right:5px;"></span> <div style="display:inline; color:rgba(255,255,255,0.25);">></div>
       </button>
     </header>
     <div id="mainContainer" class="container" style="width:100%;">
       <div class="row" id="mainRow" style="height:100%;">
         <div class="row" style="height:15%;">
-          <img class="img-responsive" style="margin:auto; height:100%;" src="img/p4p.png"></img>
+          <img class="img-responsive" style="margin:auto; height:100%;" src="img/P4PLogo.png"></img>
         </div>
         <div class="row" id="mainTitleRow">
-          <h1 style="width:70%; margin:auto; border-bottom:2px solid #BD2124; padding-bottom:1%;"> Virtual <div style="display:inline; color:#BD2124;">Conference</div> Room - Speaker</h1>
+          <h1 style="width:70%; margin:auto; border-bottom:2px solid #917a57; padding-bottom:1%;"> Virtual <div style="display:inline; color:#917a57">Conference</div> Room - Speaker</h1>
         </div>
         <div class="row" id="loginRow">
           <div id="login" style="width:100%;">
@@ -63,7 +63,7 @@ if($_SESSION['entrou'] == "") {
             </div>
             <br>
             <div class="row" id="errorRow">
-              <div id="formErrorMessageDiv" style="display:none;"><p style="display:inline;"> Please specify a </p> <p id="formErrorMessage" style="display:inline; color:#BD2124;"> </p> <p style="display:inline;"> in order to continue. </p></div>
+              <div id="formErrorMessageDiv" style="display:none;"><p style="display:inline;"> Please specify a </p> <p id="formErrorMessage" style="display:inline; color:#917a57"> </p> <p style="display:inline;"> in order to continue. </p></div>
             </div>
         </div>
       </div>
