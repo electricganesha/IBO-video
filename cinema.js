@@ -418,7 +418,7 @@ function getconf(){
               divconf.title = "live";
               divconf.id = data[i].id_conferencia;
               if(lastclicked == data[i].id_conferencia){
-                  divconf.style.border = "solid 1px #bd2124";
+                  divconf.style.border = "solid 1px #917a57";
               }
 
               var divnpeople = document.createElement('div');
@@ -505,7 +505,7 @@ function getconf(){
             divconf.title = "offline";
             divconf.id = data[i].id_conferencia;
             if(lastclicked == data[i].id_conferencia){
-                divconf.style.border = "solid 1px #bd2124";
+                divconf.style.border = "solid 1px #917a57";
             }
 
             if(data[i].dia != ""){
@@ -558,7 +558,7 @@ function getconf(){
             for (var j=0; j<data.length; j ++){
               document.getElementById(data[j].id_conferencia).style.border = "solid 1px #5d5d5d";
             }
-            document.getElementById(this.id).style.border = "solid 1px #bd2124";
+            document.getElementById(this.id).style.border = "solid 1px #917a57";
             lastclicked = this.id;
 
             if(this.title == 'live'){
@@ -629,7 +629,7 @@ function getconf(){
           });
 
           $("#" + data[i].id_conferencia).on("mouseover", function(){
-              document.getElementById(this.id).style.border = "solid 1px #bd2124";
+              document.getElementById(this.id).style.border = "solid 1px #917a57";
           });
 
           $("#" + data[i].id_conferencia).on("mouseout", function(){
@@ -770,11 +770,11 @@ function init() {
 
   var divtexto1 = document.createElement('div');
   divtexto1.style.borderBottom = "solid 1px #5d5d5d";
-  divtexto1.style.width = "400px";
+  divtexto1.style.width = "600px";
   divtexto1.style.margin = "auto";
 
   var textowelcome = document.createElement('p');
-  textowelcome.innerHTML = "Welcome to <b><span style='color:#bd2124'>PLAY 4 POVERTY</span></b>";
+  textowelcome.innerHTML = "Welcome to <b><span style='color:#917a57'>PLAY 4 POVERTY</span></b> - Virtual Conference Room";
   textowelcome.style.fontFamily = "osr";
   textowelcome.style.fontSize = "23px";
 
@@ -867,7 +867,7 @@ function init() {
 
   var splashelpbt = document.createElement('div');
   splashelpbt.style.color = "white";
-  splashelpbt.style.backgroundColor= "rgba(189, 33, 36, 1)";
+  splashelpbt.style.backgroundColor= "#917a57";
   splashelpbt.style.cursor = "pointer";
   splashelpbt.style.width = '60px';
   splashelpbt.style.textAlign = "center";
@@ -1054,7 +1054,7 @@ function init() {
 
   var legEsq = document.createElement('div');
   legEsq.style.width = '60px';
-  legEsq.style.backgroundColor= "rgba(189, 33, 36, 1)";
+  legEsq.style.backgroundColor= "#917a57";
   legEsq.style.fontFamily = "osb";
   legEsq.style.height = '60px';
   legEsq.style.textAlign = 'center';
@@ -1095,7 +1095,7 @@ function init() {
 
   var legDir = document.createElement('div');
   legDir.style.width = '60px';
-  legDir.style.backgroundColor= "rgba(189, 33, 36, 1)";
+  legDir.style.backgroundColor= "#917a57";
   legDir.style.fontFamily = "osb";
   legDir.style.height = '60px';
   legDir.style.textAlign = 'center';
@@ -1508,7 +1508,7 @@ function showMenuSelect(){
   divInfoMovie.style.height = '170px';
   divInfoMovie.style.padding = '0';
   divInfoMovie.style.position = "absolute";
-  divInfoMovie.style.background = '#FFF';
+  divInfoMovie.style.background = 'black';
   divInfoMovie.id = 'divInfoMovie';
   divInfoMovie.style.right = '0';
   divInfoMovie.style.top = '0';
@@ -1547,7 +1547,7 @@ function showMenuSelect(){
   bannerSeats.innerHTML = "Seats";
   bannerSeats.style.width = "100%";
   bannerSeats.style.height = "25px";
-  bannerSeats.style.backgroundColor = "#BD2124";
+  bannerSeats.style.backgroundColor = "#917a57";
   bannerSeats.style.display = "inline-block";
   bannerSeats.style.fontFamily = "ossb";
   bannerSeats.style.lineHeight ="80%";
@@ -1574,7 +1574,8 @@ function showMenuSelect(){
   divInfo.appendChild(bannerSeats);
   divInfo.appendChild(selectLugares);
   document.body.appendChild(iDiv);
-  document.getElementById("logoCinema").src="img/p4p.png";
+  document.getElementById("logoCinema").src="img/P4PLogo.png";
+  document.getElementById("logoCinema").style.height="85%";
 
   $('#menuSelect').bind('mouseenter' ,"*", function(e){
     mouseIsOnMenu = true;
